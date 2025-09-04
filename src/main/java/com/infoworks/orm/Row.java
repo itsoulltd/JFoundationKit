@@ -1,0 +1,130 @@
+package com.infoworks.orm;
+
+import com.infoworks.objects.Message;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public class Row {
+	
+	public Row() {
+		super();
+	}
+	public List<Property> getProperties() {
+		return properties;
+	}
+	public void setProperties(List<Property> items) {
+		if(items == null) {return;}
+		this.properties = items;
+	}
+	private List<Property> properties = new ArrayList<Property>();
+	public Row add(Property prop){
+		if (prop == null || properties.contains(prop) == true) {return this;}
+		properties.add(prop);
+		return this;
+	}
+	public Row add(String name){return add(new Property(name));}
+	public Row add(String name, Object value){
+		return add(new Property(name, value));
+	}
+	public List<Property> getCloneProperties(){
+		//All standard collections have copy constructors.
+		//This does a shallow copy
+		return new ArrayList<>(this.properties);
+	}
+	public Row remove(String...names){
+		Map<String, Property> keyPropMap = keyValueMap();
+		for (String key : names) {
+			properties.remove(keyPropMap.get(key));
+		}
+		return this;
+	}
+	public String[] getKeys(){
+    	//Before Java 8
+		//This does a shallow copy
+        List<String> result = new ArrayList<String>();
+        for (Property x : this.properties) {
+            result.add(new String(x.getKey()));
+        }
+    	return result.toArray(new String[]{});
+    }
+	public Object[] getValues(){
+		List<Object> result = new ArrayList<>();
+		for (Property x : this.properties) {
+			result.add(x.getValue());
+		}
+		return result.toArray();
+	}
+    public Map<String, Property> keyValueMap(){
+    	//This does a shallow copy
+    	Map<String, Property> result = new HashMap<String, Property>();
+    	for (Property parameter : this.properties) {
+			result.put(new String(parameter.getKey()), new Property(parameter));
+		}
+    	return result;
+    }
+    public Map<String, Object> keyObjectMap(){
+    	//This does a shallow copy
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	for (Property parameter : this.properties) {
+			result.put(new String(parameter.getKey()), parameter.getValue());
+		}
+    	return result;
+    }
+    public Map<String,Property> keyValueMapToNames(Map<String, String> mappingToFields){ //Key=Column:Name, value=Class.fieldName
+    	if(mappingToFields == null || mappingToFields.size() < 1) {
+    		return keyValueMap();
+    	}
+    	//This does a shallow copy
+    	Map<String, Property> dataMap = keyValueMap(); 
+        Map<String,Property> nXRow = new HashMap<String, Property>(dataMap.size() <= 0 ? 1 : dataMap.size());
+        if (dataMap.size() > 0) {
+        	//
+        	for (Entry<String, String> mapEntry : mappingToFields.entrySet()) {
+        		String columnName = mapEntry.getKey();
+        		if (dataMap.containsKey(columnName)) {
+        			String newKey = mapEntry.getValue();
+                	Property m = dataMap.get(columnName);
+                	Property newProp = new Property(mapEntry.getValue(), m.getValue());
+                    nXRow.put(newKey, newProp);
+                }
+			}
+        }
+        return nXRow;
+    }
+    public int size(){
+    	return properties.size();
+    }
+    public <T> T inflate(Class<T> type) throws InstantiationException, IllegalAccessException {
+		return inflate(type, null);
+	}
+    public <T> T inflate(Class<T> type, Map<String, String> mappingKeys) throws InstantiationException, IllegalAccessException {
+		Class<T> cls = type;
+		T newInstance = cls.newInstance();
+		Field[] fields;
+		if (Message.class.isAssignableFrom(cls)){
+		    fields = ((Message)newInstance).getDeclaredFields(true);
+        }else{
+            fields = cls.getDeclaredFields();
+        }
+		Map<String, Property> data = this.keyValueMapToNames(mappingKeys);
+        for (Field field : fields) {
+            field.setAccessible(true);
+            Property entry = data.get(field.getName());
+            if(entry != null) {
+            	field.set(newInstance, entry.getValue());
+            }
+            field.setAccessible(false);
+        }
+		return newInstance;
+	}
+    @Override
+    public String toString() {
+    	Map<String, Object> objMap = keyObjectMap(); 
+    	return objMap.toString();
+    }
+}

@@ -19,7 +19,7 @@ public class Message implements Externalizable {
         return this;
     }
 
-    protected final Field[] getDeclaredFields(boolean inherit) {
+    public final Field[] getDeclaredFields(boolean inherit) {
         List<Field> fields = new ArrayList();
         fields.addAll(Arrays.asList(getClass().getDeclaredFields()));
         if (inherit){
