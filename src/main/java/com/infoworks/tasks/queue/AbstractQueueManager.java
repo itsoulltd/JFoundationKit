@@ -1,8 +1,7 @@
-package com.infoworks.utils.jmsq;
+package com.infoworks.tasks.queue;
 
 import com.infoworks.objects.Message;
 import com.infoworks.tasks.Task;
-import com.infoworks.tasks.queue.QueuedTaskStateListener;
 import com.infoworks.tasks.stack.StackManager;
 
 public abstract class AbstractQueueManager implements StackManager {

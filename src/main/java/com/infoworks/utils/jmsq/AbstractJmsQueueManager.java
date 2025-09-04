@@ -2,6 +2,7 @@ package com.infoworks.utils.jmsq;
 
 import com.infoworks.objects.Message;
 import com.infoworks.tasks.Task;
+import com.infoworks.tasks.queue.AbstractQueueManager;
 import com.infoworks.tasks.queue.QueuedTaskStateListener;
 import com.infoworks.utils.MessageMapper;
 
