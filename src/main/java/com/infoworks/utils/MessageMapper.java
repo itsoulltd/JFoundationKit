@@ -25,17 +25,9 @@ public final class MessageMapper {
         return false;
     }
 
-    public static <P> P unmarshal(Class<P> type, String payload) throws IOException {
-        return internalUnmarshal(type, payload);
-    }
-
-    public static <P> P unmarshal(TypeReference<P> type, String payload) throws IOException {
-        return internalUnmarshal(type, payload);
-    }
-
-    private static <P> P internalUnmarshal(Object type, String payload) throws IOException {
+    private static <P> P internalUnmarshal(Object type, String payload, ObjectMapper mapper) throws IOException {
         if (isValidJson(payload) && type != null){
-            final ObjectMapper mapper = getJsonSerializer();
+            mapper = (mapper == null) ? getJsonSerializer() : mapper;
             if (type instanceof TypeReference){
                 P obj = mapper.readValue(payload, (TypeReference<P>) type);
                 return obj;
@@ -47,30 +39,56 @@ public final class MessageMapper {
         return null;
     }
 
-    public static <P> String marshal(P object) throws IOException {
+    public static <P> P unmarshal(Class<P> type, String payload) throws IOException {
+        return internalUnmarshal(type, payload, getJsonSerializer());
+    }
+
+    public static <P> P unmarshal(Class<P> type, String payload, ObjectMapper mapper) throws IOException {
+        return internalUnmarshal(type, payload, mapper);
+    }
+
+    public static <P> P unmarshal(TypeReference<P> type, String payload) throws IOException {
+        return internalUnmarshal(type, payload, getJsonSerializer());
+    }
+
+    public static <P> P unmarshal(TypeReference<P> type, String payload, ObjectMapper mapper) throws IOException {
+        return internalUnmarshal(type, payload, mapper);
+    }
+
+    public static <P> String marshal(P object, ObjectMapper mapper) throws IOException {
         if (object != null){
-            final ObjectMapper mapper = getJsonSerializer();
+            mapper = (mapper == null) ? getJsonSerializer() : mapper;
             String value = mapper.writeValueAsString(object);
             return value;
         }
         return null;
     }
 
-    public static <P>  String printString(P object, ObjectMapper mapper) {
-        mapper = (mapper == null) ? getJsonSerializer() : mapper;
-        if (mapper != null){
-            try {
-                String json = mapper.writeValueAsString(object);
-                return json;
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-        return "";
+    public static <P> String marshal(P object) throws IOException {
+        return marshal(object, getJsonSerializer());
     }
 
     public static <P>  String printString(P object) {
         return printString(object, getJsonSerializer());
+    }
+
+    public static <P>  String printString(P object, ObjectMapper mapper) {
+        return printJson(object, mapper);
+    }
+
+    public static <P>  String printJson(P object) {
+        return printJson(object, getJsonSerializer());
+    }
+
+    public static <P>  String printJson(P object, ObjectMapper mapper) {
+        mapper = (mapper == null) ? getJsonSerializer() : mapper;
+        try {
+            String json = mapper.writeValueAsString(object);
+            return json;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "{}";
     }
 
 }
