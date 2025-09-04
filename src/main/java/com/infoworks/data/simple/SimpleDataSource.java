@@ -1,0 +1,85 @@
+package com.infoworks.data.simple;
+
+import com.infoworks.data.base.DataSource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+
+public class SimpleDataSource<Key, Value> implements DataSource<Key, Value> {
+
+    private Map<Key, Value> inMemoryStorage;
+
+    protected Map<Key, Value> getInMemoryStorage() {
+        if (inMemoryStorage == null){
+            inMemoryStorage = new ConcurrentHashMap<>();
+        }
+        return inMemoryStorage;
+    }
+
+    @Override
+    public void clear() {
+        getInMemoryStorage().clear();
+    }
+
+    @Override
+    public Value replace(Key key, Value value) {
+        return getInMemoryStorage().replace(key, value);
+    }
+
+    @Override
+    public Value remove(Key key) {
+        return getInMemoryStorage().remove(key);
+    }
+
+    @Override
+    public void put(Key key, Value value) {
+        getInMemoryStorage().put(key, value);
+    }
+
+    @Override
+    public boolean containsKey(Key s) {
+        return getInMemoryStorage().containsKey(s);
+    }
+
+    @Override
+    public int size() {
+        return getInMemoryStorage().size();
+    }
+
+    @Override
+    public Value read(Key key) {
+        return getInMemoryStorage().get(key);
+    }
+
+    @Override
+    public Value[] readSync(int offset, int pageSize) {
+        //Validation:
+        int size = size();
+        int fromIndex = Math.abs(offset);
+        if (fromIndex >= size) return (Value[]) new Object[0];
+        int toIndex = Math.abs(offset) + Math.abs(pageSize);
+        if (toIndex > size) toIndex = size;
+        //In-Memory-Pagination:
+        List<Value> items = new ArrayList<>(getInMemoryStorage().values())
+                .subList(fromIndex, toIndex);
+        return (Value[]) items.toArray();
+    }
+
+    private Executor serviceExe = Executors.newSingleThreadExecutor();
+
+    @Override
+    public void readAsync(int offset, int pageSize, Consumer<Value[]> consumer) {
+        serviceExe.execute(() -> {
+            if (consumer != null){
+                Value[] items = readSync(offset, pageSize);
+                consumer.accept(items);
+            }
+        });
+    }
+
+}
