@@ -56,8 +56,8 @@ public final class MessageMapper {
         return null;
     }
 
-    public static <P>  String printString(P object) {
-        ObjectMapper mapper = getJsonSerializer();
+    public static <P>  String printString(P object, ObjectMapper mapper) {
+        mapper = (mapper == null) ? getJsonSerializer() : mapper;
         if (mapper != null){
             try {
                 String json = mapper.writeValueAsString(object);
@@ -67,6 +67,10 @@ public final class MessageMapper {
             }
         }
         return "";
+    }
+
+    public static <P>  String printString(P object) {
+        return printString(object, getJsonSerializer());
     }
 
 }

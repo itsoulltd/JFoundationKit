@@ -1,5 +1,8 @@
 package com.infoworks.objects;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.infoworks.utils.MessageMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -117,6 +120,25 @@ public class MessageTest {
         Assert.assertEquals(message.getName(), deserialized.getName());
         Assert.assertEquals(message.getAge(), deserialized.getAge());
         System.out.println(MessageMapper.printString(deserialized));
+    }
+
+    @Test
+    public void jsonStringTest() {
+        MyMessage message = new MyMessage();
+        message.setPayload("My name");
+        message.setActivate(true);
+        message.setAge(23);
+        message.setDob(LocalDateTime.now());
+        message.setName("David");
+        //Solution: Add Jackson JSR-310 Module. Jackson doesn't know how to (de)serialize java.time.LocalDateTime,
+        // because Java 8 time types are not supported out-of-the-box unless you register the JSR-310 module.
+        ObjectMapper mapper = MessageMapper.getJsonSerializer();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        //
+        String json = MessageMapper.printString(message, mapper);
+        Assert.assertTrue(MessageMapper.isValidJson(json));
+        System.out.println(json);
     }
 
 }
