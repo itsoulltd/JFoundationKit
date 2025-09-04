@@ -14,8 +14,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Set: [2.9.10.5, 2.18.3) to Jackson.Version, To use with JDK 17 or latest -->
         <jackson.version>[2.9.10.5, 2.18.3]</jackson.version>
-        <!-- [2.9.10.5, 2.18.3] < Jackson.Version, Need to use JDK 17 or latest -->
     </properties>
 
     <dependencies>
