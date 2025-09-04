@@ -1,4 +1,4 @@
-package com.infoworks.data.simple;
+package com.infoworks.data.impl;
 
 import com.infoworks.data.base.DataSource;
 
