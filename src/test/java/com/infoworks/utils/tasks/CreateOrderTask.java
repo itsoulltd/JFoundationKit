@@ -5,18 +5,16 @@ import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
 import com.infoworks.tasks.ExecutableTask;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class CreateOrderTask extends ExecutableTask<Message, Response> {
 
-    public CreateOrderTask(AtomicInteger counter, String message, boolean nextRandom) {
+    public CreateOrderTask(int orderId, String message, boolean nextRandom) {
         super(new Property("message", message)
-                , new Property("orderId", counter.incrementAndGet())
+                , new Property("orderId", orderId)
                 , new Property("nextRandom", nextRandom));
     }
 
-    public CreateOrderTask(AtomicInteger counter, String message) {
-        this(counter, message, true);
+    public CreateOrderTask(int orderId, String message) {
+        this(orderId, message, true);
     }
 
     @Override
