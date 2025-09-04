@@ -19,7 +19,7 @@ public class Message implements Externalizable {
         return this;
     }
 
-    protected final Field[] getDeclaredFields(boolean inherit){
+    protected final Field[] getDeclaredFields(boolean inherit) {
         List<Field> fields = new ArrayList();
         fields.addAll(Arrays.asList(getClass().getDeclaredFields()));
         if (inherit){
@@ -33,7 +33,7 @@ public class Message implements Externalizable {
         return fields.toArray(new Field[0]);
     }
 
-    public Map<String, Object> marshalling(boolean inherit) {
+    public Map<String, Object> marshalling(boolean inherit) throws RuntimeException {
         Map<String, Object> result = new HashMap();
         for (Field field : getDeclaredFields(inherit)) {
             if (field.isAnnotationPresent(Ignore.class)) continue;
@@ -55,31 +55,35 @@ public class Message implements Externalizable {
         return result;
     }
 
-    public void unmarshalling(Map<String, Object> data, boolean inherit){
-        if (data != null) {
-            Field[] fields = getDeclaredFields(inherit);
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(Ignore.class)) continue;
-                try {
-                    field.setAccessible(true);
-                    Object entry = data.get(field.getName());
-                    if(entry != null) {
-                        try {
-                            if (Message.class.isAssignableFrom(field.getType())){
-                                //Now we can say this might-be a marshaled object that confirm to Message,
-                                Message enIf = (Message) field.getType().getDeclaredConstructor().newInstance();
-                                if(entry instanceof Map)
-                                    enIf.unmarshalling((Map<String, Object>) entry, true);
-                                field.set(this, enIf);
-                            }else{
-                                field.set(this, entry);
-                            }
-                        } catch (Exception e) {}
-                    }
-                    field.setAccessible(false);
-                } catch (SecurityException e) {}
-            }
+    public void unmarshalling(Map<String, Object> data, boolean inherit) throws RuntimeException {
+        if (data == null) {
+            return;
         }
+        //Un-marshaling:
+        Field[] fields = getDeclaredFields(inherit);
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Ignore.class)) continue;
+            try {
+                field.setAccessible(true);
+                Object entry = data.get(field.getName());
+                if(entry != null) {
+                    try {
+                        if (Message.class.isAssignableFrom(field.getType())){
+                            //Now we can say this might-be a marshaled object that confirm to Message,
+                            Message enIf = (Message) field.getType().getDeclaredConstructor().newInstance();
+                            if(entry instanceof Map)
+                                enIf.unmarshalling((Map<String, Object>) entry, true);
+                            field.set(this, enIf);
+                        }else{
+                            field.set(this, entry);
+                        }
+                    } catch (Exception e) {}
+                }
+                field.setAccessible(false);
+            } catch (SecurityException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        } //END-Of-Loop
     }
 
     @Override
