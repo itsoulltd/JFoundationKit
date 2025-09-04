@@ -8,11 +8,16 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Message implements Externalizable {
 
     @Ignore
+    protected static Logger LOG = Logger.getLogger(Message.class.getSimpleName());
+    @Ignore
     private String payload;
+
     public String getPayload() {
         return payload;
     }
@@ -105,7 +110,7 @@ public class Message implements Externalizable {
         try {
             return MessageMapper.printJson(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.log(Level.WARNING, e.getMessage());
         }
         //Otherwise plain string for debug:
         return "Message{" + "payload='" + payload + '\'' + '}';
