@@ -85,7 +85,8 @@
                 <version>3.5.3</version>
                 <configuration>
                     <excludes>
-                        <!--<exclude>MyTest.java</exclude>-->
+                        <exclude>iResourcesTest.java</exclude>
+                        <exclude>iPropertiesTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -1,0 +1,52 @@
+package com.infoworks.utils.services;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.infoworks.utils.services.impl.AppResources;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+public interface iResources {
+    static iResources create(){
+        return new AppResources();
+    }
+    InputStream createStream(File file);
+    String readAsString(String filename);
+    String readAsString(InputStream ios);
+    byte[] readAsBytes(InputStream ios);
+    List<Map<String, Object>> readAsJsonObject(String json);
+    <T> T readAsJsonObject(String json, TypeReference<T> typeReference);
+    <T> T readAsJsonObject(String json, Class<T> classReference);
+    byte[] readImageAsBytes(BufferedImage img, Format format) throws IOException;
+    String readImageAsBase64(BufferedImage img, Format format) throws IOException;
+    BufferedImage readImageFromBase64(String content) throws IOException;
+    BufferedImage readAsImage(InputStream ios, int imgType) throws IOException;
+    BufferedImage createCopyFrom(Image originalImage, int scaledWidth, int scaledHeight, int imageType);
+
+    enum Format{
+        JPEG("jpeg"),
+        PNG("PNG");
+
+        private String value;
+
+        Format(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "format{" +
+                    "value='" + value + '\'' +
+                    '}';
+        }
+
+        public String value(){
+            return value;
+        }
+    }
+}
