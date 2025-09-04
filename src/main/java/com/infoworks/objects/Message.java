@@ -1,5 +1,7 @@
 package com.infoworks.objects;
 
+import com.infoworks.utils.MessageMapper;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -99,8 +101,13 @@ public class Message implements Externalizable {
 
     @Override
     public String toString() {
-        return "Message{"
-                + "payload='" + payload + '\'' +
-                '}';
+        //Convert into Json:
+        try {
+            return MessageMapper.printJson(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //Otherwise plain string for debug:
+        return "Message{" + "payload='" + payload + '\'' + '}';
     }
 }
