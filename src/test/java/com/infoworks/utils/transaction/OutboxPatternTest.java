@@ -76,7 +76,7 @@ public class OutboxPatternTest {
     public void stackTest(){
         //Initialize:
         TaskQueue orderQueue = new JMSQueue();
-        TaskQueue deliveryQueue = new JMSQueue(); //Sync=true means Executors.newSingleThreadExecutor()
+        TaskQueue deliveryQueue = new JMSQueue();
         //
         CountDownLatch latch = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger(0);
