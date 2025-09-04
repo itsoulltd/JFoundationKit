@@ -5,15 +5,18 @@ import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
 import com.infoworks.tasks.ExecutableTask;
 
-public class CreateOrderTask extends ExecutableTask<Message, Response> {
+public class CreateOrderJmsTask extends ExecutableTask<Message, Response> {
 
-    public CreateOrderTask(int orderId, String message, boolean nextRandom) {
+    //Must need Zero param constructor in Case of JMSTask
+    public CreateOrderJmsTask() {}
+
+    public CreateOrderJmsTask(int orderId, String message, boolean nextRandom) {
         super(new Property("message", message)
                 , new Property("orderId", orderId)
                 , new Property("nextRandom", nextRandom));
     }
 
-    public CreateOrderTask(int orderId, String message) {
+    public CreateOrderJmsTask(int orderId, String message) {
         this(orderId, message, true);
     }
 

@@ -5,9 +5,12 @@ import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
 import com.infoworks.tasks.ExecutableTask;
 
-public class DispatchDeliveryTask extends ExecutableTask<Message, Response> {
+public class DispatchDeliveryJmsTask extends ExecutableTask<Message, Response> {
 
-    public DispatchDeliveryTask(String message) {
+    //Must need Zero param constructor in Case of JMSTask
+    public DispatchDeliveryJmsTask() {}
+
+    public DispatchDeliveryJmsTask(String message) {
         super(new Property("message", message));
     }
 

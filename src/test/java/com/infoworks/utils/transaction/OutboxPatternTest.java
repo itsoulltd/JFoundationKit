@@ -4,8 +4,8 @@ import com.infoworks.objects.Response;
 import com.infoworks.tasks.queue.TaskQueue;
 import com.infoworks.tasks.stack.TaskStack;
 import com.infoworks.utils.fakejms.JMSQueue;
-import com.infoworks.utils.tasks.CreateOrderTask;
-import com.infoworks.utils.tasks.DispatchDeliveryTask;
+import com.infoworks.utils.tasks.CreateOrderJmsTask;
+import com.infoworks.utils.tasks.DispatchDeliveryJmsTask;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class OutboxPatternTest {
             if (state == TaskStack.State.Finished){
                 if (result instanceof Response){
                     String message = ((Response) result).getMessage();
-                    deliveryQueue.add(new DispatchDeliveryTask(message));
+                    deliveryQueue.add(new DispatchDeliveryJmsTask(message));
                 }
             } else {
                 //Handle Failed Status:
@@ -100,18 +100,18 @@ public class OutboxPatternTest {
         //
         Random random = new Random();
         //
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee"));
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee"));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee"));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee"));
 
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee", random.nextBoolean()));
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee", random.nextBoolean()));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee", random.nextBoolean()));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee", random.nextBoolean()));
 
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee", random.nextBoolean()));
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee", random.nextBoolean()));
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee", random.nextBoolean()));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee", random.nextBoolean()));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee", random.nextBoolean()));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee", random.nextBoolean()));
 
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee", random.nextBoolean()));
-        orderQueue.add(new CreateOrderTask(counter, "Order For Coffee", random.nextBoolean()));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee", random.nextBoolean()));
+        orderQueue.add(new CreateOrderJmsTask(counter.incrementAndGet(), "Order For Coffee", random.nextBoolean()));
         //
         try {
             latch.await();
