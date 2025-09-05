@@ -2,9 +2,8 @@ package com.infoworks.tasks.queue;
 
 import com.infoworks.objects.Message;
 import com.infoworks.tasks.Task;
-import com.infoworks.tasks.stack.StackManager;
 
-public abstract class AbstractQueueManager implements StackManager {
+public abstract class AbstractQueueManager implements QueueManager {
 
     public abstract QueuedTaskStateListener getListener();
     public abstract void setListener(QueuedTaskStateListener listener);
