@@ -9,9 +9,12 @@ import com.infoworks.utils.MessageMapper;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractJmsQueueManager extends AbstractQueueManager {
 
+    protected static Logger LOG = Logger.getLogger(AbstractJmsQueueManager.class.getSimpleName());
     private QueuedTaskStateListener listener;
     public QueuedTaskStateListener getListener() {
         return listener;
@@ -48,6 +51,7 @@ public abstract class AbstractJmsQueueManager extends AbstractQueueManager {
                 | ClassNotFoundException
                 | IllegalAccessException | InstantiationException
                 | NoSuchMethodException | InvocationTargetException e){
+            LOG.log(Level.WARNING, e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -70,6 +74,7 @@ public abstract class AbstractJmsQueueManager extends AbstractQueueManager {
                 | ClassNotFoundException
                 | IllegalAccessException | InstantiationException
                 | NoSuchMethodException | InvocationTargetException e){
+            LOG.log(Level.WARNING, e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
