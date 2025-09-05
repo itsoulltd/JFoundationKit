@@ -1,4 +1,4 @@
-package com.infoworks.utils.transaction;
+package com.infoworks.utils.jmsq;
 
 import com.infoworks.objects.Response;
 import com.infoworks.tasks.queue.TaskQueue;
