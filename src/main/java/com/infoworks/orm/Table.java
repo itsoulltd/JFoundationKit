@@ -1,5 +1,6 @@
 package com.infoworks.orm;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,8 @@ public class Table {
 		rows.add(list);
 		return this;
 	}
-	public <T> List<T> inflate(Class<T> type) throws InstantiationException, IllegalAccessException {
+	public <T> List<T> inflate(Class<T> type)
+			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		List<T> inflatedRows = new ArrayList<>();
 		for (Row row : getRows()) {
 			T item = (T) row.inflate(type);
@@ -30,7 +32,8 @@ public class Table {
 		}
 		return inflatedRows;
 	}
-	public <T> List<T> inflate(Class<T> type, Map<String, String> mappingKeys) throws InstantiationException, IllegalAccessException {
+	public <T> List<T> inflate(Class<T> type, Map<String, String> mappingKeys)
+			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		List<T> inflatedRows = new ArrayList<>();
 		for (Row row : getRows()) {
 			T item = (T) row.inflate(type, mappingKeys);

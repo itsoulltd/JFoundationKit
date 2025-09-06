@@ -3,6 +3,7 @@ package com.infoworks.utils.states;
 import com.infoworks.utils.states.context.State;
 import com.infoworks.utils.states.context.StateContext;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +22,15 @@ public class StateMachine implements StateContext {
         this.states = states;
         for (Class stateType: states) {
             try {
-                State state = (State) stateType.newInstance();
+                State state = (State) stateType.getDeclaredConstructor().newInstance();
                 stateMap.put(stateType.getName(), state);
             } catch (InstantiationException e) {
                 LOG.log(Level.WARNING, e.getMessage());
             } catch (IllegalAccessException e) {
+                LOG.log(Level.WARNING, e.getMessage());
+            } catch (InvocationTargetException e) {
+                LOG.log(Level.WARNING, e.getMessage());
+            } catch (NoSuchMethodException e) {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }

@@ -3,6 +3,7 @@ package com.infoworks.orm;
 import com.infoworks.objects.Message;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,12 +100,14 @@ public class Row {
     public int size(){
     	return properties.size();
     }
-    public <T> T inflate(Class<T> type) throws InstantiationException, IllegalAccessException {
+    public <T> T inflate(Class<T> type)
+			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		return inflate(type, null);
 	}
-    public <T> T inflate(Class<T> type, Map<String, String> mappingKeys) throws InstantiationException, IllegalAccessException {
+    public <T> T inflate(Class<T> type, Map<String, String> mappingKeys)
+			throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		Class<T> cls = type;
-		T newInstance = cls.newInstance();
+		T newInstance = cls.getDeclaredConstructor().newInstance();
 		Field[] fields;
 		if (Message.class.isAssignableFrom(cls)){
 		    fields = ((Message)newInstance).getDeclaredFields(true);
