@@ -8,16 +8,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
-
 public class EventQueueTest {
 
     @Test
-    public void eventQueueTest() {
+    public void syncEventQueueTest() {
         //Initialize:
         CountDownLatch latch = new CountDownLatch(1);
-        AtomicInteger counter = new AtomicInteger(4);
-        //
+        AtomicInteger counter = new AtomicInteger(8);
+        //Default constructor: async == false;
         EventQueue queue = new EventQueue(Executors.newSingleThreadExecutor());
         queue.onTaskComplete((message, state) -> {
             System.out.println("State: " + state.name());
@@ -31,8 +29,12 @@ public class EventQueueTest {
         //Adding Into Queue:
         queue.add(new SimpleTestTask("Wow bro! I am Adams"));
         queue.add(new SimpleTestTask("Hello bro! I am Hayes"));
+        queue.add(new AbortTask("Api not available: code-01"));
         queue.add(new SimpleTestTask("Hi there! I am Cris"));
         queue.add(new SimpleTestTask("Let's bro! I am James"));
+        queue.add(new AbortTask("Database connection close: code-02"));
+        queue.add(new SimpleTestTask("Hi there! I am Cris 2"));
+        queue.add(new SimpleTestTask("Hello bro! I am Hayes 2"));
         //
         try {
             latch.await();
@@ -40,12 +42,12 @@ public class EventQueueTest {
     }
 
     @Test
-    public void eventConcurrentQueueTest() {
+    public void asyncEventQueueTest() {
         //Initialize:
         CountDownLatch latch = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger(8);
-        //
-        EventQueue queue = new EventQueue(Executors.newFixedThreadPool(3));
+        //For async-queue: async == true
+        EventQueue queue = new EventQueue(Executors.newFixedThreadPool(3), true);
         queue.onTaskComplete((message, state) -> {
             System.out.println("State: " + state.name());
             System.out.println(message.toString());
