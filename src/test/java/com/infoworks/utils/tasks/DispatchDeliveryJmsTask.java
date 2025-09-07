@@ -17,7 +17,7 @@ public class DispatchDeliveryJmsTask extends ExecutableTask<Message, Response> {
     @Override
     public Response execute(Message message) throws RuntimeException {
         String msg = getPropertyValue("message").toString();
-        System.out.println(msg + "->" + "Dispatch: Order Delivery");
+        System.out.println(msg + "->" + "Dispatch: Order Delivery [" + Thread.currentThread().getName() + "]");
         return new Response().setStatus(200).setMessage(msg);
     }
 }
