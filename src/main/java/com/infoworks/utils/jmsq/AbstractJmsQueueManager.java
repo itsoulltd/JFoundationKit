@@ -4,7 +4,7 @@ import com.infoworks.objects.Message;
 import com.infoworks.tasks.Task;
 import com.infoworks.tasks.queue.AbstractQueueManager;
 import com.infoworks.tasks.queue.QueuedTaskStateListener;
-import com.infoworks.utils.MessageMapper;
+import com.infoworks.objects.MessageParser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -31,13 +31,13 @@ public abstract class AbstractJmsQueueManager extends AbstractQueueManager {
             throws ClassNotFoundException, IOException, IllegalAccessException
             , InstantiationException, NoSuchMethodException, InvocationTargetException {
         //Defined:JmsMessage Protocol
-        JmsMessage jmsMessage = MessageMapper.unmarshal(JmsMessage.class, text);
+        JmsMessage jmsMessage = MessageParser.unmarshal(JmsMessage.class, text);
         //Task task = (Task) Class.forName(jmsMessage.getTaskClassName()).newInstance();
         Class taskType = Class.forName(jmsMessage.getTaskClassName());
         Task task = (Task) taskType.getDeclaredConstructor().newInstance();
         //
         Class<? extends Message> messageClass = (Class<? extends Message>) Class.forName(jmsMessage.getMessageClassName());
-        Message taskMessage = MessageMapper.unmarshal(messageClass, jmsMessage.getPayload());
+        Message taskMessage = MessageParser.unmarshal(messageClass, jmsMessage.getPayload());
         task.setMessage(taskMessage);
         return task;
     }
@@ -57,10 +57,10 @@ public abstract class AbstractJmsQueueManager extends AbstractQueueManager {
     }
 
     protected Message getErrorMessage(String text) throws IOException, ClassNotFoundException {
-        JmsMessage jmsMessage = MessageMapper.unmarshal(JmsMessage.class, text);
+        JmsMessage jmsMessage = MessageParser.unmarshal(JmsMessage.class, text);
         //Handle error-message:
         Class<? extends Message> errorClass = (Class<? extends Message>) Class.forName(jmsMessage.getErrorClassName());
-        Message errorMessage = MessageMapper.unmarshal(errorClass, jmsMessage.getErrorPayload());
+        Message errorMessage = MessageParser.unmarshal(errorClass, jmsMessage.getErrorPayload());
         return errorMessage;
     }
 

@@ -1,7 +1,7 @@
 package com.infoworks.utils.services.impl;
 
 import com.infoworks.objects.Message;
-import com.infoworks.utils.MessageMapper;
+import com.infoworks.objects.MessageParser;
 import com.infoworks.utils.services.iProperties;
 
 import java.io.*;
@@ -119,7 +119,7 @@ public class AppProperties implements iProperties {
 
     @Override
     public <E extends Message> void putObject(String key, E value) throws IOException{
-        String json = MessageMapper.marshal(value);
+        String json = MessageParser.marshal(value);
         String base64 = Base64.getEncoder().encodeToString(json.getBytes());
         put(key, base64);
     }
@@ -128,8 +128,8 @@ public class AppProperties implements iProperties {
     public <E extends Message> E getObject(String key, Class<E> type) throws IOException{
         String base64 = read(key);
         String json = new String(Base64.getDecoder().decode(base64));
-        if (!MessageMapper.isValidJson(json)) throw new IOException("Invalid Json Format!");
-        return MessageMapper.unmarshal(type, json);
+        if (!MessageParser.isValidJson(json)) throw new IOException("Invalid Json Format!");
+        return MessageParser.unmarshal(type, json);
     }
 
     @Override

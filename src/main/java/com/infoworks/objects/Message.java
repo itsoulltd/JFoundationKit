@@ -1,7 +1,5 @@
 package com.infoworks.objects;
 
-import com.infoworks.utils.MessageMapper;
-
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -108,7 +106,7 @@ public class Message implements Externalizable {
     public String toString() {
         //Convert into Json:
         try {
-            return MessageMapper.printJson(this);
+            return MessageParser.printJson(this);
         } catch (Exception e) {
             LOG.log(Level.WARNING, e.getMessage());
         }

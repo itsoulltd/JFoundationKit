@@ -2,7 +2,7 @@ package com.infoworks.utils.services.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.infoworks.utils.MessageMapper;
+import com.infoworks.objects.MessageParser;
 import com.infoworks.utils.services.iResources;
 
 import javax.imageio.ImageIO;
@@ -53,16 +53,16 @@ public class AppResources implements iResources {
     }
 
     public List<Map<String, Object>> readAsJsonObject(String json) {
-        if (MessageMapper.isValidJson(json)){
+        if (MessageParser.isValidJson(json)){
             if (json.trim().startsWith("{")){
                 try {
-                    ObjectMapper objectMapper = MessageMapper.getJsonSerializer();
+                    ObjectMapper objectMapper = MessageParser.getJsonSerializer();
                     Map res = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
                     return Arrays.asList(res);
                 } catch (IOException e) {}
             }else{
                 try {
-                    ObjectMapper objectMapper = MessageMapper.getJsonSerializer();
+                    ObjectMapper objectMapper = MessageParser.getJsonSerializer();
                     List res = objectMapper.readValue(json, new TypeReference<List<Map<String, Object>>>() {});
                     return res;
                 } catch (IOException e) {}
@@ -72,9 +72,9 @@ public class AppResources implements iResources {
     }
 
     public <T> T readAsJsonObject(String json, TypeReference<T> typeReference) {
-        if (MessageMapper.isValidJson(json)){
+        if (MessageParser.isValidJson(json)){
             try {
-                ObjectMapper objectMapper = MessageMapper.getJsonSerializer();
+                ObjectMapper objectMapper = MessageParser.getJsonSerializer();
                 T res = objectMapper.readValue(json, typeReference);
                 return res;
             } catch (IOException e) {}
@@ -84,9 +84,9 @@ public class AppResources implements iResources {
 
     @Override
     public <T> T readAsJsonObject(String json, Class<T> classReference) {
-        if (MessageMapper.isValidJson(json)){
+        if (MessageParser.isValidJson(json)){
             try {
-                ObjectMapper objectMapper = MessageMapper.getJsonSerializer();
+                ObjectMapper objectMapper = MessageParser.getJsonSerializer();
                 T res = objectMapper.readValue(json, classReference);
                 return res;
             } catch (IOException e) {}

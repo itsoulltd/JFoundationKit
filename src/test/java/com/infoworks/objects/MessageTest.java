@@ -3,7 +3,6 @@ package com.infoworks.objects;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.infoworks.utils.MessageMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -119,13 +118,13 @@ public class MessageTest {
         // Assert values
         Assert.assertEquals(message.getName(), deserialized.getName());
         Assert.assertEquals(message.getAge(), deserialized.getAge());
-        System.out.println(MessageMapper.printString(deserialized));
+        System.out.println(MessageParser.printString(deserialized));
     }
 
     private ObjectMapper getMapperWithDatetimeOption() {
         //Solution: Add Jackson JSR-310 Module. Jackson doesn't know how to (de)serialize java.time.LocalDateTime,
         // because Java 8 time types are not supported out-of-the-box unless you register the JSR-310 module.
-        ObjectMapper mapper = MessageMapper.getJsonSerializer();
+        ObjectMapper mapper = MessageParser.getJsonSerializer();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper;
@@ -140,8 +139,8 @@ public class MessageTest {
         message.setName("David");
         //
         ObjectMapper mapper = getMapperWithDatetimeOption();
-        String json = MessageMapper.printString(message, mapper);
-        Assert.assertTrue(MessageMapper.isValidJson(json));
+        String json = MessageParser.printString(message, mapper);
+        Assert.assertTrue(MessageParser.isValidJson(json));
         System.out.println(json);
     }
 
@@ -156,17 +155,17 @@ public class MessageTest {
         message.setSecondName("sname");
         //
         ObjectMapper mapper = getMapperWithDatetimeOption();
-        String json = MessageMapper.printJson(message, mapper);
-        Assert.assertTrue(MessageMapper.isValidJson(json));
+        String json = MessageParser.printJson(message, mapper);
+        Assert.assertTrue(MessageParser.isValidJson(json));
         System.out.println("Expected: " + json);
         //Convert MyExtendedMessage from Json:
-        MyExtendedMessage fromJson = MessageMapper.unmarshal(MyExtendedMessage.class, json, mapper);
+        MyExtendedMessage fromJson = MessageParser.unmarshal(MyExtendedMessage.class, json, mapper);
         Assert.assertTrue(fromJson != null);
         Assert.assertEquals(message.getName(), fromJson.getName());
         Assert.assertEquals(message.getDob(), fromJson.getDob());
         Assert.assertEquals(message.getAge(), fromJson.getAge());
         //Revert to json string:
-        String revert = MessageMapper.marshal(fromJson, mapper);
+        String revert = MessageParser.marshal(fromJson, mapper);
         Assert.assertTrue(revert != null);
         Assert.assertEquals(json, revert);
         System.out.println("Reverted: " + revert);

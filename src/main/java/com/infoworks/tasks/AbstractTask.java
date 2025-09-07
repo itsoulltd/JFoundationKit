@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.infoworks.objects.Message;
 import com.infoworks.orm.Property;
 import com.infoworks.orm.Row;
-import com.infoworks.utils.MessageMapper;
+import com.infoworks.objects.MessageParser;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ public abstract class AbstractTask<In extends Message, Out extends Message> impl
         Row row = new Row();
         row.setProperties(Arrays.asList(properties));
         try {
-            this.message.setPayload(MessageMapper.marshal(row.keyObjectMap()));
+            this.message.setPayload(MessageParser.marshal(row.keyObjectMap()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,10 +86,10 @@ public abstract class AbstractTask<In extends Message, Out extends Message> impl
 
     protected Object getPropertyValue(String key) throws RuntimeException{
         String message = getMessage().getPayload();
-        if (message != null && MessageMapper.isValidJson(message)){
+        if (message != null && MessageParser.isValidJson(message)){
             if(message.startsWith("[")) {throw new RuntimeException("AbstractTask: JsonArray is not supported.");}
             try {
-                Map<String, Object> data = MessageMapper.unmarshal(new TypeReference<Map<String, Object>>() {}, message);
+                Map<String, Object> data = MessageParser.unmarshal(new TypeReference<Map<String, Object>>() {}, message);
                 Object obj = data.get(key);
                 if (obj == null) throw new IOException("AbstractTask: Invalid Property Access");
                 return obj;
@@ -102,14 +102,14 @@ public abstract class AbstractTask<In extends Message, Out extends Message> impl
 
     protected void updateProperties(Property...properties) throws RuntimeException {
         String payload = getMessage().getPayload();
-        if (MessageMapper.isValidJson(payload)){
+        if (MessageParser.isValidJson(payload)){
             if (payload.startsWith("[")) { throw new RuntimeException("AbstractTask: JsonArray is not supported."); }
             try {
-                Map<String, Object> old = MessageMapper.unmarshal(new TypeReference<Map<String, Object>>() {}, payload);
+                Map<String, Object> old = MessageParser.unmarshal(new TypeReference<Map<String, Object>>() {}, payload);
                 for (Property property : properties) {
                     old.put(property.getKey(), property.getValue());
                 }
-                payload = MessageMapper.marshal(old);
+                payload = MessageParser.marshal(old);
                 getMessage().setPayload(payload);
                 return;
             } catch (IOException e) {

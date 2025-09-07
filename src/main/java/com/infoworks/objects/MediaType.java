@@ -1,4 +1,4 @@
-package com.infoworks.utils;
+package com.infoworks.objects;
 
 import java.nio.charset.Charset;
 
