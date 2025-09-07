@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class OutboxPatternTest {
 
     /**
-     * Note: This is an Hands On Simulation about Outbox Pattern:
+     * Note: This is a Hands-On Simulation about Outbox Pattern:
      * How this pattern works in 2 way:
      * 1. Transactional outbox with Polling publisher
      * 2. Transactional outbox with Transaction Log Trailing
@@ -43,7 +43,7 @@ public class OutboxPatternTest {
      * *
      * This way if an error happens in any of the two operations the transaction is rolled back.
      * You then pick up the messages from the ‘Outbox’ and deliver it to your messaging system like Apache Kafka.
-     * Also once the message is delivered delete the entry from the Outbox so that it is not processed again.
+     * Also, once the message is delivered delete the entry from the Outbox so that it is not processed again.
      * *
      * So let’s say you perform two different operations in the below order as part of a single transaction:
      * 1 Database Insert
@@ -75,7 +75,7 @@ public class OutboxPatternTest {
     @Test
     public void stackTest(){
         //Initialize:
-        TaskQueue orderQueue = new EventQueue(Executors.newFixedThreadPool(3));
+        TaskQueue orderQueue = new EventQueue(Executors.newFixedThreadPool(3), true);
         TaskQueue deliveryQueue = new EventQueue(Executors.newSingleThreadExecutor());
         //
         CountDownLatch latch = new CountDownLatch(1);

@@ -21,8 +21,8 @@ public class EventQueue implements TaskQueue, QueuedTaskStateListener {
 
     public EventQueue(ExecutorService service, boolean async) {
         this.manager = async
-                ? new AsyncEventQueueManager(service)
-                : new EventQueueManager(service);
+                ? new AsyncQueueManager(service)
+                : new SyncQueueManager(service);
         this.manager.setListener(this);
     }
 
