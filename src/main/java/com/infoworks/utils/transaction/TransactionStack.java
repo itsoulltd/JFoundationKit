@@ -21,7 +21,7 @@ public class TransactionStack implements TaskStack, StackedTaskStateListener {
     private TaskCompletionListener listener;
 
     public TransactionStack() {
-        this.manager = new TransactionManager(this);
+        this.manager = new TransactionStackManager(this);
         this.beanStack = new Stack<>();
         this.passedStack = new Stack<>();
     }

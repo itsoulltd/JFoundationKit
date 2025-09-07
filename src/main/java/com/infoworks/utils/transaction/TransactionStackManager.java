@@ -7,13 +7,13 @@ import com.infoworks.tasks.stack.StackedTaskStateListener;
 
 import java.util.concurrent.TimeUnit;
 
-public class TransactionManager implements StackManager {
+public class TransactionStackManager implements StackManager {
 
     private StackedTaskStateListener listener;
 
-    public TransactionManager() {}
+    public TransactionStackManager() {}
 
-    public TransactionManager(StackedTaskStateListener listener) {
+    public TransactionStackManager(StackedTaskStateListener listener) {
         this.listener = listener;
     }
 
