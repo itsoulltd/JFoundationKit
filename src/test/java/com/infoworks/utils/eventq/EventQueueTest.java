@@ -58,10 +58,10 @@ public class EventQueueTest {
         //Adding Into Queue:
         queue.add(new SimpleTestTask("Wow bro! I am Adams"));
         queue.add(new SimpleTestTask("Hello bro! I am Hayes"));
-        queue.add(new AbortTask("Hi there! I am aborting 1"));
+        queue.add(new AbortTask("Api not available: code-01"));
         queue.add(new SimpleTestTask("Hi there! I am Cris"));
         queue.add(new SimpleTestTask("Let's bro! I am James"));
-        queue.add(new AbortTask("Hi there! I am aborting 1"));
+        queue.add(new AbortTask("Database connection close: code-02"));
         queue.add(new SimpleTestTask("Hi there! I am Cris 2"));
         queue.add(new SimpleTestTask("Hello bro! I am Hayes 2"));
         //

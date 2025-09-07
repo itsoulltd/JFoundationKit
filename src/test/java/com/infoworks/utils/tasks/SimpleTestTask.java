@@ -52,7 +52,9 @@ public class SimpleTestTask extends AbstractTask {
         Response response = new Response();
         int rand = RANDOM.nextInt(6) + 1;
         try {
-            Thread.sleep(rand * 1000);
+            long sleepTime = rand * 1000;
+            System.out.println("Going to sleep for: " + sleepTime + " ms");
+            Thread.sleep(sleepTime);
             response.setStatus(200);
             if (message == null || message.getPayload() == null) {
                 response.setMessage("Working!");
@@ -74,7 +76,9 @@ public class SimpleTestTask extends AbstractTask {
         Response response = new Response();
         int rand = RANDOM.nextInt(3) + 1;
         try {
-            Thread.sleep(rand * 1000);
+            long sleepTime = rand * 1000;
+            System.out.println("Going to sleep for: " + sleepTime + " ms");
+            Thread.sleep(sleepTime);
             response.setStatus(500 + rand);
             if (message == null || message.getPayload() == null){
                 response.setError("Not Sure why! May be Covid-19");
