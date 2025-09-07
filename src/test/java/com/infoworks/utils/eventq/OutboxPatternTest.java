@@ -1,10 +1,8 @@
-package com.infoworks.utils.jmsq;
+package com.infoworks.utils.eventq;
 
 import com.infoworks.objects.Response;
 import com.infoworks.tasks.queue.TaskQueue;
 import com.infoworks.tasks.stack.TaskStack;
-import com.infoworks.utils.eventq.EventQueue;
-import com.infoworks.utils.fakejms.JMSQueue;
 import com.infoworks.utils.tasks.CreateOrderJmsTask;
 import com.infoworks.utils.tasks.DispatchDeliveryJmsTask;
 import org.junit.After;
@@ -79,8 +77,6 @@ public class OutboxPatternTest {
         //Initialize:
         TaskQueue orderQueue = new EventQueue(Executors.newFixedThreadPool(3));
         TaskQueue deliveryQueue = new EventQueue(Executors.newSingleThreadExecutor());
-        /*TaskQueue orderQueue = new JMSQueue();
-        TaskQueue deliveryQueue = new JMSQueue();*/
         //
         CountDownLatch latch = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger(9);
