@@ -64,8 +64,8 @@ public final class JsqlConnector {
 
     public static boolean isPath(String input) {
         try {
+            // Basic structural check
             Path path = Paths.get(input);
-            // basic structural check
             return path.getNameCount() > 0;
         } catch (Exception e) {
             return false;
