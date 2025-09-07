@@ -50,7 +50,7 @@ public class SimpleTestTask extends AbstractTask {
     public Message execute(Message message) throws RuntimeException {
         System.out.println("("+Thread.currentThread().getName()+") Doing jobs..." + getMessage().getPayload());
         Response response = new Response();
-        int rand = RANDOM.nextInt(6) + 1;
+        int rand = RANDOM.nextInt(2) + 1;
         try {
             long sleepTime = rand * 1000;
             System.out.println("Going to sleep for: " + sleepTime + " ms");
