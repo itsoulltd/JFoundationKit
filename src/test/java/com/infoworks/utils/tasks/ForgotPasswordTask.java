@@ -24,6 +24,7 @@ public class ForgotPasswordTask extends AbstractTask<Message, Response> {
     @Override
     public Response abort(Message message) throws RuntimeException {
         String reason = message != null ? message.getPayload() : "UnknownError! @" + this.getClass().getSimpleName();
+        System.out.println("Forget Pass: Abort: " + reason);
         return new Response().setMessage(reason).setStatus(500);
     }
 }
