@@ -10,7 +10,7 @@ import java.util.List;
 public interface iFileStore<IOStream> extends iDocument<IOStream> {
     boolean save(String location, IOStream file) throws IOException;
     default void retry(boolean async) {}
-    String[] fileNames();
+    String[] filenames();
     List<File> search(File searchDir, Property...query);
     void prepareZipEntryFrom(List<File> files, OutputStream oStream) throws IOException;
 }

@@ -34,7 +34,7 @@ public class FileStore extends SimpleDataSource<String, InputStream> implements 
         return fileSavedStatusMap;
     }
 
-    public String[] fileNames(){
+    public String[] filenames(){
         return getFileSavedStatusMap().keySet().toArray(new String[0]);
     }
 
