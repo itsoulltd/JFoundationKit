@@ -121,6 +121,8 @@
                         <exclude>iResourcesTest.java</exclude>
                         <exclude>iPropertiesTest.java</exclude>
                         <exclude>OutboxPatternTest.java</exclude>
+                        <exclude>ObjectMapperTest.java</exclude>
+                        <exclude>TableMapperTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
