@@ -91,6 +91,20 @@
             <version>v1.1.5.8-RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>6.2.0.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Redis-Client -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.11.1</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Test Suits Ends -->
     </dependencies>
 
@@ -123,6 +137,9 @@
                         <exclude>OutboxPatternTest.java</exclude>
                         <exclude>ObjectMapperTest.java</exclude>
                         <exclude>TableMapperTest.java</exclude>
+                        <exclude>MemCacheTest.java</exclude>
+                        <exclude>LettuceDataSourceTest.java</exclude>
+                        <exclude>RedissonDataSourceTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
