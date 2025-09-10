@@ -16,7 +16,7 @@ public class iFileStoreTest {
 
     @Test
     public void notFound() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
+        iFileStore<InputStream> iFile = new FileStore("src/test/resources/Users/Public");
         List<InputStream> stream = iFile.search(new Property("filename", "qwtep"));
         //Assert.assertTrue(stream.isEmpty());
         System.out.println("Count: " + stream.size());
@@ -24,7 +24,7 @@ public class iFileStoreTest {
 
     @Test
     public void notFoundEmpty() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
+        iFileStore<InputStream> iFile = new FileStore("src/test/resources/Users/Public");
         List<InputStream> stream = iFile.search(new Property("filename", " "));
         //Assert.assertTrue(stream.isEmpty());
         System.out.println("Count: " + stream.size());
@@ -32,7 +32,7 @@ public class iFileStoreTest {
 
     @Test
     public void fileExistAll() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
+        iFileStore<InputStream> iFile = new FileStore("src/test/resources/Users/Public");
         List<InputStream> stream = iFile.search(new Property("filename", "emn"));
         //Assert.assertTrue(!stream.isEmpty());
         System.out.println("Count: " + stream.size());
@@ -40,7 +40,7 @@ public class iFileStoreTest {
 
     @Test
     public void contentLengthCheck() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
+        iFileStore<InputStream> iFile = new FileStore("src/test/resources/Users/Public");
         List<InputStream> stream = iFile.search(new Property("filename", "emn"));
         //Assert.assertTrue(!stream.isEmpty());
         int cLength = stream.stream()
@@ -57,23 +57,25 @@ public class iFileStoreTest {
 
     @Test
     public void searchByFileNameInDir() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
-        List<File> stream = iFile.search(Paths.get("/Users/Public").toFile(), new Property("filename", "emn"));
+        String dir = "src/test/resources/Users";
+        iFileStore<InputStream> iFile = new FileStore(dir);
+        List<File> stream = iFile.search(Paths.get(dir).toFile(), new Property("filename", "a"));
         //Assert.assertTrue(!stream.isEmpty());
         System.out.println("Count: " + stream.size());
     }
 
     @Test
     public void searchByDirNameInDir() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
-        List<File> stream = iFile.search(Paths.get("/Users/Public").toFile(), new Property("filename", "Reports"));
+        String dir = "src/test/resources/Users/Public";
+        iFileStore<InputStream> iFile = new FileStore(dir);
+        List<File> stream = iFile.search(Paths.get(dir).toFile(), new Property("filename", "Reports"));
         //Assert.assertTrue(stream.isEmpty());
         System.out.println("Count: " + stream.size());
     }
 
     @Test
     public void fileExistSub() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public/Downloads");
+        iFileStore<InputStream> iFile = new FileStore("src/test/resources/Users/Public/Downloads");
         List<InputStream> stream = iFile.search(new Property("filename", "emn"));
         //Assert.assertTrue(!stream.isEmpty());
         System.out.println("Count: " + stream.size());
@@ -81,7 +83,7 @@ public class iFileStoreTest {
 
     @Test
     public void dirExist() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
+        iFileStore<InputStream> iFile = new FileStore("src/test/resources/Users/Public");
         List<InputStream> stream = iFile.search(new Property("filename", "Downloads"));
         //Assert.assertTrue(!stream.isEmpty());
         System.out.println("Count: " + stream.size());
@@ -89,7 +91,7 @@ public class iFileStoreTest {
 
     @Test
     public void emptyDirTest() {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public");
+        iFileStore<InputStream> iFile = new FileStore("src/test/resources/Users/Public");
         List<InputStream> stream = iFile.search(new Property("filename", "Reports"));
         //Assert.assertTrue(!stream.isEmpty());
         System.out.println("Count: " + stream.size());
@@ -97,12 +99,15 @@ public class iFileStoreTest {
 
     @Test
     public void makingZip() throws IOException {
-        iFileStore<InputStream> iFile = new FileStore("/Users/Public/Reports");
-        List<File> files = iFile.search(Paths.get("/Users/Public/Reports").toFile(), new Property("filename", "emn"));
+        String readDir = "src/test/resources/Users/Public/Downloads";
+        iFileStore<InputStream> iFile = new FileStore(readDir);
+        List<File> files = iFile.search(Paths.get(readDir).toFile(), new Property("filename", "emn"));
         SimpleDateFormat fileNameDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
         String fileName = String.format("%s_%s.zip", UUID.randomUUID().toString().substring(0, 8)
                 , fileNameDateFormatter.format(new Date()));
-        File toWrite = Paths.get("/Users/Public/Reports", fileName).toFile();
+
+        String writeDir = "target/";
+        File toWrite = Paths.get(writeDir, fileName).toFile();
         //
         if (!files.isEmpty()) {
             //Searching By File-Names:-
