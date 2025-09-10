@@ -1,6 +1,6 @@
 package com.infoworks.data.base;
 
-public interface DataStorage {
+public interface iDataStore {
     default String getUuid() {return null;}
     default void save(boolean async) {}
     default boolean retrieve() {return false;}

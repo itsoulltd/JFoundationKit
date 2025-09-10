@@ -1,14 +1,14 @@
 package com.infoworks.utils.services;
 
-import com.infoworks.data.base.DataSource;
-import com.infoworks.data.base.DataStorage;
+import com.infoworks.data.base.iDataSource;
+import com.infoworks.data.base.iDataStore;
 import com.infoworks.objects.Message;
 import com.infoworks.utils.services.impl.AppProperties;
 
 import java.io.IOException;
 import java.util.Map;
 
-public interface iProperties extends DataSource<String, String>, DataStorage {
+public interface iProperties extends iDataSource<String, String>, iDataStore {
 
     static iProperties create(String name, Map<String, String> defaultSet) {
         return new AppProperties(name, defaultSet);

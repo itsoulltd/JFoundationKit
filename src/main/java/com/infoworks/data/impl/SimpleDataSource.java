@@ -1,6 +1,6 @@
 package com.infoworks.data.impl;
 
-import com.infoworks.data.base.DataSource;
+import com.infoworks.data.base.iDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class SimpleDataSource<Key, Value> implements DataSource<Key, Value> {
+public class SimpleDataSource<Key, Value> implements iDataSource<Key, Value> {
 
     private Map<Key, Value> inMemoryStorage;
 

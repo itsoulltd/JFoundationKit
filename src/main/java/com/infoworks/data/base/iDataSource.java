@@ -2,7 +2,7 @@ package com.infoworks.data.base;
 
 import java.util.function.Consumer;
 
-public interface DataSource<Key, Value> {
+public interface iDataSource<Key, Value> {
     default Value read(Key key) {return null;}
     default Value[] readSync(int offset, int pageSize) {return null;}
     default void readAsync(int offset, int pageSize, Consumer<Value[]> consumer) {
