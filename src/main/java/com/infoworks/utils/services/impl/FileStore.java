@@ -23,11 +23,18 @@ public class FileStore extends SimpleDataSource<String, InputStream> implements 
 
     private static Logger LOG = Logger.getLogger(FileStore.class.getSimpleName());
     private Map<String, Boolean> fileSavedStatusMap = new ConcurrentHashMap<>();
-    private Executor executor = Executors.newSingleThreadExecutor();
+    private Executor executor;
     private final String uploadPath;
 
     public FileStore(String uploadPath) {
         this.uploadPath = uploadPath;
+    }
+
+    protected Executor getExecutor() {
+        if (executor == null) {
+            executor = Executors.newSingleThreadExecutor();
+        }
+        return executor;
     }
 
     protected Map<String, Boolean> getFileSavedStatusMap() {
@@ -142,7 +149,7 @@ public class FileStore extends SimpleDataSource<String, InputStream> implements 
         List<String> notSavedYet = getUnsavedFiles();
         notSavedYet.forEach(fileName -> {
             if (async){
-                executor.execute(() -> {
+                getExecutor().execute(() -> {
                     try {
                         retrySave(fileName, getFileSavedStatusMap());
                     } catch (IOException e) {
