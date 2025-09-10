@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class MessageTest {
@@ -169,6 +171,27 @@ public class MessageTest {
         Assert.assertTrue(revert != null);
         Assert.assertEquals(json, revert);
         System.out.println("Reverted: " + revert);
+    }
+
+    @Test
+    public void responseListSortTest() {
+        Response response1 = new Response().setStatus(220).setMessage("Cris");
+        Response response2 = new Response().setStatus(201).setMessage("Adams");
+        Response response3 = new Response().setStatus(420).setMessage("James");
+        Response response4 = new Response().setStatus(356).setMessage("Hayes");
+        Responses responses = new Responses().setCollections(Arrays.asList(response1, response2, response3, response4));
+        System.out.println("Before Sort: ");
+        responses.getCollections().forEach(rsp -> System.out.println(rsp.toString()));
+        //Test:01
+        List<Response> ordered = responses.sort(Responses.SortOrder.ASC, "status");
+        Assert.assertNotEquals(response1, ordered.get(0));
+        System.out.println("After SortBy -> Status(ASC): ");
+        ordered.forEach(rsp -> System.out.println(rsp.toString()));
+        //Test:02
+        List<Response> ordered2 = responses.sort(Responses.SortOrder.DESC, "message");
+        Assert.assertNotEquals(response1, ordered2.get(0));
+        System.out.println("After SortBy -> Message(DESC): ");
+        ordered2.forEach(rsp -> System.out.println(rsp.toString()));
     }
 
 }
