@@ -1,8 +1,8 @@
 package com.infoworks.orm;
 
 import com.infoworks.data.impl.Person;
-import com.infoworks.db.JsqlConnector;
-import com.it.soul.lab.connect.DriverClass;
+import com.infoworks.db.SQLConnector;
+import com.infoworks.db.SQLDriverClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,11 +41,11 @@ public class ObjectMapperTest {
     public void basicJdbcAndObjectMapperTest() throws SQLException {
         //First initiate database with tables:
         //JsqlConnector.executeScripts(DriverClass.H2_EMBEDDED, "testDB", new File("testDB-v1.4.200.sql"));
-        JsqlConnector.executeScripts(DriverClass.H2_EMBEDDED, "testDB", new File("testDB-v2.2.220.sql"));
+        SQLConnector.executeScripts(SQLDriverClass.H2_EMBEDDED, "testDB", new File("testDB-v2.2.220.sql"));
         //Now try to connect the database:testDB and insert seed rows:
         insertSeedData();
         //Now begin the actual test:
-        try(Connection connection = JsqlConnector.createConnection(DriverClass.H2_EMBEDDED, "testDB");
+        try(Connection connection = SQLConnector.createConnection(SQLDriverClass.H2_EMBEDDED, "testDB");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(QUERY)) {
             //Test Mapping:
@@ -59,7 +59,7 @@ public class ObjectMapperTest {
     }
 
     private void insertSeedData() throws SQLException{
-        try(Connection connection = JsqlConnector.createConnection(DriverClass.H2_EMBEDDED, "testDB");
+        try(Connection connection = SQLConnector.createConnection(SQLDriverClass.H2_EMBEDDED, "testDB");
             Statement stmt = connection.createStatement()) {
             //
             AtomicInteger insertCount = new AtomicInteger(0);
