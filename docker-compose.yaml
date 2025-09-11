@@ -9,6 +9,7 @@ networks:
 volumes:
   mysql-test-storage:
   cassandra-test-storage:
+  redis-inmemory-storage:
 
 services:
   mysql-db:
@@ -62,3 +63,14 @@ services:
       - jsql-app-net
     depends_on:
       - cassandra-db
+
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - web-app-net
+    volumes:
+      - redis-inmemory-storage:/data
+
+#End-Of-File
