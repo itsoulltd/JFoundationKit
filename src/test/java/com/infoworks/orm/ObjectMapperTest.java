@@ -40,7 +40,7 @@ public class ObjectMapperTest {
     @Test
     public void basicJdbcAndObjectMapperTest() throws SQLException {
         //First initiate database with tables:
-        //JsqlConnector.executeScripts(DriverClass.H2_EMBEDDED, "testDB", new File("testDB-v1.4.200.sql"));
+        //SQLConnector.executeScripts(DriverClass.H2_EMBEDDED, "testDB", new File("testDB-v1.4.200.sql"));
         SQLConnector.executeScripts(SQLDriverClass.H2_EMBEDDED, "testDB", new File("testDB-v2.2.220.sql"));
         //Now try to connect the database:testDB and insert seed rows:
         insertSeedData();
