@@ -11,10 +11,10 @@ CREATE TABLE IF NOT EXISTS Passenger
 
 CREATE TABLE IF NOT EXISTS Person
 (
-  uuid       varchar(512) not null primary key,
+  uuid       varchar(512) primary key,
   name       varchar(512) null,
   age        int          null,
-  gender     varchar(12) null,
+  gender     varchar(12)  null,
   email      varchar(512) null,
   active     tinyint(1)   null,
   salary     double       null,

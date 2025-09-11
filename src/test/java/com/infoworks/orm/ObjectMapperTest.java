@@ -40,7 +40,8 @@ public class ObjectMapperTest {
     @Test
     public void basicJdbcAndObjectMapperTest() throws SQLException {
         //First initiate database with tables:
-        JsqlConnector.executeScripts(DriverClass.H2_EMBEDDED, "testDB", new File("testDB.sql"));
+        //JsqlConnector.executeScripts(DriverClass.H2_EMBEDDED, "testDB", new File("testDB-v1.4.200.sql"));
+        JsqlConnector.executeScripts(DriverClass.H2_EMBEDDED, "testDB", new File("testDB-v2.2.220.sql"));
         //Now try to connect the database:testDB and insert seed rows:
         insertSeedData();
         //Now begin the actual test:
@@ -49,7 +50,8 @@ public class ObjectMapperTest {
             ResultSet rs = stmt.executeQuery(QUERY)) {
             //Test Mapping:
             List<Person> persons = new PersonObjectMapper().objects(rs);
-            assertFalse(persons.isEmpty());
+            Assert.assertNotNull(persons);
+            Assert.assertFalse(persons.isEmpty());
             persons.forEach(person -> System.out.println(person.toString()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
