@@ -21,7 +21,7 @@ public interface ObjectMapper<R> {
             try {
                 R entity = object(rs, columnCount, rowIdx++);
                 collection.add(entity);
-            } catch (SQLException e) {}
+            } catch (SQLException e) { throw new RuntimeException(e); }
         }
         return collection;
     }

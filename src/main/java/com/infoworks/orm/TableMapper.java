@@ -15,7 +15,7 @@ public interface TableMapper {
             try {
                 Row row = row(rs, columnCount, rowidx++);
                 table.add(row);
-            } catch (SQLException e) {}
+            } catch (SQLException e) { throw new RuntimeException(e); }
         }
         return table;
     }
