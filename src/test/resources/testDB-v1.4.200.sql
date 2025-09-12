@@ -20,7 +20,5 @@ CREATE TABLE IF NOT EXISTS Person
   salary     double       null,
   dob        datetime     null,
   height     float        null,
-  createDate timestamp    null,
-  dobDate    date         null,
-  createTime time         null
+  createDate timestamp    null
 );
