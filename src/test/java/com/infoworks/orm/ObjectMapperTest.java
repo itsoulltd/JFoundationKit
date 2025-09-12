@@ -37,6 +37,25 @@ public class ObjectMapperTest {
             , "INSERT INTO Person (uuid,name,age,gender,email) VALUES ('00562334','Andy',36,'MALE','Andy@g.com');"
     };
 
+    private void insertSeedData() throws SQLException{
+        try(Connection connection = SQLConnector.createConnection(SQLDriverClass.H2_EMBEDDED, "testDB");
+            Statement stmt = connection.createStatement()) {
+            //
+            AtomicInteger insertCount = new AtomicInteger(0);
+            Arrays.stream(PersonInsertQuery).forEach(query -> {
+                try {
+                    int result = stmt.executeUpdate(query);
+                    insertCount.incrementAndGet();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            });
+            System.out.println("Inserted records into the table, Count: " + insertCount.get());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     public void basicJdbcAndObjectMapperTest() throws SQLException {
         //First initiate database with tables:
@@ -58,25 +77,6 @@ public class ObjectMapperTest {
         }
     }
 
-    private void insertSeedData() throws SQLException{
-        try(Connection connection = SQLConnector.createConnection(SQLDriverClass.H2_EMBEDDED, "testDB");
-            Statement stmt = connection.createStatement()) {
-            //
-            AtomicInteger insertCount = new AtomicInteger(0);
-            Arrays.stream(PersonInsertQuery).forEach(query -> {
-                try {
-                    int result = stmt.executeUpdate(query);
-                    insertCount.incrementAndGet();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            });
-            System.out.println("Inserted records into the table, Count: " + insertCount.get());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }
 
 class PersonObjectMapper implements ObjectMapper<Person> {
@@ -87,7 +87,7 @@ class PersonObjectMapper implements ObjectMapper<Person> {
         person.setName(rs.getString("name"));
         person.setGender(rs.getString("gender"));
         person.setEmail(rs.getString("email"));
-        //person.setCreateDate(rs.getTimestamp("createDate"));
+        person.setCreateDate(rs.getTimestamp("createDate").toLocalDateTime());
         return person;
     }
 }
