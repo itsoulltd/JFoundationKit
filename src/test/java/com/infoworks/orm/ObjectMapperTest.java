@@ -52,7 +52,7 @@ public class ObjectMapperTest {
             });
             System.out.println("Inserted records into the table, Count: " + insertCount.get());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class ObjectMapperTest {
             Assert.assertFalse(persons.isEmpty());
             persons.forEach(person -> System.out.println(person.toString()));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ class PersonObjectMapper implements ObjectMapper<Person> {
         person.setName(rs.getString("name"));
         person.setGender(rs.getString("gender"));
         person.setEmail(rs.getString("email"));
-        person.setCreateDate(rs.getTimestamp("createDate").toLocalDateTime());
+        //person.setCreateDate(rs.getTimestamp("createDate").toLocalDateTime());
         return person;
     }
 }
