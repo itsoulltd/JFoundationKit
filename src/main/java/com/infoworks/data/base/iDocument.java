@@ -4,7 +4,9 @@ import com.infoworks.orm.Property;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 public interface iDocument<File> extends iDataSource<String, File> {
     File findByName(String name);
@@ -20,7 +22,16 @@ public interface iDocument<File> extends iDataSource<String, File> {
     default void search(Property[] query, BiConsumer<Long, List<File>> consumer) {
         if (consumer != null) consumer.accept(0l, search(query));
     }
-    default long remove(Property...query) {return 0l;}
+    default long remove(Property...queries) {
+        AtomicLong count = new AtomicLong(0);
+        Stream.of(queries).forEach(query -> {
+            if(query.getValue() != null) {
+                remove(query.getValue().toString());
+                count.incrementAndGet();
+            }
+        });
+        return count.get();
+    }
     static boolean isValidBase64String(String base64) {
         try {
             Base64.Decoder decoder = Base64.getDecoder();
