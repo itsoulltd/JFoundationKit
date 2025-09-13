@@ -119,6 +119,9 @@ public class iFileStoreTest {
             fos.close();
         }
         System.out.println("makingZip Count: " + files.size());
+        //Cleaning zip file:
+        Boolean deleted = toWrite.delete();
+        System.out.println(fileName + " Deleted: " + deleted);
     }
 
     @Test
