@@ -140,7 +140,7 @@
                         <exclude>MemCacheTest.java</exclude>
                         <exclude>LettuceDataSourceTest.java</exclude>
                         <exclude>RedissonDataSourceTest.java</exclude>
-                        <exclude>FileStoreTest.java</exclude>
+                        <exclude>iFileStoreTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
