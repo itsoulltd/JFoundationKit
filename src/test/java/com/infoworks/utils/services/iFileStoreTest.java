@@ -2,6 +2,7 @@ package com.infoworks.utils.services;
 
 import com.infoworks.orm.Property;
 import com.infoworks.utils.services.impl.FileStore;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class iFileStoreTest {
 
@@ -117,6 +119,49 @@ public class iFileStoreTest {
             fos.close();
         }
         System.out.println("makingZip Count: " + files.size());
+    }
+
+    @Test
+    public void uploadTest() {
+        String readDir = "src/test/resources/Users/Public";
+        iFileStore<InputStream> readFile = new FileStore(readDir);
+        InputStream readStream = readFile.read("abc-1.txt");
+        Assert.assertNotNull(readStream);
+        //
+        String uploadDir = "target/";
+        iFileStore<InputStream> uploadFile = new FileStore(uploadDir);
+        uploadFile.put("abc-1.txt", readStream);
+        String[] names = uploadFile.filenames();
+        Assert.assertTrue(names.length > 0);
+        System.out.println("Uploaded: ");
+        Stream.of(names).forEach(System.out::println);
+    }
+
+    @Test
+    public void downloadTest() {
+        String readDir = "src/test/resources/Users/Public/Downloads";
+        iFileStore<InputStream> readFile = new FileStore(readDir);
+        InputStream readStream = readFile.read("abc-2.txt");
+        Assert.assertNotNull(readStream);
+    }
+
+    @Test
+    public void removeTest() {
+        String readDir = "src/test/resources/Users/Public";
+        iFileStore<InputStream> readFile = new FileStore(readDir);
+        InputStream readStream = readFile.read("abc-1.txt");
+        Assert.assertNotNull(readStream);
+        //
+        String uploadDir = "target/";
+        iFileStore<InputStream> uploadFile = new FileStore(uploadDir);
+        uploadFile.put("abc-1.txt", readStream);
+        String[] names = uploadFile.filenames();
+        Assert.assertTrue(names.length > 0);
+        //
+        InputStream removed = uploadFile.remove("abc-1.txt");
+        Assert.assertNull(removed);
+        names = uploadFile.filenames();
+        Assert.assertTrue(names.length == 0);
     }
 
 }

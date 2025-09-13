@@ -50,6 +50,11 @@ public class FileStore extends SimpleDataSource<String, InputStream> implements 
         return getFileSavedStatusMap().size();
     }
 
+    /**
+     *
+     * @param filename
+     * @return InputStream [Have to close() after use].
+     */
     @Override
     public InputStream read(String filename) {
         try {
@@ -79,14 +84,19 @@ public class FileStore extends SimpleDataSource<String, InputStream> implements 
         return getFileSavedStatusMap().containsKey(filename);
     }
 
+    /**
+     *
+     * @param filename
+     * @return always null.
+     */
     @Override
     public InputStream remove(String filename) {
         if (containsKey(filename)){
             try {
                 String fullPath = getTargetLocation(filename);
                 if (deleteFile(fullPath)) {
-                    getFileSavedStatusMap().remove(filename);
-                    return new FileInputStream("");
+                    Boolean wasSaved = getFileSavedStatusMap().remove(filename);
+                    LOG.info(fullPath + ": " + wasSaved);
                 }
             } catch (Exception e) {
                 LOG.info(e.getMessage());
@@ -171,6 +181,11 @@ public class FileStore extends SimpleDataSource<String, InputStream> implements 
         return read(name);
     }
 
+    /**
+     *
+     * @param query
+     * @return InputStream [Have to close() after use].
+     */
     @Override
     public List<InputStream> search(Property...query) {
         List<File> subFiles = search(Paths.get(uploadPath).toFile(), query);
