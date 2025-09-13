@@ -91,16 +91,16 @@ public class FileStore extends SimpleDataSource<String, InputStream> implements 
      */
     @Override
     public InputStream remove(String filename) {
-        if (containsKey(filename)){
-            try {
-                String fullPath = getTargetLocation(filename);
-                if (deleteFile(fullPath)) {
+        try {
+            String fullPath = getTargetLocation(filename);
+            if (deleteFile(fullPath)) {
+                if (containsKey(filename)) {
                     Boolean wasSaved = getFileSavedStatusMap().remove(filename);
                     LOG.info(fullPath + ": " + wasSaved);
                 }
-            } catch (Exception e) {
-                LOG.info(e.getMessage());
             }
+        } catch (Exception e) {
+            LOG.info(e.getMessage());
         }
         return null;
     }
