@@ -10,8 +10,8 @@ import com.infoworks.orm.Row;
 import com.infoworks.tasks.ExecutableTask;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public abstract class BaseRequest<In extends Message, Out extends Response> extends ExecutableTask<In, Out> {
@@ -121,12 +121,10 @@ public abstract class BaseRequest<In extends Message, Out extends Response> exte
             if (query.getValue() == null || query.getValue().toString().isEmpty()){
                 continue;
             }
-            try {
-                buffer.append(query.getKey()
-                        + "="
-                        + URLEncoder.encode(query.getValue().toString(), "UTF-8")
-                        + "&");
-            } catch (UnsupportedEncodingException e) {}
+            buffer.append(query.getKey()
+                    + "="
+                    + URLEncoder.encode(query.getValue().toString(), StandardCharsets.UTF_8)  //"UTF-8"
+                    + "&");
         }
         String value = buffer.toString();
         value = value.substring(0, value.length()-1);
