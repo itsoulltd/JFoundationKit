@@ -2,7 +2,7 @@ package com.infoworks.utils.rest.client;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
-import com.infoworks.utils.rest.base.BaseRequest;
+import com.infoworks.utils.rest.base.HttpTask;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class RestTask<In extends Message, Out extends Response> extends BaseRequest<In, Out> {
+public abstract class RestTask<In extends Message, Out extends Response> extends HttpTask<In, Out> {
 
     protected Map<String, Object> body;
     protected HttpClient client;
@@ -57,7 +57,7 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         return this;
     }
 
-    public BaseRequest addResponseListener(Consumer<String> response) {
+    public HttpTask addResponseListener(Consumer<String> response) {
         this.responseListener = response;
         return this;
     }

@@ -2,7 +2,7 @@ package com.infoworks.utils.rest.spring;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
-import com.infoworks.utils.rest.base.BaseRequest;
+import com.infoworks.utils.rest.base.HttpTask;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class RestTask<In extends Message, Out extends Response> extends BaseRequest<In, Out> {
+public abstract class RestTask<In extends Message, Out extends Response> extends HttpTask<In, Out> {
 
     protected HttpEntity body;
     protected RestTemplate template;
@@ -57,7 +57,7 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         return this;
     }
 
-    public BaseRequest addResponseListener(Consumer<String> response) {
+    public HttpTask addResponseListener(Consumer<String> response) {
         this.responseListener = response;
         return this;
     }

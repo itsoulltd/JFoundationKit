@@ -14,7 +14,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public abstract class BaseRequest<In extends Message, Out extends Response> extends ExecutableTask<In, Out> {
+public abstract class HttpTask<In extends Message, Out extends Response> extends ExecutableTask<In, Out> {
     public static String authorizationKey() {return "Authorization";}
     public static String authorizationValue(String token){return prefix() + parseToken(token);}
     public static String prefix(){return "Bearer ";}
@@ -33,23 +33,23 @@ public abstract class BaseRequest<In extends Message, Out extends Response> exte
     protected Object[] params = new Object[0];
     protected String token;
 
-    public BaseRequest(String baseUri, String requestUri, Object...params) {
+    public HttpTask(String baseUri, String requestUri, Object...params) {
         this.baseUri = baseUri;
         this.requestUri = requestUri;
         this.params = params;
     }
 
-    public BaseRequest setBaseUri(String baseUri) {
+    public HttpTask setBaseUri(String baseUri) {
         this.baseUri = baseUri;
         return this;
     }
 
-    public BaseRequest setRequestUri(String requestUri) {
+    public HttpTask setRequestUri(String requestUri) {
         this.requestUri = requestUri;
         return this;
     }
 
-    public BaseRequest setParams(Object...params) {
+    public HttpTask setParams(Object...params) {
         this.params = params;
         return this;
     }
@@ -58,21 +58,21 @@ public abstract class BaseRequest<In extends Message, Out extends Response> exte
         return this.params;
     }
 
-    public BaseRequest setBody(Message body, String token) {
+    public HttpTask setBody(Message body, String token) {
         Map<String, Object> data = (body != null)
                 ? body.marshalling(true)
                 : null;
         return setBody(data, token);
     }
 
-    public BaseRequest setBody(Row row, String token) {
+    public HttpTask setBody(Row row, String token) {
         Map<String, Object> data = (row != null)
                 ? row.keyObjectMap()
                 : null;
         return setBody(data, token);
     }
 
-    public final BaseRequest setBody(Map<String, Object> data, String token) {
+    public final HttpTask setBody(Map<String, Object> data, String token) {
         setToken(token);
         setBody(data);
         return this;
