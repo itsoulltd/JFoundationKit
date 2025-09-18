@@ -16,7 +16,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Set: [2.9.10.5, 2.18.3) to Jackson.Version, To use with JDK 17 or latest -->
         <jackson.version>[2.9.10.5, 2.18.3]</jackson.version>
-        <spring.version>[5.0.4.RELEASE, 5.3.39]</spring.version>
     </properties>
 
     <repositories>
@@ -48,13 +47,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Spring WebSocket Client API -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Test Suits Starts -->
@@ -112,6 +104,13 @@
             <artifactId>redisson</artifactId>
             <version>3.11.1</version>
             <scope>test</scope>
+        </dependency>
+        <!-- Spring WebSocket Client API -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>[5.0.4.RELEASE, 5.3.39]</version>
+            <!--<scope>test</scope>-->
         </dependency>
         <!-- Test Suits Ends -->
     </dependencies>
