@@ -3,17 +3,17 @@ package com.infoworks.utils.rest.client;
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
 import com.infoworks.utils.rest.base.BaseRequest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.client.RestTemplate;
 
+import java.net.http.HttpClient;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class RestTask<In extends Message, Out extends Response> extends BaseRequest<In, Out> {
 
-    protected HttpEntity body;
-    protected RestTemplate template;
+    protected Map<String, Object> body;
+    protected HttpClient client;
 
     protected Consumer<String> responseListener;
 
@@ -35,25 +35,25 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
     }
 
     public void setBody(Map<String, Object> data) {
-        this.body = new HttpEntity(data, createHeaderFrom(this.token));
+        this.body = data;
     }
 
-    public HttpEntity getBody() {
-        if (this.body == null) {
-            return new HttpEntity(null, createHeaderFrom(getToken()));
-        }
+    public Map<String, Object> getBody() {
         return this.body;
     }
 
-    protected RestTemplate getTemplate() {
-        if (this.template == null) {
-            this.template = new RestTemplate();
+    protected HttpClient getClient() {
+        if (this.client == null) {
+            this.client = HttpClient.newBuilder()
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .connectTimeout(Duration.ofMillis(500))
+                    .build();
         }
-        return this.template;
+        return this.client;
     }
 
-    public RestTask setTemplate(RestTemplate template) {
-        this.template = template;
+    public RestTask setClient(HttpClient client) {
+        this.client = client;
         return this;
     }
 
@@ -66,8 +66,8 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         return this.responseListener;
     }
 
-    protected HttpHeaders createHeaderFrom(String token) {
-        HttpHeaders httpHeaders = new HttpHeaders();
+    protected Map<String, String> createHeaderFrom(String token) {
+        Map<String, String> httpHeaders = new HashMap<>();
         //CHECK token empty or null after prefix:
         if (token == null || token.trim().isEmpty()) return httpHeaders;
         String prefix = prefix();
@@ -75,7 +75,7 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         token = parseToken(token);
         //CHECK again token empty or null after prefix:
         if (token == null || token.trim().isEmpty()) return httpHeaders;
-        httpHeaders.set(HttpHeaders.AUTHORIZATION, prefix + token);
+        httpHeaders.put(authorizationKey(), prefix + token);
         return httpHeaders;
     }
 }
