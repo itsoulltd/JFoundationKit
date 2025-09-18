@@ -6,8 +6,8 @@ import com.infoworks.objects.MessageParser;
 import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
+import com.infoworks.orm.Row;
 import com.infoworks.tasks.ExecutableTask;
-import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,6 +26,81 @@ public abstract class BaseRequest<In extends Message, Out extends Response> exte
             return pToken.trim();
         }
         return token;
+    }
+
+    protected String baseUri;
+    protected String requestUri;
+    protected Object[] params = new Object[0];
+    protected String token;
+
+    public BaseRequest(String baseUri, String requestUri, Object...params) {
+        this.baseUri = baseUri;
+        this.requestUri = requestUri;
+        this.params = params;
+    }
+
+    public BaseRequest setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
+        return this;
+    }
+
+    public BaseRequest setRequestUri(String requestUri) {
+        this.requestUri = requestUri;
+        return this;
+    }
+
+    public BaseRequest setParams(Object...params) {
+        this.params = params;
+        return this;
+    }
+
+    protected Object[] getParams() {
+        return this.params;
+    }
+
+    public BaseRequest setBody(Message body, String token) {
+        Map<String, Object> data = (body != null)
+                ? body.marshalling(true)
+                : null;
+        return setBody(data, token);
+    }
+
+    public BaseRequest setBody(Row row, String token) {
+        Map<String, Object> data = (row != null)
+                ? row.keyObjectMap()
+                : null;
+        return setBody(data, token);
+    }
+
+    public final BaseRequest setBody(Map<String, Object> data, String token) {
+        setToken(token);
+        setBody(data);
+        return this;
+    }
+
+    public abstract void setBody(Map<String, Object> body);
+
+    public void setToken(String token) {
+        this.token = (token == null) ? "" : token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    protected String getUri() {
+        StringBuilder builder = new StringBuilder();
+        if (this.baseUri != null && !this.baseUri.isEmpty()) {
+            builder.append(this.baseUri.endsWith("/")
+                    ? this.baseUri.substring(0, (this.baseUri.length() - 1))
+                    : this.baseUri);
+        }
+        if (this.requestUri != null && !this.requestUri.isEmpty()) {
+            builder.append(this.requestUri.startsWith("/")
+                    ? this.requestUri
+                    : "/" + this.requestUri);
+        }
+        return builder.toString();
     }
 
     protected String urlencodedQueryParam(Property...params) {
@@ -95,19 +170,6 @@ public abstract class BaseRequest<In extends Message, Out extends Response> exte
             }
         }
         return (List<T>) Arrays.asList(new Response().setMessage(json));
-    }
-
-    protected HttpHeaders createHeaderFrom(String token) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        //CHECK token empty or null after prefix:
-        if (token == null || token.trim().isEmpty()) return httpHeaders;
-        String prefix = prefix();
-        //Get rid of prefix in either-case:
-        token = parseToken(token);
-        //CHECK again token empty or null after prefix:
-        if (token == null || token.trim().isEmpty()) return httpHeaders;
-        httpHeaders.set(HttpHeaders.AUTHORIZATION, prefix + token);
-        return httpHeaders;
     }
 
 }
