@@ -2,11 +2,8 @@ package com.infoworks.utils.rest.client;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
+import com.infoworks.objects.Responses;
 import com.infoworks.utils.services.iResources;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.InputStream;
 import java.util.Base64;
@@ -26,7 +23,7 @@ public class DownloadTask extends GetTask {
 
     @Override
     public ResourceResponse execute(Message message) throws RuntimeException {
-        RestTemplate template = getTemplate();
+        /*RestTemplate template = getClient();
         try {
             ResponseEntity<Resource> response = (getParams().length > 0)
                     ? template.exchange(getUri(), HttpMethod.GET, getBody(), Resource.class, getParams())
@@ -54,17 +51,19 @@ public class DownloadTask extends GetTask {
                     .setStatus(500)
                     .setMessage(getUri())
                     .setError(e.getMessage());
-        }
+        }*/
+        //TODO:
+        return (ResourceResponse) new ResourceResponse().setStatus(500);
     }
 
     public static class ResourceResponse extends Response {
-        private Resource resource;
+        private InputStream resource;
 
-        public Resource getResource() {
+        public InputStream getResource() {
             return resource;
         }
 
-        public ResourceResponse setResource(Resource resource) {
+        public ResourceResponse setResource(InputStream resource) {
             this.resource = resource;
             return this;
         }

@@ -2,9 +2,7 @@ package com.infoworks.utils.rest.client;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import com.infoworks.objects.Responses;
 
 import java.util.function.Consumer;
 
@@ -22,7 +20,7 @@ public class DeleteTask extends RestTask<Message, Response> {
 
     @Override
     public Response execute(Message message) throws RuntimeException {
-        RestTemplate template = getTemplate();
+        /*RestTemplate template = getClient();
         try {
             ResponseEntity<String> response = template.exchange(getUri()
                     , HttpMethod.DELETE
@@ -40,6 +38,8 @@ public class DeleteTask extends RestTask<Message, Response> {
                     .setStatus(500)
                     .setMessage(getUri())
                     .setError(e.getMessage());
-        }
+        }*/
+        //TODO:
+        return new Responses().setStatus(500);
     }
 }

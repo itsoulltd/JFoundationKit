@@ -110,7 +110,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>[5.0.4.RELEASE, 5.3.39]</version>
-            <!--<scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
         <!-- Test Suits Ends -->
     </dependencies>
@@ -148,7 +148,8 @@
                         <exclude>LettuceDataSourceTest.java</exclude>
                         <exclude>RedissonDataSourceTest.java</exclude>
                         <exclude>iFileStoreTest.java</exclude>
-                        <exclude>DownloadTaskTest.java</exclude>
+                        <exclude>com.infoworks.utils.rest.client.DownloadTaskTest.java</exclude>
+                        <exclude>com.infoworks.utils.rest.spring.DownloadTaskTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

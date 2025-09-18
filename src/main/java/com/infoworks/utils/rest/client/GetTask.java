@@ -2,10 +2,8 @@ package com.infoworks.utils.rest.client;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
+import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -54,7 +52,7 @@ public class GetTask extends RestTask<Message, Response> {
 
     @Override
     public Response execute(Message message) throws RuntimeException {
-        RestTemplate template = getTemplate();
+        /*RestTemplate template = getClient();
         try {
             ResponseEntity<String> response = (getParams().length > 0)
                     ? template.exchange(getUri(), HttpMethod.GET, getBody(), String.class, getParams())
@@ -70,6 +68,8 @@ public class GetTask extends RestTask<Message, Response> {
                     .setStatus(500)
                     .setMessage(getUri())
                     .setError(e.getMessage());
-        }
+        }*/
+        //TODO:
+        return new Responses().setStatus(500);
     }
 }
