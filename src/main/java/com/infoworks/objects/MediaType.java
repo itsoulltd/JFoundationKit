@@ -3,7 +3,6 @@ package com.infoworks.objects;
 import java.nio.charset.Charset;
 
 public class MediaType {
-
     public static String Key = "Content-Type";
     public static MediaType PLAIN_TEXT = new MediaType("text/plain");
     public static MediaType JSON = new MediaType("application/json");
@@ -16,14 +15,13 @@ public class MediaType {
     public static MediaType JPEG = new MediaType("image/jpeg", null);
     public static MediaType PNG = new MediaType("image/png", null);
     public static MediaType MP4 = new MediaType("video/mp4", null);
-
     private String typeValue;
     private String charset;
-    MediaType(String type){
+    public MediaType(String type) {
         this(type, "UTF-8");
     }
 
-    MediaType(String type, String charset){
+    public MediaType(String type, String charset) {
         this.typeValue = type;
         this.charset = charset;
     }
