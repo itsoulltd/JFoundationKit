@@ -46,6 +46,7 @@ public class DownloadTask extends GetTask {
             HttpResponse<InputStream> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
             HttpHeaders responseHeaders = response.headers();
             outcome.setHeaders(responseHeaders);
+            outcome.setStatus(response.statusCode());
             int statusCode = response.statusCode();
             if (statusCode >= 200 && statusCode < 300) {
                 outcome.setResource(response.body());
