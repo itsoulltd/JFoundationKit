@@ -6,12 +6,12 @@ import com.infoworks.objects.Response;
 import com.infoworks.utils.services.iResources;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.http.HttpHeaders;
-import java.io.InputStream;
 import java.util.Base64;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -98,12 +98,14 @@ public class DownloadTask extends GetTask {
         }
 
         public long contentLength() {
+            //e.g. check content-length or x-ttfb-l
             if (getHeaders() != null && this.contentLength == 0l) {
-                getHeaders().firstValue("content-length").ifPresent(length -> {
-                    try {
-                        this.contentLength = Long.valueOf(length);
-                    } catch (NumberFormatException e) {}
-                });
+                String val = getHeaders().firstValue("content-length").orElse("0l");
+                if (val.equals("0l"))
+                    val = getHeaders().firstValue("x-ttfb-l").orElse("0l");
+                try {
+                    this.contentLength = Long.valueOf(val);
+                } catch (NumberFormatException e) {}
             }
             return contentLength;
         }
@@ -111,7 +113,13 @@ public class DownloadTask extends GetTask {
         public String filename() {
             //e.g. content-disposition=[attachment; filename=6115759179_86316c08ff_z.jpg]
             if (getHeaders() != null && this.filename == null) {
-                //TODO:
+                String vals = getHeaders().firstValue("content-disposition").orElse(null);
+                if (vals != null && !vals.isEmpty()) {
+                    String[] parsed = vals.split("; filename=");
+                    if (parsed != null && parsed.length > 0)
+                        this.filename = parsed[1];
+                    else this.filename = parsed[0];
+                }
             }
             return filename;
         }
@@ -119,8 +127,8 @@ public class DownloadTask extends GetTask {
         public MediaType mediaType() {
             //e.g. content-type=[image/jpeg]
             if (getHeaders() != null && this.mediaType == null) {
-                //TODO:
-                this.mediaType = MediaType.BINARY_OCTET_STREAM;
+                String vals = getHeaders().firstValue("content-type").orElse(null);
+                this.mediaType = (vals != null) ? new MediaType(vals, null) : MediaType.BINARY_OCTET_STREAM;
             }
             return mediaType;
         }

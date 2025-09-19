@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
-import static org.junit.Assert.*;
 
 public class DownloadTaskTest {
 
@@ -31,6 +30,7 @@ public class DownloadTaskTest {
                 Assert.assertNotNull(img);
                 System.out.println("Image Downloaded: " + response.filename());
                 System.out.println("Image Size: " + response.contentLength());
+                System.out.println("Media type: " + response.mediaType().toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
