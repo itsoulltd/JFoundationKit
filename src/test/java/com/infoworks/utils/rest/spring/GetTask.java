@@ -26,6 +26,17 @@ public class GetTask extends RestTask<Message, Response> {
 
     private Map<String, Object> paramsKeyMaps = new HashMap<>();
 
+    public void updateQueryParams(Property...params) {
+        //Filter-Out null and empty:
+        Arrays.stream(params)
+                .filter(param -> param.getValue() != null && !param.getValue().toString().isEmpty())
+                .forEach(param -> paramsKeyMaps.put(param.getKey(), param.getValue()));
+        //
+        List<Property> paramList = new ArrayList<>();
+        this.paramsKeyMaps.forEach((key, value) -> paramList.add(new Property(key, value.toString())));
+        updateRequestUriWithQueryParams(this.requestUri, paramList.toArray(new Property[0]));
+    }
+
     private void updateRequestUriWithQueryParams(String requestUri, Property[] params) {
         if(requestUri == null) return;
         //Update paths?<query-params>
@@ -37,17 +48,6 @@ public class GetTask extends RestTask<Message, Response> {
         } else {
             setRequestUri(requestUri + queryParam);
         }
-    }
-
-    public void updateQueryParams(Property...params) {
-        //Filter-Out null and empty:
-        Arrays.stream(params)
-                .filter(param -> param.getValue() != null && !param.getValue().toString().isEmpty())
-                .forEach(param -> paramsKeyMaps.put(param.getKey(), param.getValue()));
-        //
-        List<Property> paramList = new ArrayList<>();
-        this.paramsKeyMaps.forEach((key, value) -> paramList.add(new Property(key, value.toString())));
-        updateRequestUriWithQueryParams(this.requestUri, paramList.toArray(new Property[0]));
     }
 
     @Override
