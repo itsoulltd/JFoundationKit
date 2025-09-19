@@ -20,16 +20,6 @@ public class iResourcesTest {
     @After
     public void tearDown() throws Exception {}
 
-    @Test
-    public void readJson(){
-        iResources manager = iResources.create();
-        String json = manager.readAsString("data/rider-mock-data.json");
-        System.out.println(json);
-
-        List<Map<String, Object>> jObj = manager.readAsJsonObject(json);
-        System.out.println(jObj.toString());
-    }
-
     private InputStream createFileInputStream(String fileName) throws FileNotFoundException {
         return createFileInputStream(fileName, null);
     }
@@ -45,6 +35,16 @@ public class iResourcesTest {
             InputStream ios = resources.createStream(imfFile);
             return ios;
         }
+    }
+
+    @Test
+    public void readJson(){
+        iResources manager = iResources.create();
+        String json = manager.readAsString("data/rider-mock-data.json");
+        System.out.println(json);
+
+        List<Map<String, Object>> jObj = manager.readAsJsonObject(json);
+        System.out.println(jObj.toString());
     }
 
     @Test
