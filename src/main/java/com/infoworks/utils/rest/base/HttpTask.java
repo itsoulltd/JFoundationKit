@@ -11,6 +11,7 @@ import com.infoworks.tasks.ExecutableTask;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -27,6 +28,12 @@ public abstract class HttpTask<In extends Message, Out extends Response> extends
         }
         return token;
     }
+    public static String encodeUrlParam(String param, Charset charset) {
+        if (param == null || param.isEmpty()) return param;
+        charset = (charset == null) ? StandardCharsets.UTF_8 : charset;
+        return URLEncoder.encode(param, charset);
+    }
+    public static String encodeUrlParam(String param) { return encodeUrlParam(param, StandardCharsets.UTF_8); }
 
     protected String baseUri;
     protected String requestUri;
@@ -121,9 +128,10 @@ public abstract class HttpTask<In extends Message, Out extends Response> extends
             if (query.getValue() == null || query.getValue().toString().isEmpty()){
                 continue;
             }
-            buffer.append(query.getKey()
+            buffer.append(
+                    URLEncoder.encode(query.getKey(), StandardCharsets.UTF_8)
                     + "="
-                    + URLEncoder.encode(query.getValue().toString(), StandardCharsets.UTF_8)  //"UTF-8"
+                    + URLEncoder.encode(query.getValue().toString(), StandardCharsets.UTF_8)
                     + "&");
         }
         String value = buffer.toString();
