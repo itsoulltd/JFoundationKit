@@ -99,7 +99,7 @@ public class DownloadTask extends GetTask {
 
         public long contentLength() {
             if (getHeaders() != null && this.contentLength == 0l) {
-                getHeaders().firstValue("Content-Length").ifPresent(length -> {
+                getHeaders().firstValue("content-length").ifPresent(length -> {
                     try {
                         this.contentLength = Long.valueOf(length);
                     } catch (NumberFormatException e) {}
@@ -109,6 +109,7 @@ public class DownloadTask extends GetTask {
         }
 
         public String filename() {
+            //e.g. content-disposition=[attachment; filename=6115759179_86316c08ff_z.jpg]
             if (getHeaders() != null && this.filename == null) {
                 //TODO:
             }
@@ -116,6 +117,7 @@ public class DownloadTask extends GetTask {
         }
 
         public MediaType mediaType() {
+            //e.g. content-type=[image/jpeg]
             if (getHeaders() != null && this.mediaType == null) {
                 //TODO:
                 this.mediaType = MediaType.BINARY_OCTET_STREAM;
