@@ -27,6 +27,7 @@ public class GetTask extends RestTask<Message, Response> {
     private Map<String, Object> paramsKeyMaps = new HashMap<>();
 
     private void updateRequestUriWithQueryParams(String requestUri, Property[] params) {
+        if(requestUri == null) return;
         //Update paths?<query-params>
         String queryParam = urlencodedQueryParam(params);
         requestUri = requestUri.trim();
