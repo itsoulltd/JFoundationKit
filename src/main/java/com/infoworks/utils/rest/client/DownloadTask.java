@@ -3,6 +3,7 @@ package com.infoworks.utils.rest.client;
 import com.infoworks.objects.MediaType;
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
+import com.infoworks.orm.Property;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,7 @@ public class DownloadTask extends GetTask {
 
     public DownloadTask() {super();}
 
-    public DownloadTask(String baseUri, String requestUri, Object...params) {
+    public DownloadTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
     }
 

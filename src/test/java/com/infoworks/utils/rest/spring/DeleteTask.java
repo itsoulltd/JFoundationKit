@@ -2,6 +2,7 @@ package com.infoworks.utils.rest.spring;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
+import com.infoworks.orm.Property;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -12,12 +13,12 @@ public class DeleteTask extends RestTask<Message, Response> {
 
     public DeleteTask() { super(); }
 
-    public DeleteTask(String baseUri, String requestUri, Object...params) {
+    public DeleteTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
     }
 
-    public DeleteTask(String baseUri, String requestUri, Consumer<String> response) {
-        super(baseUri, requestUri, response);
+    public DeleteTask(String baseUri, String requestUri, Property[] params, Consumer<String> response) {
+        super(baseUri, requestUri, params, response);
     }
 
     @Override

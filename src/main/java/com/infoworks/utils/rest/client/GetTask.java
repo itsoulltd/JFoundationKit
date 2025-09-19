@@ -12,12 +12,14 @@ public class GetTask extends RestTask<Message, Response> {
 
     public GetTask() {super();}
 
-    public GetTask(String baseUri, String requestUri, Object...params) {
+    public GetTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
+        updateQueryParams(params);
     }
 
-    public GetTask(String baseUri, String requestUri, Consumer<String> response) {
-        super(baseUri, requestUri, response);
+    public GetTask(String baseUri, String requestUri, Property[] params, Consumer<String> response) {
+        this(baseUri, requestUri, params);
+        addResponseListener(response);
     }
 
     private Map<String, Object> paramsKeyMaps = new HashMap<>();
@@ -32,11 +34,6 @@ public class GetTask extends RestTask<Message, Response> {
         } else {
             setRequestUri(requestUri + queryParam);
         }
-    }
-
-    public GetTask(String baseUri, String requestUri, Property...params) {
-        super(baseUri, requestUri);
-        updateQueryParams(params);
     }
 
     public void updateQueryParams(Property...params) {

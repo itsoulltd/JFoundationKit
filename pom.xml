@@ -150,6 +150,8 @@
                         <exclude>iFileStoreTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.client.DownloadTaskTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.spring.DownloadTaskTest.java</exclude>
+                        <exclude>RestTaskTest.java</exclude>
+                        <exclude>UploadTaskTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

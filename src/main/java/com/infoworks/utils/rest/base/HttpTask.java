@@ -30,10 +30,10 @@ public abstract class HttpTask<In extends Message, Out extends Response> extends
 
     protected String baseUri;
     protected String requestUri;
-    protected Object[] params = new Object[0];
+    protected Property[] params = new Property[0];
     protected String token;
 
-    public HttpTask(String baseUri, String requestUri, Object...params) {
+    public HttpTask(String baseUri, String requestUri, Property...params) {
         this.baseUri = baseUri;
         this.requestUri = requestUri;
         this.params = params;
@@ -49,7 +49,7 @@ public abstract class HttpTask<In extends Message, Out extends Response> extends
         return this;
     }
 
-    public HttpTask setParams(Object...params) {
+    public HttpTask setParams(Property...params) {
         this.params = params;
         return this;
     }

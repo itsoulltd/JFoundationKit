@@ -2,6 +2,7 @@ package com.infoworks.utils.rest.spring;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
+import com.infoworks.orm.Property;
 import com.infoworks.utils.rest.base.HttpTask;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,19 +18,19 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
 
     protected Consumer<String> responseListener;
 
-    public RestTask(String baseUri, String requestUri, Object...params) {
+    public RestTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
     }
 
     public RestTask(String baseUri, String requestUri) {
-        this(baseUri, requestUri, new Object[0]);
+        this(baseUri, requestUri, new Property[0]);
     }
 
     public RestTask() {
         this("", "");
     }
 
-    public RestTask(String baseUri, String requestUri, Object[] params, Consumer<String> responseListener) {
+    public RestTask(String baseUri, String requestUri, Property[] params, Consumer<String> responseListener) {
         this(baseUri, requestUri, params);
         this.responseListener = responseListener;
     }

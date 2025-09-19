@@ -4,6 +4,7 @@ import com.infoworks.objects.MediaType;
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
+import com.infoworks.orm.Property;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +24,7 @@ public class UploadTask extends RestTask<Message, Response> {
     public UploadTask() {super();}
 
     public UploadTask(String uploadUri, MediaType type, File uploadFile) {
-        super(uploadUri, "", new Object[0]);
+        super(uploadUri, "", new Property[0]);
         this.type = type;
         this.uploadFile = uploadFile;
     }
