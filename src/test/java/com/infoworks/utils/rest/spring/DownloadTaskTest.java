@@ -32,6 +32,7 @@ public class DownloadTaskTest {
                 BufferedImage img = service.readAsImage(iso, TYPE_INT_RGB);
                 Assert.assertNotNull(img);
                 System.out.println("Image Downloaded: " + response.getResource().getFilename());
+                System.out.println("Image Size: " + response.getResource().contentLength());
             } catch (IOException e) {
                 e.printStackTrace();
             }
