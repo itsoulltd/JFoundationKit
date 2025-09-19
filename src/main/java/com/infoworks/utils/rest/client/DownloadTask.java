@@ -96,7 +96,7 @@ public class DownloadTask extends GetTask {
             return this;
         }
 
-        public long getContentLength() {
+        public long contentLength() {
             if (getHeaders() != null && this.contentLength == 0l) {
                 getHeaders().firstValue("Content-Length").ifPresent(length -> {
                     try {
