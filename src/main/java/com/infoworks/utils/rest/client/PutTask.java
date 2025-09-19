@@ -41,6 +41,7 @@ public class PutTask extends RestTask<Message, Response> {
                     .setError(e.getMessage());
         }*/
         //TODO:
+        System.out.println(getUri());
         return new Responses().setStatus(500);
     }
 }

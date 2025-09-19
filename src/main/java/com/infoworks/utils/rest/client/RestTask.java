@@ -20,6 +20,7 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
 
     public RestTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
+        updateQueryParams(params);
     }
 
     public RestTask(String baseUri, String requestUri) {
