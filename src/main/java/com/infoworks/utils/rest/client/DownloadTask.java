@@ -3,7 +3,6 @@ package com.infoworks.utils.rest.client;
 import com.infoworks.objects.MediaType;
 import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
-import com.infoworks.utils.services.iResources;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Base64;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class DownloadTask extends GetTask {
 
@@ -22,10 +19,6 @@ public class DownloadTask extends GetTask {
 
     public DownloadTask(String baseUri, String requestUri, Object...params) {
         super(baseUri, requestUri, params);
-    }
-
-    public DownloadTask(String baseUri, String requestUri, Consumer<String> response) {
-        super(baseUri, requestUri, response);
     }
 
     @Override
@@ -50,16 +43,6 @@ public class DownloadTask extends GetTask {
             int statusCode = response.statusCode();
             if (statusCode >= 200 && statusCode < 300) {
                 outcome.setResource(response.body());
-                //Now convert into base64 string and accept-consumer:
-                if (getResponseListener() != null && response.body() != null) {
-                    String base64Encoded = null;
-                    try (InputStream iso = response.body()) {
-                        iResources service = iResources.create();
-                        byte[] bytes = service.readAsBytes(iso);
-                        base64Encoded = new String(Base64.getEncoder().encode(bytes), "UTF-8");
-                    }
-                    getResponseListener().accept(base64Encoded);
-                }
             } else {
                 outcome.setError("Failed to download file. HTTP status code: " + statusCode
                         + "\nResponse headers: " + responseHeaders.map());
