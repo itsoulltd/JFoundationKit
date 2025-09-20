@@ -21,5 +21,19 @@ public class UploadTaskTest {
         task.setToken("my-token");
         Response response = task.execute(null);
         System.out.println(response.getStatus());
+        if(response.getStatus() == 500) System.out.println(response.getError());
+        else System.out.println(response.getMessage());
+    }
+
+    @Test
+    public void uploadTestV2() {
+        Path path = Paths.get("src","test","resources", "data", "JFoundationKit_Test.pdf");
+        File imfFile = new File(path.toFile().getAbsolutePath());
+        //
+        UploadTask task = new UploadTask("https://example.com/upload", MediaType.PDF, imfFile);
+        Response response = task.execute(null);
+        System.out.println(response.getStatus());
+        if(response.getStatus() == 500) System.out.println(response.getError());
+        else System.out.println(response.getMessage());
     }
 }

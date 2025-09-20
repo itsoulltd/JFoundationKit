@@ -37,11 +37,11 @@ public class UploadTask extends PostTask {
             //Prepare request builder:
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(getUri()))
-                    .header(this.type.key(), this.type.value())
                     .POST(HttpRequest.BodyPublishers.ofInputStream(() -> inputStream));
             //Prepare Http-Headers:
             Map<String, String> headers = createAuthHeader(getToken());
             headers.put("User-Agent", "JavaHttpClient/11");
+            headers.put(type.key(), type.value());
             headers.forEach(builder::header);
             //POST file-upload:
             HttpClient client = getClient();
