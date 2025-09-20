@@ -30,9 +30,7 @@ public class PostTask extends RestTask {
                 .uri(URI.create(getUri()))
                 .POST(HttpRequest.BodyPublishers.ofString(json));
         //Prepare Http-Headers:
-        Map<String, String> headers = createHeaderFrom(getToken());
-        headers.put("User-Agent", "JavaHttpClient/11");
-        headers.put("Content-Type", "application/json");
+        Map<String, String> headers = getDefaultHeaders();
         headers.forEach(builder::header);
         return builder.build();
     }

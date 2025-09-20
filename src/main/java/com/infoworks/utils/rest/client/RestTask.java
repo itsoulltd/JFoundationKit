@@ -3,10 +3,7 @@ package com.infoworks.utils.rest.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.infoworks.objects.Message;
-import com.infoworks.objects.MessageParser;
-import com.infoworks.objects.Response;
-import com.infoworks.objects.Responses;
+import com.infoworks.objects.*;
 import com.infoworks.orm.Property;
 import com.infoworks.utils.rest.base.HttpTask;
 
@@ -23,6 +20,7 @@ public abstract class RestTask extends HttpTask<Message, Response> {
 
     protected Map<String, Object> body;
     protected HttpClient client;
+    protected MediaType contentType = MediaType.JSON;
     protected Consumer<String> responseListener;
 
     public RestTask(String baseUri, String requestUri, Property...params) {
@@ -66,6 +64,14 @@ public abstract class RestTask extends HttpTask<Message, Response> {
         return this;
     }
 
+    public MediaType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType;
+    }
+
     public HttpTask addResponseListener(Consumer<String> response) {
         this.responseListener = response;
         return this;
@@ -86,6 +92,14 @@ public abstract class RestTask extends HttpTask<Message, Response> {
         if (token == null || token.trim().isEmpty()) return httpHeaders;
         httpHeaders.put(authorizationKey(), prefix + token);
         return httpHeaders;
+    }
+
+    protected Map<String, String> getDefaultHeaders() {
+        Map<String, String> headers = createHeaderFrom(getToken());
+        headers.put("User-Agent", "JavaHttpClient/11");
+        if (getContentType() != null)
+            headers.put(getContentType().key(), getContentType().value());
+        return headers;
     }
 
     protected ObjectMapper getMapperWithJVTimeModule() {
