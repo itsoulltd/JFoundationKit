@@ -40,7 +40,7 @@ public class UploadTask extends PostTask {
                     .header(this.type.key(), this.type.value())
                     .POST(HttpRequest.BodyPublishers.ofInputStream(() -> inputStream));
             //Prepare Http-Headers:
-            Map<String, String> headers = createHeaderFrom(getToken());
+            Map<String, String> headers = createAuthHeader(getToken());
             headers.put("User-Agent", "JavaHttpClient/11");
             headers.forEach(builder::header);
             //POST file-upload:

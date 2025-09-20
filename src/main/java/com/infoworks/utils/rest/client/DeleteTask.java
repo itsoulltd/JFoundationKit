@@ -27,7 +27,7 @@ public class DeleteTask extends RestTask {
                 .uri(URI.create(getUri()))
                 .DELETE();
         //Prepare Http-Headers:
-        Map<String, String> headers = createHeaderFrom(getToken());
+        Map<String, String> headers = createAuthHeader(getToken());
         headers.put("User-Agent", "JavaHttpClient/11");
         headers.forEach(builder::header);
         return builder.build();

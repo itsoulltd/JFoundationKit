@@ -81,7 +81,7 @@ public abstract class RestTask extends HttpTask<Message, Response> {
         return this.responseListener;
     }
 
-    protected Map<String, String> createHeaderFrom(String token) {
+    protected final Map<String, String> createAuthHeader(String token) {
         Map<String, String> httpHeaders = new HashMap<>();
         //CHECK token empty or null after prefix:
         if (token == null || token.trim().isEmpty()) return httpHeaders;
@@ -95,7 +95,7 @@ public abstract class RestTask extends HttpTask<Message, Response> {
     }
 
     protected Map<String, String> getDefaultHeaders() {
-        Map<String, String> headers = createHeaderFrom(getToken());
+        Map<String, String> headers = createAuthHeader(getToken());
         headers.put("User-Agent", "JavaHttpClient/11");
         if (getContentType() != null)
             headers.put(getContentType().key(), getContentType().value());

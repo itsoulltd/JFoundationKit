@@ -36,12 +36,12 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
     }
 
     public void setBody(Map<String, Object> data) {
-        this.body = new HttpEntity(data, createHeaderFrom(this.token));
+        this.body = new HttpEntity(data, createAuthHeader(getToken()));
     }
 
     public HttpEntity getBody() {
         if (this.body == null) {
-            return new HttpEntity(null, createHeaderFrom(getToken()));
+            return new HttpEntity(null, createAuthHeader(getToken()));
         }
         return this.body;
     }
@@ -67,7 +67,7 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         return this.responseListener;
     }
 
-    protected HttpHeaders createHeaderFrom(String token) {
+    protected HttpHeaders createAuthHeader(String token) {
         HttpHeaders httpHeaders = new HttpHeaders();
         //CHECK token empty or null after prefix:
         if (token == null || token.trim().isEmpty()) return httpHeaders;
