@@ -67,7 +67,7 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         return this.responseListener;
     }
 
-    protected HttpHeaders createAuthHeader(String token) {
+    protected final HttpHeaders createAuthHeader(String token) {
         HttpHeaders httpHeaders = new HttpHeaders();
         //CHECK token empty or null after prefix:
         if (token == null || token.trim().isEmpty()) return httpHeaders;
