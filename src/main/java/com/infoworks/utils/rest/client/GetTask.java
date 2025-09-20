@@ -38,7 +38,7 @@ public class GetTask extends RestTask<Message, Response> {
         Map<String, String> headers = createHeaderFrom(getToken());
         headers.put("User-Agent", "JavaHttpClient/11");
         headers.forEach(builder::header);
-        //POST file-upload:
+        //GET:
         try {
             HttpClient client = getClient();
             HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());

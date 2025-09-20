@@ -2,6 +2,7 @@ package com.infoworks.utils.rest.client;
 
 import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
+import com.infoworks.orm.Row;
 import com.infoworks.utils.rest.base.HttpTask;
 import org.junit.Test;
 
@@ -29,10 +30,12 @@ public class RestTaskTest {
 
     @Test
     public void postTest() {
-        HttpTask task = new PostTask(
+        PostTask task = new PostTask(
                 "http://localhost:8080"
                 , String.format("/api/auth/%s", HttpTask.encodeUrlParam("sohana@gmail.com"))
                 , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
+        //
+        task.setBody(new Row().add("name", "sohana"), null);
         task.execute(null);
     }
 

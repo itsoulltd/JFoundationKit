@@ -1,6 +1,10 @@
 package com.infoworks.utils.rest.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.infoworks.objects.Message;
+import com.infoworks.objects.MessageParser;
 import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
 import com.infoworks.utils.rest.base.HttpTask;
@@ -15,7 +19,6 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
 
     protected Map<String, Object> body;
     protected HttpClient client;
-
     protected Consumer<String> responseListener;
 
     public RestTask(String baseUri, String requestUri, Property...params) {
@@ -79,5 +82,14 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         if (token == null || token.trim().isEmpty()) return httpHeaders;
         httpHeaders.put(authorizationKey(), prefix + token);
         return httpHeaders;
+    }
+
+    protected ObjectMapper getMapperWithJVTimeModule() {
+        //Solution: Add Jackson JSR-310 Module. Jackson doesn't know how to (de)serialize java.time.LocalDateTime,
+        // because Java 8 time types are not supported out-of-the-box unless you register the JSR-310 module.
+        ObjectMapper mapper = MessageParser.getJsonSerializer();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
     }
 }
