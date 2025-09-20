@@ -6,16 +6,20 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.infoworks.objects.Message;
 import com.infoworks.objects.MessageParser;
 import com.infoworks.objects.Response;
+import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
 import com.infoworks.utils.rest.base.HttpTask;
 
+import java.io.IOException;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class RestTask<In extends Message, Out extends Response> extends HttpTask<In, Out> {
+public abstract class RestTask extends HttpTask<Message, Response> {
 
     protected Map<String, Object> body;
     protected HttpClient client;
@@ -91,5 +95,25 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper;
+    }
+
+    @Override
+    public Response execute(Message message) throws RuntimeException {
+        LOG.info(getUri());
+        return executeRequest(prepareRequest(message));
+    }
+
+    protected abstract HttpRequest prepareRequest(Message message);
+
+    protected Response executeRequest(HttpRequest request) {
+        Response outcome = new Responses().setStatus(500);
+        try {
+            HttpClient client = getClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            outcome = new Responses().setStatus(response.statusCode()).setMessage(response.body());
+        } catch (IOException | InterruptedException e) {
+            outcome.setError(e.getMessage());
+        }
+        return outcome;
     }
 }

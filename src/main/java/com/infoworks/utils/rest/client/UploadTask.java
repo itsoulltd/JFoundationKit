@@ -15,7 +15,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
-public class UploadTask extends RestTask<Message, Response> {
+public class UploadTask extends PostTask {
 
     private MediaType type;
     private File uploadFile;

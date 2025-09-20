@@ -12,7 +12,7 @@ public class RestTaskTest {
 
     @Test
     public void getTest() {
-        GetTask task = new GetTask(
+        RestTask task = new GetTask(
                 "http://localhost:8080"
                 , String.format("/api/auth/%s", HttpTask.encodeUrlParam("sohana@gmail.com"))
                 , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
@@ -22,7 +22,7 @@ public class RestTaskTest {
 
     @Test
     public void getTestV2() {
-        GetTask task = new GetTask("https://jsonplaceholder.typicode.com/posts", "/1");
+        RestTask task = new GetTask("https://jsonplaceholder.typicode.com/posts", "/1");
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         System.out.println(response.getMessage());
@@ -30,7 +30,7 @@ public class RestTaskTest {
 
     @Test
     public void postTest() {
-        PostTask task = new PostTask(
+        RestTask task = new PostTask(
                 "http://localhost:8080"
                 , String.format("/api/auth/%s", HttpTask.encodeUrlParam("sohana@gmail.com"))
                 , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
@@ -41,7 +41,7 @@ public class RestTaskTest {
 
     @Test
     public void putTest() {
-        HttpTask task = new PutTask(
+        RestTask task = new PutTask(
                 "http://localhost:8080"
                 , String.format("/api/auth/%s", HttpTask.encodeUrlParam("sohana@gmail.com"))
                 , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
@@ -50,7 +50,7 @@ public class RestTaskTest {
 
     @Test
     public void deleteTest() {
-        HttpTask task = new DeleteTask(
+        RestTask task = new DeleteTask(
                 "http://localhost:8080"
                 , String.format("/api/auth/%s", HttpTask.encodeUrlParam("sohana@gmail.com"))
                 , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
