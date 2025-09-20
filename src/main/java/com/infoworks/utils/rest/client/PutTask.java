@@ -21,27 +21,7 @@ public class PutTask extends RestTask<Message, Response> {
 
     @Override
     public Response execute(Message message) throws RuntimeException {
-        /*RestTemplate template = getClient();
-        try {
-            ResponseEntity<String> response = template.exchange(getUri()
-                    , HttpMethod.PUT
-                    , getBody()
-                    , String.class
-                    , getParams());
-            if (getResponseListener() != null)
-                getResponseListener().accept(response.getBody());
-            return (Response) new Response()
-                    .setStatus(200)
-                    .setMessage(getUri())
-                    .setPayload(response.getBody());
-        } catch (Exception e) {
-            return new Response()
-                    .setStatus(500)
-                    .setMessage(getUri())
-                    .setError(e.getMessage());
-        }*/
-        //TODO:
-        System.out.println(getUri());
+        LOG.info(getUri());
         return new Responses().setStatus(500);
     }
 }

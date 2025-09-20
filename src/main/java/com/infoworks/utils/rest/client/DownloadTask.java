@@ -48,9 +48,7 @@ public class DownloadTask extends GetTask {
                 outcome.setError("Failed to download file. HTTP status code: " + statusCode
                         + "\nResponse headers: " + responseHeaders.map());
             }
-        } catch (IOException e) {
-            outcome.setError(e.getMessage());
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             outcome.setError(e.getMessage());
         }
         return outcome;

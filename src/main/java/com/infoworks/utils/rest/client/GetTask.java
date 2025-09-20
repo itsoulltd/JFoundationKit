@@ -5,6 +5,12 @@ import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class GetTask extends RestTask<Message, Response> {
@@ -22,25 +28,24 @@ public class GetTask extends RestTask<Message, Response> {
 
     @Override
     public Response execute(Message message) throws RuntimeException {
-        /*RestTemplate template = getClient();
+        Response outcome = new Responses().setStatus(500);
+        LOG.info(getUri());
+        //Prepare request builder:
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(getUri()))
+                .GET();
+        //Prepare Http-Headers:
+        Map<String, String> headers = createHeaderFrom(getToken());
+        headers.put("User-Agent", "JavaHttpClient/11");
+        headers.forEach(builder::header);
+        //POST file-upload:
         try {
-            ResponseEntity<String> response = (getParams().length > 0)
-                    ? template.exchange(getUri(), HttpMethod.GET, getBody(), String.class, getParams())
-                    : template.exchange(getUri(), HttpMethod.GET, getBody(), String.class);
-            if (getResponseListener() != null)
-                getResponseListener().accept(response.getBody());
-            return (Response) new Response()
-                    .setStatus(200)
-                    .setMessage(getUri())
-                    .setPayload(response.getBody());
-        } catch (Exception e) {
-            return new Response()
-                    .setStatus(500)
-                    .setMessage(getUri())
-                    .setError(e.getMessage());
-        }*/
-        //TODO:
-        System.out.println(getUri());
-        return new Responses().setStatus(500);
+            HttpClient client = getClient();
+            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            outcome = new Responses().setStatus(response.statusCode()).setMessage(response.body());
+        } catch (IOException | InterruptedException e) {
+            outcome.setError(e.getMessage());
+        }
+        return outcome;
     }
 }

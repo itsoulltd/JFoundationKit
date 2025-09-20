@@ -8,7 +8,6 @@ import com.infoworks.orm.Property;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -48,11 +47,7 @@ public class UploadTask extends RestTask<Message, Response> {
             HttpClient client = getClient();
             HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
             outcome = new Responses().setStatus(response.statusCode()).setMessage(response.body());
-        } catch (FileNotFoundException e) {
-            outcome.setError(e.getMessage());
-        } catch (IOException e) {
-            outcome.setError(e.getMessage());
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             outcome.setError(e.getMessage());
         }
         return outcome;

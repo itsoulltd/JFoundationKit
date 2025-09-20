@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Logger;
 
 public abstract class HttpTask<In extends Message, Out extends Response> extends ExecutableTask<In, Out> {
     public static String authorizationKey() {return "Authorization";}
@@ -35,6 +36,7 @@ public abstract class HttpTask<In extends Message, Out extends Response> extends
     }
     public static String encodeUrlParam(String param) { return encodeUrlParam(param, StandardCharsets.UTF_8); }
 
+    protected static Logger LOG = Logger.getLogger(HttpTask.class.getSimpleName());
     protected String baseUri;
     protected String requestUri;
     protected Property[] params = new Property[0];
