@@ -58,10 +58,9 @@ public abstract class RestTask extends HttpTask<Message, Response> {
             HttpClient.Builder builder = HttpClient.newBuilder()
                     .followRedirects(redirectPolicy())
                     .connectTimeout(connectionTimeout());
+            builder = (getSecurity() != null) ? builder.sslContext(getSecurity()) : builder;
             builder = (getSslParameters() != null) ? builder.sslParameters(getSslParameters()) : builder;
-            this.client = (getSecurity() != null)
-                    ? builder.sslContext(getSecurity()).build()
-                    : builder.build();
+            this.client = builder.build();
         }
         return this.client;
     }
