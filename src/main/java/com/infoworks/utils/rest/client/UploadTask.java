@@ -71,7 +71,8 @@ public class UploadTask extends PostTask {
         if (getFileType() == null) return outcome.setError("MediaType cannot be null or empty.");
         if (getUploadFile() == null) return outcome.setError("UploadFile cannot be null or empty.");
         setContentType(MediaType.MULTIPART_FORM_DATA);
-        try (FileInputStream inputStream = new FileInputStream(getUploadFile())) {
+        //Files.newInputStream(getUploadFile().toPath())
+        try (InputStream inputStream = new FileInputStream(getUploadFile())) {
             //Prepare request builder:
             byte[] pre = preamble(getFilename(), getFileType());
             byte[] cls = closing();
