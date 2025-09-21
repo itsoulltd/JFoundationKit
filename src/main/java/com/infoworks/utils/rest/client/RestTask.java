@@ -52,12 +52,15 @@ public abstract class RestTask extends HttpTask<Message, Response> {
     protected HttpClient getClient() {
         if (this.client == null) {
             this.client = HttpClient.newBuilder()
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .connectTimeout(Duration.ofMillis(500))
+                    .followRedirects(redirectPolicy())
+                    .connectTimeout(connectionTimeout())
                     .build();
         }
         return this.client;
     }
+
+    protected HttpClient.Redirect redirectPolicy() { return HttpClient.Redirect.NORMAL; }
+    protected Duration connectionTimeout() { return Duration.ofMillis(700); }
 
     public RestTask setClient(HttpClient client) {
         this.client = client;

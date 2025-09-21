@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Map;
 
 public class UploadTask extends PostTask {
@@ -45,6 +46,11 @@ public class UploadTask extends PostTask {
     }
 
     @Override
+    protected Duration connectionTimeout() {
+        return Duration.ofSeconds(60);
+    }
+
+    @Override
     public Response execute(Message message) throws RuntimeException {
         Response outcome = new Responses().setStatus(500);
         if (fileType == null) return outcome.setError("MediaType cannot be null or empty.");
@@ -59,6 +65,7 @@ public class UploadTask extends PostTask {
             Map<String, String> headers = createAuthHeader(getToken());
             headers.put("User-Agent", "JavaHttpClient/11");
             headers.put(getContentType().key(), getContentType().value());
+            headers.put("accept", "*/*");
             headers.forEach(builder::header);
             //POST file-upload:
             HttpClient client = getClient();
