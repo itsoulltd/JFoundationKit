@@ -8,6 +8,7 @@ import com.infoworks.orm.Property;
 import com.infoworks.utils.rest.base.HttpTask;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -20,6 +21,7 @@ import java.util.function.Consumer;
 public abstract class RestTask extends HttpTask<Message, Response> {
 
     protected SSLContext security;
+    protected SSLParameters sslParameters;
     protected Map<String, Object> body;
     protected HttpClient client;
     protected MediaType contentType = MediaType.JSON;
@@ -56,6 +58,7 @@ public abstract class RestTask extends HttpTask<Message, Response> {
             HttpClient.Builder builder = HttpClient.newBuilder()
                     .followRedirects(redirectPolicy())
                     .connectTimeout(connectionTimeout());
+            builder = (getSslParameters() != null) ? builder.sslParameters(getSslParameters()) : builder;
             this.client = (getSecurity() != null)
                     ? builder.sslContext(getSecurity()).build()
                     : builder.build();
@@ -77,6 +80,14 @@ public abstract class RestTask extends HttpTask<Message, Response> {
 
     public void setSecurity(SSLContext security) {
         this.security = security;
+    }
+
+    public SSLParameters getSslParameters() {
+        return sslParameters;
+    }
+
+    public void setSslParameters(SSLParameters sslParameters) {
+        this.sslParameters = sslParameters;
     }
 
     public MediaType getContentType() {
