@@ -12,6 +12,7 @@ public class MediaType {
     public static MediaType PDF = new MediaType("application/pdf", null);
     public static MediaType ZIPPED = new MediaType("application/zip", null);
     public static MediaType BINARY_OCTET_STREAM = new MediaType("application/octet-stream", null);
+    public static MediaType MULTIPART_FORM_DATA = new MediaType("multipart/form-data", null);
     public static MediaType JPEG = new MediaType("image/jpeg", null);
     public static MediaType PNG = new MediaType("image/png", null);
     public static MediaType MP4 = new MediaType("video/mp4", null);

@@ -17,22 +17,39 @@ import java.util.Map;
 
 public class UploadTask extends PostTask {
 
-    private MediaType type;
+    private MediaType fileType;
     private File uploadFile;
 
     public UploadTask() {super();}
 
-    public UploadTask(String uploadUri, MediaType type, File uploadFile) {
+    public UploadTask(String uploadUri, MediaType fileType, File uploadFile) {
         super(uploadUri, "", new Property[0]);
-        this.type = type;
+        this.fileType = fileType;
+        this.uploadFile = uploadFile;
+    }
+
+    public MediaType getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(MediaType fileType) {
+        this.fileType = fileType;
+    }
+
+    public File getUploadFile() {
+        return uploadFile;
+    }
+
+    public void setUploadFile(File uploadFile) {
         this.uploadFile = uploadFile;
     }
 
     @Override
     public Response execute(Message message) throws RuntimeException {
         Response outcome = new Responses().setStatus(500);
-        if (type == null) return outcome.setError("MediaType cannot be null or empty.");
+        if (fileType == null) return outcome.setError("MediaType cannot be null or empty.");
         if (uploadFile == null) return outcome.setError("UploadFile cannot be null or empty.");
+        setContentType(MediaType.MULTIPART_FORM_DATA);
         try (FileInputStream inputStream = new FileInputStream(this.uploadFile)) {
             //Prepare request builder:
             HttpRequest.Builder builder = HttpRequest.newBuilder()
@@ -41,7 +58,7 @@ public class UploadTask extends PostTask {
             //Prepare Http-Headers:
             Map<String, String> headers = createAuthHeader(getToken());
             headers.put("User-Agent", "JavaHttpClient/11");
-            headers.put(type.key(), type.value());
+            headers.put(getContentType().key(), getContentType().value());
             headers.forEach(builder::header);
             //POST file-upload:
             HttpClient client = getClient();
