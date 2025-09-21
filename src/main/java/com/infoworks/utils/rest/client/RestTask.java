@@ -10,6 +10,7 @@ import com.infoworks.utils.rest.base.HttpTask;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -20,10 +21,12 @@ import java.util.function.Consumer;
 
 public abstract class RestTask extends HttpTask<Message, Response> {
 
+    protected Authenticator authenticator;
     protected SSLContext security;
     protected SSLParameters sslParameters;
     protected Map<String, Object> body;
     protected HttpClient client;
+    protected HttpClient.Version version;
     protected MediaType contentType = MediaType.JSON;
     protected Consumer<String> responseListener;
 
@@ -60,6 +63,8 @@ public abstract class RestTask extends HttpTask<Message, Response> {
                     .connectTimeout(connectionTimeout());
             builder = (getSecurity() != null) ? builder.sslContext(getSecurity()) : builder;
             builder = (getSslParameters() != null) ? builder.sslParameters(getSslParameters()) : builder;
+            builder = (getAuthenticator() != null) ? builder.authenticator(getAuthenticator()) : builder ;
+            builder = (getVersion() != null) ? builder.version(getVersion()) : builder;
             this.client = builder.build();
         }
         return this.client;
@@ -87,6 +92,22 @@ public abstract class RestTask extends HttpTask<Message, Response> {
 
     public void setSslParameters(SSLParameters sslParameters) {
         this.sslParameters = sslParameters;
+    }
+
+    public Authenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
+
+    public HttpClient.Version getVersion() {
+        return version;
+    }
+
+    public void setVersion(HttpClient.Version version) {
+        this.version = version;
     }
 
     public MediaType getContentType() {
