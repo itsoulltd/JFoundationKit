@@ -5,6 +5,8 @@ import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
+import com.infoworks.utils.rest.client.publisher.MultipartBodyPublisher;
+import com.infoworks.utils.rest.client.publisher.MultipartIStreamPublisher;
 
 import java.io.*;
 import java.net.URI;
@@ -74,15 +76,14 @@ public class UploadTask extends PostTask {
         //Files.newInputStream(getUploadFile().toPath())
         try (InputStream inputStream = new FileInputStream(getUploadFile())) {
             //Prepare request builder:
-            byte[] pre = preamble(getFilename(), getFileType());
-            byte[] cls = closing();
+            MultipartBodyPublisher publisher = new MultipartIStreamPublisher();
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(getUri()))
-                    .POST(ofMultipartBody(pre, inputStream, cls));
+                    .POST(publisher.ofMultipartBody(getFilename(), getFileType(), inputStream));
             //Prepare Http-Headers:
             Map<String, String> headers = createAuthHeader(getToken());
             headers.put("User-Agent", "JavaHttpClient/11");
-            headers.put(getContentType().key(), String.format("%s; boundary=%s", getContentType().value(), BOUNDARY));
+            headers.put(publisher.contentTypeKey(), publisher.contentTypeValue(getContentType()));
             headers.put("accept", "*/*");
             headers.forEach(builder::header);
             //POST file-upload:
@@ -93,31 +94,5 @@ public class UploadTask extends PostTask {
             outcome.setError(e.getMessage());
         }
         return outcome;
-    }
-
-    private static String BOUNDARY = "----Boundary" + UUID.randomUUID();
-    private static String LINE_FEED = "\r\n";
-    public byte[] closing() {
-        return (LINE_FEED + "--" + BOUNDARY + "--" + LINE_FEED).getBytes();
-    }
-    public byte[] preamble(String filename, MediaType fileType) {
-        StringBuilder preambleBuilder = new StringBuilder();
-        preambleBuilder.append("--").append(BOUNDARY).append(LINE_FEED);
-        preambleBuilder.append("Content-Disposition: form-data; name=\"file\"; filename=\"")
-                .append(filename).append("\"").append(LINE_FEED);
-        preambleBuilder.append("Content-Type: ").append(fileType.value()).append(LINE_FEED).append(LINE_FEED);
-        return preambleBuilder.toString().getBytes();
-    }
-
-    public HttpRequest.BodyPublisher ofMultipartBody(byte[] preamble, InputStream ios, byte[] closing) {
-        return HttpRequest.BodyPublishers.ofInputStream(() -> {
-            List<InputStream> streams = Arrays.asList(
-                    new ByteArrayInputStream(preamble)
-                    , ios
-                    , new ByteArrayInputStream(closing)
-            );
-            SequenceInputStream sios = new SequenceInputStream(Collections.enumeration(streams));
-            return sios;
-        });
     }
 }
