@@ -3,6 +3,7 @@ package com.infoworks.utils.rest.client.publisher;
 import com.infoworks.objects.MediaType;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.net.http.HttpRequest;
@@ -29,7 +30,7 @@ public class MultipartIStreamPublisher implements MultipartBodyPublisher {
         return preambleBuilder.toString().getBytes();
     }
 
-    public HttpRequest.BodyPublisher ofMultipartBody(String filename, MediaType fileType, InputStream ios) {
+    public HttpRequest.BodyPublisher ofMultipartBody(String filename, MediaType fileType, InputStream ios) throws IOException {
         final byte[] preamble = preamble(filename, fileType);
         final byte[] closing = closing();
         return HttpRequest.BodyPublishers.ofInputStream(() -> {

@@ -6,21 +6,24 @@ import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
 import com.infoworks.utils.rest.client.publisher.MultipartBodyPublisher;
-import com.infoworks.utils.rest.client.publisher.MultipartIStreamPublisher;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.time.Duration;
-import java.util.*;
+import java.util.Map;
 
 public class UploadTask extends PostTask {
 
     private MediaType fileType;
     private File uploadFile;
+    private MultipartBodyPublisher bodyPublisher;
 
     public UploadTask() {super();}
 
@@ -62,6 +65,14 @@ public class UploadTask extends PostTask {
         return null;
     }
 
+    public MultipartBodyPublisher getBodyPublisher() {
+        return bodyPublisher;
+    }
+
+    public void setBodyPublisher(MultipartBodyPublisher bodyPublisher) {
+        this.bodyPublisher = bodyPublisher;
+    }
+
     @Override
     protected Duration connectionTimeout() {
         return Duration.ofSeconds(60);
@@ -76,7 +87,7 @@ public class UploadTask extends PostTask {
         //Files.newInputStream(getUploadFile().toPath())
         try (InputStream inputStream = new FileInputStream(getUploadFile())) {
             //Prepare request builder:
-            MultipartBodyPublisher publisher = new MultipartIStreamPublisher();
+            MultipartBodyPublisher publisher = getBodyPublisher();
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(getUri()))
                     .POST(publisher.ofMultipartBody(getFilename(), getFileType(), inputStream));

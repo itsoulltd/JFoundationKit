@@ -3,6 +3,8 @@ package com.infoworks.utils.rest.client;
 import com.infoworks.objects.MediaType;
 import com.infoworks.objects.Response;
 import com.infoworks.utils.rest.base.SSLContextFactory;
+import com.infoworks.utils.rest.client.publisher.MultipartFilePublisher;
+import com.infoworks.utils.rest.client.publisher.MultipartIStreamPublisher;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,6 +24,8 @@ public class UploadTaskTest {
         //
         UploadTask task = new UploadTask("http://localhost:8080/files/upload", MediaType.PNG, imfFile);
         task.setToken("my-token");
+        //task.setBodyPublisher(new MultipartIStreamPublisher());
+        task.setBodyPublisher(new MultipartFilePublisher());
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         if(response.getStatus() == 500) {
