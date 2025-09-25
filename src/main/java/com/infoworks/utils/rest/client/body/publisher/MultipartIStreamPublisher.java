@@ -32,11 +32,12 @@ public class MultipartIStreamPublisher implements MultipartBodyPublisher {
 
     public HttpRequest.BodyPublisher ofMultipartBody(String filename, MediaType fileType, InputStream ios) throws IOException {
         final byte[] preamble = preamble(filename, fileType);
+        final byte[] data = ios.readAllBytes();
         final byte[] closing = closing();
         return HttpRequest.BodyPublishers.ofInputStream(() -> {
             List<InputStream> streams = Arrays.asList(
                     new ByteArrayInputStream(preamble)
-                    , ios
+                    , new ByteArrayInputStream(data)
                     , new ByteArrayInputStream(closing)
             );
             SequenceInputStream sios = new SequenceInputStream(Collections.enumeration(streams));
