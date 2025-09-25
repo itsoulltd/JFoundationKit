@@ -1,4 +1,4 @@
-package com.infoworks.utils.rest.client.publisher;
+package com.infoworks.utils.rest.client.body.publisher;
 
 import com.infoworks.objects.MediaType;
 

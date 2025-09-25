@@ -5,7 +5,7 @@ import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
-import com.infoworks.utils.rest.client.publisher.MultipartBodyPublisher;
+import com.infoworks.utils.rest.client.body.publisher.MultipartBodyPublisher;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -3,8 +3,7 @@ package com.infoworks.utils.rest.client;
 import com.infoworks.objects.MediaType;
 import com.infoworks.objects.Response;
 import com.infoworks.utils.rest.base.SSLContextFactory;
-import com.infoworks.utils.rest.client.publisher.MultipartFilePublisher;
-import com.infoworks.utils.rest.client.publisher.MultipartIStreamPublisher;
+import com.infoworks.utils.rest.client.body.publisher.MultipartFilePublisher;
 import org.junit.Assert;
 import org.junit.Test;
 
