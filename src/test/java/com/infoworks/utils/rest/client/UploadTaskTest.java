@@ -65,6 +65,8 @@ public class UploadTaskTest {
         task.setSslParameters(sslParams);
         task.setSecurity(SSLContextFactory.createDefaultContext());
         //
+        task.setContentDispositionNameKey("content");
+        task.setBodyPublisher(new MultipartIStreamPublisher());
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         if(response.getStatus() == 500) System.out.println(response.getError());
