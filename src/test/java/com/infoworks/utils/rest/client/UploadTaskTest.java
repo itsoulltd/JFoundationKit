@@ -24,7 +24,7 @@ public class UploadTaskTest {
         //
         UploadTask task = new UploadTask("http://localhost:8080/files/upload", MediaType.PNG, imfFile);
         task.setToken("my-token");
-        //task.setBodyPublisher(new MultipartIStreamPublisher());
+        task.setContentDispositionNameKey("content");
         task.setBodyPublisher(new MultipartFilePublisher());
         Response response = task.execute(null);
         System.out.println(response.getStatus());
@@ -42,6 +42,7 @@ public class UploadTaskTest {
         //
         UploadTask task = new UploadTask("http://localhost:8080/files/upload", MediaType.PDF, imfFile);
         task.setToken("my-token");
+        task.setContentDispositionNameKey("content");
         task.setBodyPublisher(new MultipartIStreamPublisher());
         Response response = task.execute(null);
         System.out.println(response.getStatus());
@@ -75,7 +76,7 @@ public class UploadTaskTest {
         Path path = Paths.get("src","test","resources", "data", "final-architecture.png");
         File imfFile = new File(path.toFile().getAbsolutePath());
         UploadTask task = new UploadTask("", null, imfFile);
-        MediaType type = task.getFileType();
+        MediaType type = task.getMimeType();
         Assert.assertEquals(type.value(), MediaType.PNG.value());
     }
 
@@ -84,7 +85,7 @@ public class UploadTaskTest {
         Path path = Paths.get("src","test","resources", "data", "JFoundationKit_Test.pdf");
         File pdfFile = new File(path.toFile().getAbsolutePath());
         UploadTask task = new UploadTask("", null, pdfFile);
-        MediaType type = task.getFileType();
+        MediaType type = task.getMimeType();
         Assert.assertEquals(type.value(), MediaType.PDF.value());
     }
 
@@ -93,7 +94,7 @@ public class UploadTaskTest {
         Path path = Paths.get("src","test","resources", "data", "ride-mock-data.json");
         File jsonFile = new File(path.toFile().getAbsolutePath());
         UploadTask task = new UploadTask("", null, jsonFile);
-        MediaType type = task.getFileType();
+        MediaType type = task.getMimeType();
         Assert.assertEquals(type.value(), MediaType.JSON.value());
     }
 }

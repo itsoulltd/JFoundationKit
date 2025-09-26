@@ -20,34 +20,34 @@ import java.time.Duration;
 import java.util.Map;
 
 public class UploadTask extends PostTask {
-
-    private MediaType fileType;
+    private String contentDispositionNameKey = "file";
+    private MediaType mimeType;
     private File uploadFile;
     private MultipartBodyPublisher bodyPublisher;
 
     public UploadTask() {super();}
 
-    public UploadTask(String uploadUri, MediaType fileType, File uploadFile) {
+    public UploadTask(String uploadUri, MediaType mimeType, File uploadFile) {
         super(uploadUri, "", new Property[0]);
-        this.fileType = fileType;
+        this.mimeType = mimeType;
         this.uploadFile = uploadFile;
     }
 
-    public MediaType getFileType() {
-        if (this.fileType == null) {
+    public MediaType getMimeType() {
+        if (this.mimeType == null) {
             //Let's try to get from the file it-self:
             try {
                 String mediaType = Files.probeContentType(getUploadFile().toPath());
-                this.fileType = new MediaType(mediaType, null);
+                this.mimeType = new MediaType(mediaType, null);
             } catch (Exception e) {
-                this.fileType = MediaType.BINARY_OCTET_STREAM;
+                this.mimeType = MediaType.BINARY_OCTET_STREAM;
             }
         }
-        return fileType;
+        return mimeType;
     }
 
-    public void setFileType(MediaType fileType) {
-        this.fileType = fileType;
+    public void setMimeType(MediaType mimeType) {
+        this.mimeType = mimeType;
     }
 
     public File getUploadFile() {
@@ -78,10 +78,18 @@ public class UploadTask extends PostTask {
         return Duration.ofSeconds(60);
     }
 
+    public String getContentDispositionNameKey() {
+        return contentDispositionNameKey;
+    }
+
+    public void setContentDispositionNameKey(String contentDispositionNameKey) {
+        this.contentDispositionNameKey = contentDispositionNameKey;
+    }
+
     @Override
     public Response execute(Message message) throws RuntimeException {
         Response outcome = new Responses().setStatus(500);
-        if (getFileType() == null) return outcome.setError("MediaType cannot be null or empty.");
+        if (getMimeType() == null) return outcome.setError("MediaType cannot be null or empty.");
         if (getUploadFile() == null) return outcome.setError("UploadFile cannot be null or empty.");
         if (getBodyPublisher() == null) return outcome.setError("MultipartBodyPublisher cannot be null or empty.");
         setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -91,7 +99,7 @@ public class UploadTask extends PostTask {
             MultipartBodyPublisher publisher = getBodyPublisher();
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(getUri()))
-                    .POST(publisher.ofMultipartBody(getFilename(), getFileType(), inputStream));
+                    .POST(publisher.ofMultipartBody(inputStream, getContentDispositionNameKey(), getFilename(), getMimeType()));
             //Prepare Http-Headers:
             Map<String, String> headers = createAuthHeader(getToken());
             headers.put("User-Agent", "JavaHttpClient/11");
