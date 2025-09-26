@@ -31,9 +31,7 @@ public class MultipartIStreamPublisher implements MultipartBodyPublisher {
 
     public HttpRequest.BodyPublisher ofMultipartBody(InputStream ios, Property...contentDispositions) throws IOException {
         //String name, String filename, String Content-Type;
-        Row row = new Row();
-        row.setProperties(Arrays.asList(contentDispositions));
-        Map<String, Property> disposition = row.keyValueMap();
+        Map<String, Property> disposition = convert(contentDispositions);
         String name = disposition.get("name").getValue().toString();
         String filename = disposition.get("filename").getValue().toString();
         String mimeType = disposition.get("Content-Type").getValue().toString();
@@ -50,6 +48,12 @@ public class MultipartIStreamPublisher implements MultipartBodyPublisher {
             SequenceInputStream sios = new SequenceInputStream(Collections.enumeration(streams));
             return sios;
         });
+    }
+
+    private Map<String, Property> convert(Property...properties) {
+        Row row = new Row();
+        row.setProperties(Arrays.asList(properties));
+        return row.keyValueMap();
     }
 
     @Override

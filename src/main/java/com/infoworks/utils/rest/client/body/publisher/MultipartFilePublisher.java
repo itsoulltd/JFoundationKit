@@ -17,26 +17,28 @@ public class MultipartFilePublisher implements MultipartBodyPublisher {
 
     @Override
     public HttpRequest.BodyPublisher ofMultipartBody(InputStream ios, Property...contentDispositions) throws IOException {
-        List<byte[]> byteArrays = new ArrayList<>();
-        byte[] separator = ("\r\n--" + BOUNDARY + "\r\n")
-                .getBytes(StandardCharsets.UTF_8);
-        //start:
-        byteArrays.add(separator);
         //String name, String filename, String Content-Type;
-        Row row = new Row();
-        row.setProperties(Arrays.asList(contentDispositions));
-        Map<String, Property> disposition = row.keyValueMap();
+        Map<String, Property> disposition = convert(contentDispositions);
         String name = disposition.get("name").getValue().toString();
         String filename = disposition.get("filename").getValue().toString();
         String mimeType = disposition.get("Content-Type").getValue().toString();
-        //
+        //start:
+        List<byte[]> byteArrays = new ArrayList<>();
+        byte[] separator = ("\r\n--" + BOUNDARY + "\r\n").getBytes(StandardCharsets.UTF_8);
+        byteArrays.add(separator);
         byteArrays.add(("Content-Disposition: form-data; name=\"" + name + "\"; "
                 + "filename=\"" + filename + "\"\r\n"
                 + "Content-Type: " + mimeType + "\r\n\r\n").getBytes(StandardCharsets.UTF_8));
         byteArrays.add(ios.readAllBytes());
-        //end
         byteArrays.add(("\r\n--" + BOUNDARY + "--\r\n").getBytes(StandardCharsets.UTF_8));
+        //end
         return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
+    }
+
+    private Map<String, Property> convert(Property...properties) {
+        Row row = new Row();
+        row.setProperties(Arrays.asList(properties));
+        return row.keyValueMap();
     }
 
     @Override
