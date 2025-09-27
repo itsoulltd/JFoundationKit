@@ -105,13 +105,35 @@
             <version>3.11.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- Spring WebSocket Client API -->
+        <!-- Spring Web Client API -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>[5.0.4.RELEASE, 5.3.39]</version>
             <scope>test</scope>
         </dependency>
+        <!-- Spring WebSocket Client API-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>[5.0.4.RELEASE, 5.3.39]</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>[5.0.4.RELEASE, 5.3.39]</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://projects.eclipse.org/projects/ee4j.tyrus -->
+        <!-- https://mvnrepository.com/artifact/org.glassfish.tyrus.bundles/tyrus-standalone-client -->
+        <dependency>
+            <groupId>org.glassfish.tyrus.bundles</groupId>
+            <artifactId>tyrus-standalone-client</artifactId>
+            <version>1.18</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- -->
         <!-- Test Suits Ends -->
     </dependencies>
 
@@ -152,6 +174,7 @@
                         <exclude>com.infoworks.utils.rest.spring.DownloadTaskTest.java</exclude>
                         <exclude>RestTaskTest.java</exclude>
                         <exclude>UploadTaskTest.java</exclude>
+                        <exclude>SpringWebSocketTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
