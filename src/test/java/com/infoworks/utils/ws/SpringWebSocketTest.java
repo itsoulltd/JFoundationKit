@@ -1,6 +1,7 @@
 package com.infoworks.utils.ws;
 
 import com.infoworks.utils.ws.spring.SpringSocketTemplate;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
@@ -18,6 +19,7 @@ public class SpringWebSocketTest {
         socket.setQueryParam("secret", "app_secret");
         try {
             socket.connect("ws://localhost:8080/process", 0);
+            Assert.assertTrue(socket.isConnected());
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
