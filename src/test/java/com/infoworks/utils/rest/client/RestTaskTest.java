@@ -21,7 +21,43 @@ public class RestTaskTest {
     }
 
     @Test
+    public void getTestV1() {
+        RestTask task = new GetTask(
+                "http://localhost:8080", null
+                , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
+        Response response = task.execute(null);
+        System.out.println(response.getStatus());
+    }
+
+    @Test
     public void getTestV2() {
+        RestTask task = new GetTask(
+                "http://localhost:8080", ""
+                , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
+        Response response = task.execute(null);
+        System.out.println(response.getStatus());
+    }
+
+    @Test
+    public void getTestV3() {
+        RestTask task = new GetTask(
+                "http://localhost:8080", "/"
+                , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
+        Response response = task.execute(null);
+        System.out.println(response.getStatus());
+    }
+
+    @Test
+    public void getTestV4() {
+        RestTask task = new GetTask(
+                "http://localhost:8080/", "/"
+                , new Property("full name", "sohana islam"), new Property("email", "sohana@gmail.com"));
+        Response response = task.execute(null);
+        System.out.println(response.getStatus());
+    }
+
+    @Test
+    public void getTestV5() {
         RestTask task = new GetTask("https://jsonplaceholder.typicode.com/posts", "/1");
         Response response = task.execute(null);
         System.out.println(response.getStatus());
