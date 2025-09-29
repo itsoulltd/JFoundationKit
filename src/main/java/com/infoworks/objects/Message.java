@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Message implements Externalizable {
+public class Message implements Externalizable, Comparable<Message> {
 
     @Ignore
     protected static Logger LOG = Logger.getLogger(Message.class.getSimpleName());
@@ -115,16 +115,25 @@ public class Message implements Externalizable {
         return "Message{" + "payload='" + payload + '\'' + '}';
     }
 
-    protected int compareWithOrder(Message o1, Message o2, String sortBy, Responses.SortOrder order) {
-        if (order == Responses.SortOrder.ASC)
+    public static int compareWithOrder(Message o1, Message o2, String sortBy, SortOrder order) {
+        if (order == SortOrder.ASC)
             return compare(o1, o2, sortBy);
         else
             return compare(o2, o1, sortBy);
     }
 
-    protected int compare(Message o1, Message o2, String sortBy) {
-        Object obj1 = getSortBy(sortBy, o1);
-        Object obj2 = getSortBy(sortBy, o2);
+    public static int compare(Message o1, Message o2, String sortBy) {
+        return o1.compareTo(o2, sortBy);
+    }
+
+    @Override
+    public int compareTo(Message other) {
+        return compareTo(other, "payload");
+    }
+
+    public int compareTo(Message other, String sortBy) {
+        Object obj1 = this.getSortBy(sortBy);
+        Object obj2 = other.getSortBy(sortBy);
         if (obj1 != null && obj2 != null) {
             String value = obj1.toString();
             String oValue = obj2.toString();
@@ -148,13 +157,13 @@ public class Message implements Externalizable {
         }
     }
 
-    protected final Object getSortBy(String sortBy, Message obj) {
+    protected final Object getSortBy(String sortBy) {
         if (sortByIsEmpty(sortBy)) return null;
         Field fl = null;
         try {
-            fl = obj.getClass().getDeclaredField(sortBy);
+            fl = getClass().getDeclaredField(sortBy);
             fl.setAccessible(true);
-            return fl.get(obj);
+            return fl.get(this);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {

@@ -6,11 +6,6 @@ import java.util.List;
 
 public class Responses<C extends Response> extends Response {
 
-    public enum SortOrder {
-        ASC,
-        DESC
-    }
-
     private List<C> collections;
 
     public Responses() {/**/}

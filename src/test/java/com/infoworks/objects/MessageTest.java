@@ -183,12 +183,12 @@ public class MessageTest {
         System.out.println("Before Sort: ");
         responses.getCollections().forEach(rsp -> System.out.println(rsp.toString()));
         //Test:01
-        List<Response> ordered = responses.sort(Responses.SortOrder.ASC, "status");
+        List<Response> ordered = responses.sort(SortOrder.ASC, "status");
         Assert.assertNotEquals(response1, ordered.get(0));
         System.out.println("After SortBy -> Status(ASC): ");
         ordered.forEach(rsp -> System.out.println(rsp.toString()));
         //Test:02
-        List<Response> ordered2 = responses.sort(Responses.SortOrder.DESC, "message");
+        List<Response> ordered2 = responses.sort(SortOrder.DESC, "message");
         Assert.assertNotEquals(response1, ordered2.get(0));
         System.out.println("After SortBy -> Message(DESC): ");
         ordered2.forEach(rsp -> System.out.println(rsp.toString()));
