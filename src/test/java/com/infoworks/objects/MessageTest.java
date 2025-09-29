@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -192,6 +193,57 @@ public class MessageTest {
         Assert.assertNotEquals(response1, ordered2.get(0));
         System.out.println("After SortBy -> Message(DESC): ");
         ordered2.forEach(rsp -> System.out.println(rsp.toString()));
+    }
+
+    @Test
+    public void messageSortTest() {
+        Response response1 = new Response().setStatus(220).setMessage("Cris");
+        Response response2 = new Response().setStatus(201).setMessage("Adams");
+        Response response3 = new Response().setStatus(420).setMessage("James");
+        Response response4 = new Response().setStatus(556).setMessage("Hayes");
+        //
+        List<Response> list = Arrays.asList(response1, response2, response3, response4);
+        System.out.println("Before Sort: ");
+        list.forEach(rsp -> System.out.println(rsp.toString()));
+        //
+        Collections.sort(list, (o1, o2) -> Message.compareWithOrder(o1, o2, "status", SortOrder.DESC));
+        Assert.assertNotEquals(response1, list.get(0));
+        System.out.println("After SortBy -> Status(DESC): ");
+        list.forEach(rsp -> System.out.println(rsp.toString()));
+    }
+
+    @Test
+    public void messageSortTestV2() {
+        Response response1 = new Response().setStatus(220).setMessage("Cris");
+        Response response2 = new Response().setStatus(201).setMessage("Adams");
+        Response response3 = new Response().setStatus(420).setMessage("James");
+        Response response4 = new Response().setStatus(556).setMessage("Hayes");
+        //
+        List<Response> list = Arrays.asList(response1, response2, response3, response4);
+        System.out.println("Before Sort: ");
+        list.forEach(rsp -> System.out.println(rsp.toString()));
+        //
+        Collections.sort(list, (o1, o2) -> Message.compare(o1, o2, "message"));
+        Assert.assertNotEquals(response1, list.get(0));
+        System.out.println("After SortBy -> Message(ASC): ");
+        list.forEach(rsp -> System.out.println(rsp.toString()));
+    }
+
+    @Test
+    public void messageSortTestV3() {
+        Response response1 = new Response().setStatus(220).setMessage("Cris");
+        Response response2 = new Response().setStatus(201).setMessage("Adams");
+        Response response3 = new Response().setStatus(420).setMessage("James");
+        Response response4 = new Response().setStatus(556).setMessage("Hayes");
+        //
+        List<Response> list = Arrays.asList(response1, response2, response3, response4);
+        System.out.println("Before Sort: ");
+        list.forEach(rsp -> System.out.println(rsp.toString()));
+        //
+        Collections.sort(list, (o1, o2) -> Message.compare(o1, o2, "status"));
+        Assert.assertNotEquals(response1, list.get(0));
+        System.out.println("After SortBy -> Status(ASC): ");
+        list.forEach(rsp -> System.out.println(rsp.toString()));
     }
 
 }
