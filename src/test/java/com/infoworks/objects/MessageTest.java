@@ -276,6 +276,27 @@ public class MessageTest {
         list.forEach(rsp -> System.out.println(rsp.toString()));
     }
 
+    @Test
+    public void messageSortTestV4() {
+        Response response1 = new Response().setStatus(220).setMessage("Cris");
+        Response response2 = new Response().setStatus(201).setMessage("Adams");
+        Response response3 = new Response().setStatus(420).setMessage("James");
+        Response response4 = new Response().setStatus(556).setMessage("Hayes");
+        //
+        List<Response> list_1 = Arrays.asList(response1, response2, response3, response4);
+        List<Response> list_2 = Arrays.asList(response3, response2, response1, response4);
+        //Sort By ASC: (Default)
+        Collections.sort(list_1, (o1, o2) -> Message.compare(o1, o2, "status"));
+        //Sort By ASC:
+        Collections.sort(list_2, (o1, o2) -> Message.compareWithOrder(o1, o2, "status", SortOrder.ASC));
+        //Test: Both list must have same top object:
+        Assert.assertEquals(list_1.get(0), list_2.get(0));
+        System.out.println("list_1 SortBy -> Status(ASC by default): ");
+        list_1.forEach(rsp -> System.out.println(rsp.toString()));
+        System.out.println("list_2 SortBy -> Status(ASC by choice): ");
+        list_2.forEach(rsp -> System.out.println(rsp.toString()));
+    }
+
 }
 
 class MyExtendedMessage extends MyMessage {
