@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,5 +113,59 @@ public class Message implements Externalizable {
         }
         //Otherwise plain string for debug:
         return "Message{" + "payload='" + payload + '\'' + '}';
+    }
+
+    protected int compareWithOrder(Message o1, Message o2, String sortBy, Responses.SortOrder order) {
+        if (order == Responses.SortOrder.ASC)
+            return compare(o1, o2, sortBy);
+        else
+            return compare(o2, o1, sortBy);
+    }
+
+    protected int compare(Message o1, Message o2, String sortBy) {
+        Object obj1 = getSortBy(sortBy, o1);
+        Object obj2 = getSortBy(sortBy, o2);
+        if (obj1 != null && obj2 != null) {
+            String value = obj1.toString();
+            String oValue = obj2.toString();
+            if (obj1 instanceof Integer && obj2 instanceof Integer) {
+                return Integer.valueOf(value).compareTo(Integer.valueOf(oValue));
+            } else if (obj1 instanceof Long && obj2 instanceof Long) {
+                return Long.valueOf(value).compareTo(Long.valueOf(oValue));
+            } else if (obj1 instanceof Float && obj2 instanceof Float) {
+                return Float.valueOf(value).compareTo(Float.valueOf(oValue));
+            } else if (obj1 instanceof Double && obj2 instanceof Double) {
+                return Double.valueOf(value).compareTo(Double.valueOf(oValue));
+            } else if (obj1 instanceof BigDecimal && obj2 instanceof BigDecimal) {
+                return new BigDecimal(value).compareTo(new BigDecimal(oValue));
+            } else if (obj1 instanceof Boolean && obj2 instanceof Boolean) {
+                return Boolean.valueOf(value).compareTo(Boolean.valueOf(oValue));
+            }else {
+                return value.compareTo(oValue);
+            }
+        }else{
+            return 0; //So that, list remain as is;
+        }
+    }
+
+    protected final Object getSortBy(String sortBy, Message obj) {
+        if (sortByIsEmpty(sortBy)) return null;
+        Field fl = null;
+        try {
+            fl = obj.getClass().getDeclaredField(sortBy);
+            fl.setAccessible(true);
+            return fl.get(obj);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } finally {
+            if (fl != null) fl.setAccessible(false);
+        }
+        return null;
+    }
+
+    protected final boolean sortByIsEmpty(String sortBy) {
+        return sortBy == null || sortBy.isEmpty();
     }
 }
