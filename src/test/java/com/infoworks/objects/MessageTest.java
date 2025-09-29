@@ -34,14 +34,22 @@ public class MessageTest {
     }
 
     @Test
-    public void compareFailed() {
+    public void compareV2() {
         Message message1 = new Message();
         message1.setPayload("My name-1");
         //
         Message message2 = new Message();
         message2.setPayload("My name-2");
-        //Compare message1 == message2
+        //Compare message1 != message2
         Assert.assertFalse(message1.compareTo(message2) == 0);
+    }
+
+    @Test
+    public void compareEmpty() {
+        Message message1 = new Message();
+        Message message2 = new Message();
+        //Compare message1 == message2
+        Assert.assertTrue(message1.compareTo(message2) == 0);
     }
 
     @Test
