@@ -23,6 +23,28 @@ public class MessageTest {
     }
 
     @Test
+    public void compare() {
+        Message message1 = new Message();
+        message1.setPayload("My name");
+        //
+        Message message2 = new Message();
+        message2.setPayload("My name");
+        //Compare message1 == message2
+        Assert.assertTrue(message1.compareTo(message2) == 0);
+    }
+
+    @Test
+    public void compareFailed() {
+        Message message1 = new Message();
+        message1.setPayload("My name-1");
+        //
+        Message message2 = new Message();
+        message2.setPayload("My name-2");
+        //Compare message1 == message2
+        Assert.assertFalse(message1.compareTo(message2) == 0);
+    }
+
+    @Test
     public void marshal() {
         Message message = new Message();
         message.setPayload("My name");
