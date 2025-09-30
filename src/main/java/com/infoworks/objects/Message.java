@@ -152,7 +152,7 @@ public class Message implements Externalizable, Comparable<Message> {
             }else {
                 return value.compareTo(oValue);
             }
-        }else{
+        } else {
             return 0; //So that, list remain as is;
         }
     }
