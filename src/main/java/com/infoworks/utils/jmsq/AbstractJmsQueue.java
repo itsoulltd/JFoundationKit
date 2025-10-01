@@ -15,18 +15,9 @@ public abstract class AbstractJmsQueue implements TaskQueue, QueuedTaskStateList
 
     private BiConsumer<Message, TaskStack.State> callback;
     private TaskCompletionListener listener;
-    private ObjectMapper objectMapper;
 
-    public ObjectMapper getObjectMapper() {
-        if (objectMapper == null) {
-            objectMapper = MessageParser.getJsonSerializer();
-        }
-        return objectMapper;
-    }
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    public abstract ObjectMapper getObjectMapper();
+    public abstract void setObjectMapper(ObjectMapper objectMapper);
 
     protected JmsMessage convert(Task task){
         //Defined:JmsMessage Protocol

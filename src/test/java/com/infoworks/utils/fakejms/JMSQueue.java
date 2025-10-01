@@ -1,5 +1,6 @@
 package com.infoworks.utils.fakejms;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infoworks.objects.Message;
 import com.infoworks.tasks.Task;
 import com.infoworks.tasks.queue.TaskQueue;
@@ -19,6 +20,17 @@ public class JMSQueue extends AbstractJmsQueue {
 
     public JMSQueue() {
         this(1);
+    }
+
+    private ObjectMapper objectMapper;
+    @Override
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    @Override
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @Override
