@@ -135,22 +135,20 @@ public class Message implements Externalizable, Comparable<Message> {
         Object obj1 = this.getSortBy(sortBy);
         Object obj2 = other.getSortBy(sortBy);
         if (obj1 != null && obj2 != null) {
-            String value = obj1.toString();
-            String oValue = obj2.toString();
             if (obj1 instanceof Integer && obj2 instanceof Integer) {
-                return Integer.valueOf(value).compareTo(Integer.valueOf(oValue));
+                return Integer.compare((Integer) obj1, (Integer) obj2);
             } else if (obj1 instanceof Long && obj2 instanceof Long) {
-                return Long.valueOf(value).compareTo(Long.valueOf(oValue));
+                return Long.compare((Long) obj1, (Long) obj2);
             } else if (obj1 instanceof Float && obj2 instanceof Float) {
-                return Float.valueOf(value).compareTo(Float.valueOf(oValue));
+                return Float.compare((Float) obj1, (Float) obj2);
             } else if (obj1 instanceof Double && obj2 instanceof Double) {
-                return Double.valueOf(value).compareTo(Double.valueOf(oValue));
-            } else if (obj1 instanceof BigDecimal && obj2 instanceof BigDecimal) {
-                return new BigDecimal(value).compareTo(new BigDecimal(oValue));
+                return Double.compare((Double) obj1, (Double) obj2);
             } else if (obj1 instanceof Boolean && obj2 instanceof Boolean) {
-                return Boolean.valueOf(value).compareTo(Boolean.valueOf(oValue));
-            }else {
-                return value.compareTo(oValue);
+                return Boolean.compare((Boolean) obj1, (Boolean) obj2);
+            } else if (obj1 instanceof BigDecimal && obj2 instanceof BigDecimal) {
+                return ((BigDecimal) obj1).compareTo((BigDecimal) obj2);
+            } else {
+                return obj1.toString().compareTo(obj2.toString());
             }
         } else {
             return 0; //So that, list remain as is;
