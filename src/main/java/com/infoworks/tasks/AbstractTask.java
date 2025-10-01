@@ -1,6 +1,7 @@
 package com.infoworks.tasks;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infoworks.objects.Message;
 import com.infoworks.orm.Property;
 import com.infoworks.orm.Row;
@@ -36,7 +37,7 @@ public abstract class AbstractTask<In extends Message, Out extends Message> impl
         Row row = new Row();
         row.setProperties(Arrays.asList(properties));
         try {
-            this.message.setPayload(MessageParser.marshal(row.keyObjectMap()));
+            this.message.setPayload(MessageParser.marshal(row.keyObjectMap(), getObjectMapper()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,7 +110,7 @@ public abstract class AbstractTask<In extends Message, Out extends Message> impl
                 for (Property property : properties) {
                     old.put(property.getKey(), property.getValue());
                 }
-                payload = MessageParser.marshal(old);
+                payload = MessageParser.marshal(old, getObjectMapper());
                 getMessage().setPayload(payload);
                 return;
             } catch (IOException e) {
@@ -117,6 +118,19 @@ public abstract class AbstractTask<In extends Message, Out extends Message> impl
             }
         }
         throw new RuntimeException("AbstractTask: Invalid Property Access");
+    }
+
+    /**
+     * Override in sub-task if:
+     * 1. Global-Configured ObjectMapper Spring-Bean.
+     * 2. Need to use with special ObjectMapper Configuration.
+     * e.g. Add Jackson JSR-310 Module. Jackson doesn't know how to (de)serialize java.time.LocalDateTime,
+     * because Java 8 time types are not supported out-of-the-box unless you register the JSR-310 module.
+     * 3. Once initialized, then reused as local-variable.
+     * @return
+     */
+    protected ObjectMapper getObjectMapper() {
+        return MessageParser.getJsonSerializer();
     }
 
 }
