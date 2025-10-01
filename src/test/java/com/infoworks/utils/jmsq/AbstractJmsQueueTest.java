@@ -1,6 +1,10 @@
 package com.infoworks.utils.jmsq;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.infoworks.objects.Message;
+import com.infoworks.objects.MessageParser;
 import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
 import com.infoworks.tasks.AbstractTask;
@@ -8,10 +12,9 @@ import com.infoworks.tasks.ExecutableTask;
 import com.infoworks.utils.fakejms.JMSQueue;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.Assert.*;
 
 public class AbstractJmsQueueTest {
 
@@ -40,6 +43,41 @@ public class AbstractJmsQueueTest {
         try {
             latch.await();
         } catch (InterruptedException e) {}
+    }
+
+    @Test
+    public void jmsQueueTestWillSucceed() {
+        //Initialize:
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicInteger counter = new AtomicInteger(1);
+        //
+        JMSQueue queue = new JMSQueue();
+        queue.setObjectMapper(getMapperWithDatetimeOption());
+        //
+        queue.onTaskComplete((message, state) -> {
+            System.out.println("State: " + state.name());
+            System.out.println(message.toString());
+            if (counter.get() > 1) {
+                counter.decrementAndGet();
+            } else {
+                latch.countDown();
+            }
+        });
+        //Adding Into Queue:
+        queue.add(new ExampleTask("Going to succeed!", LocalDateTime.now()));
+        //
+        try {
+            latch.await();
+        } catch (InterruptedException e) {}
+    }
+
+    private ObjectMapper getMapperWithDatetimeOption() {
+        //Solution: Add Jackson JSR-310 Module. Jackson doesn't know how to (de)serialize java.time.LocalDateTime,
+        // because Java 8 time types are not supported out-of-the-box unless you register the JSR-310 module.
+        ObjectMapper mapper = MessageParser.getJsonSerializer();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
     }
 
     @Test
