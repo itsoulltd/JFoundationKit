@@ -1,6 +1,8 @@
 package com.infoworks.utils.jmsq;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infoworks.objects.Message;
+import com.infoworks.objects.MessageParser;
 import com.infoworks.tasks.Task;
 import com.infoworks.tasks.queue.QueuedTaskStateListener;
 import com.infoworks.tasks.queue.TaskQueue;
@@ -13,6 +15,18 @@ public abstract class AbstractJmsQueue implements TaskQueue, QueuedTaskStateList
 
     private BiConsumer<Message, TaskStack.State> callback;
     private TaskCompletionListener listener;
+    private ObjectMapper objectMapper;
+
+    public ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            objectMapper = MessageParser.getJsonSerializer();
+        }
+        return objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     protected JmsMessage convert(Task task){
         //Defined:JmsMessage Protocol
@@ -21,7 +35,7 @@ public abstract class AbstractJmsQueue implements TaskQueue, QueuedTaskStateList
                 .setMessageClassName(Message.class.getName());
         if (task.getMessage() != null) {
             jmsMessage.setMessageClassName(task.getMessage().getClass().getName())
-                    .setPayload(task.getMessage().toString());
+                    .setPayload(MessageParser.printString(task.getMessage(), getObjectMapper()));
         }
         return jmsMessage;
     }
@@ -32,7 +46,7 @@ public abstract class AbstractJmsQueue implements TaskQueue, QueuedTaskStateList
                 .setErrorClassName(Message.class.getName());
         if (error != null){
             jmsMessage.setErrorClassName(error.getClass().getName())
-                    .setErrorPayload(error.toString());
+                    .setErrorPayload(MessageParser.printString(error, getObjectMapper()));
         }
         return jmsMessage;
     }
