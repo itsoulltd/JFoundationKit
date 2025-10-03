@@ -163,9 +163,9 @@ public class Message implements Externalizable, Comparable<Message> {
             fl.setAccessible(true);
             return fl.get(this);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOG.log(Level.WARNING, e.getMessage());
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            LOG.log(Level.WARNING, e.getMessage() + "; No Such Field Exception.");
         } finally {
             if (fl != null) fl.setAccessible(false);
         }

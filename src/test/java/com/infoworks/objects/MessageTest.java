@@ -303,6 +303,21 @@ public class MessageTest {
         list_2.forEach(rsp -> System.out.println(rsp.toString()));
     }
 
+    @Test
+    public void messageSortTestV5() {
+        Response response1 = new Response().setStatus(220).setMessage("Cris");
+        Response response2 = new Response().setStatus(201).setMessage("Adams");
+        Response response3 = new Response().setStatus(420).setMessage("James");
+        Response response4 = new Response().setStatus(556).setMessage("Hayes");
+        //
+        List<Response> list = Arrays.asList(response1, response2, response3, response4);
+        //sortBy does not exist in Response:
+        Collections.sort(list, (o1, o2) -> Message.compare(o1, o2, "status_x"));
+        //So sorting didn't take place:
+        Assert.assertEquals(response1, list.get(0));
+        list.forEach(rsp -> System.out.println(rsp.toString()));
+    }
+
 }
 
 class MyExtendedMessage extends MyMessage {
