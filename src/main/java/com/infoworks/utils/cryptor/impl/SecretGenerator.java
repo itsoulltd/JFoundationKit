@@ -35,8 +35,8 @@ public class SecretGenerator implements KeyGenerator {
         return secret;
     }
 
-    public byte[] encrypt(String securePassword, String accessTokenMaterial) {
-        return hash(securePassword.toCharArray(), accessTokenMaterial.getBytes());
+    public byte[] encrypt(String password, String material) {
+        return hash(password.toCharArray(), material.getBytes());
     }
 
     public byte[] hash(char[] password, byte[] salt) {

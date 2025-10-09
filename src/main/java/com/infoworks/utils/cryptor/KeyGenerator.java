@@ -38,6 +38,6 @@ public interface KeyGenerator {
     }
     String generatePassword(String password, String salt);
     SecretKey generateKey() throws NoSuchAlgorithmException;
-    byte[] encrypt(String securePassword, String accessTokenMaterial);
+    byte[] encrypt(String password, String material);
     byte[] hash(char[] password, byte[] salt);
 }
