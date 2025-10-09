@@ -64,10 +64,10 @@ public class AES implements Cryptor {
             throw new UnsupportedEncodingException("SecretKey is null or empty!");
         //
         if (transformation == Transformation.AES_ECB_PKCS5Padding){
-            byte[] key = mykey.getBytes("UTF-8");
-            key = getSha(getHashKey()).digest(key);
-            key = Arrays.copyOf(key, 16);
-            SecretKeySpec secretKey = new SecretKeySpec(key, getAlgorithm().name());
+            byte[] keyBytes = mykey.getBytes("UTF-8");
+            keyBytes = getSha(getHashKey()).digest(keyBytes);
+            keyBytes = Arrays.copyOf(keyBytes, 16);
+            SecretKeySpec secretKey = new SecretKeySpec(keyBytes, getAlgorithm().name());
             return secretKey;
         }
         else if (transformation == Transformation.AES_CBC_PKCS7Padding){
@@ -89,10 +89,10 @@ public class AES implements Cryptor {
     }
 
     @Override
-    public String encrypt(String secret, String strToEncrypt) {
+    public String encrypt(String secret, String text) {
         try {
             Cipher cipher = getCipher(secret);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes("UTF-8")));
         } catch (Exception e) {
             System.out.println("Error while encrypting: " + e.toString());
         }
@@ -100,10 +100,10 @@ public class AES implements Cryptor {
     }
 
     @Override
-    public String decrypt(String secret, String strToDecrypt) {
+    public String decrypt(String secret, String text) {
         try {
             Cipher cipher = getDecipher(secret);
-            return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
+            return new String(cipher.doFinal(Base64.getDecoder().decode(text)));
         } catch (Exception e) {
             System.out.println("Error while decrypting: " + e.toString());
         }

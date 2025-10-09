@@ -14,8 +14,8 @@ public interface Cryptor {
     static Cryptor factory(){ return new AES(); }
 
     Key getKey(String key) throws UnsupportedEncodingException, NoSuchAlgorithmException;
-    String encrypt(String secret, String strToEncrypt);
-    String decrypt(String secret, String strToDecrypt);
+    String encrypt(String secret, String text);
+    String decrypt(String secret, String text);
 
     CryptoAlgorithm getAlgorithm();
     Transformation getTransformation();
