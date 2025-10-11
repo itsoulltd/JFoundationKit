@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Message implements Externalizable, Comparable<Message> {
+public class Message implements iMessage, Externalizable, Comparable<Message> {
 
     @Ignore
     protected static Logger LOG = Logger.getLogger(Message.class.getSimpleName());
