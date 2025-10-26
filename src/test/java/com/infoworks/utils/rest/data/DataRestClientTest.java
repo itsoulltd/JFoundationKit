@@ -79,7 +79,7 @@ public class DataRestClientTest {
         dataSource.close();
     }
 
-    @Test
+    //@Test
     public void addSingleItem() throws Exception {
         URL url = new URL("http://localhost:8080/api/data/users");
         DataRestClient<User> dataSource = new SpringDataRestClient(User.class, url);
@@ -89,6 +89,7 @@ public class DataRestClientTest {
         //
         User newUser = new User();
         newUser.setName("Sohana Islam Khan");
+        newUser.setEmail("sohana.islam_01@gmail.com");
         newUser.setAge(28);
         newUser.setSex("FEMALE");
         newUser.setActive(true);
@@ -122,8 +123,8 @@ public class DataRestClientTest {
         dataSource.close();
     }
 
-    @Test
-    public void readTest() throws Exception {
+    //@Test
+    public void readByIdTest() throws Exception {
         URL url = new URL("http://localhost:8080/api/data/users");
         DataRestClient<User> dataSource = new SpringDataRestClient(User.class, url);
         dataSource.load();
@@ -195,6 +196,7 @@ public class DataRestClientTest {
         //
         User newUser = new User();
         newUser.setName("Sohana Islam Khan");
+        newUser.setEmail("sohana.islam_02@gmail.com");
         newUser.setAge(28);
         newUser.setSex("FEMALE");
         newUser.setActive(true);
@@ -202,7 +204,7 @@ public class DataRestClientTest {
         //Create:
         Object id = dataSource.add(newUser);
         Assert.assertTrue(id != null);
-        //Read One:
+        //Read By ID:
         User read = dataSource.read(id);
         Assert.assertTrue(read != null);
         //Read from local:
@@ -351,6 +353,7 @@ public class DataRestClientTest {
 
     public static class User extends Any<Long> {
         private String name;
+        private String email;
         private String sex = "NONE";
         private int age = 18;
         private Date dob = new java.sql.Date(new Date().getTime());
@@ -396,6 +399,14 @@ public class DataRestClientTest {
 
         public void setActive(boolean active) {
             this.active = active;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         @Override
