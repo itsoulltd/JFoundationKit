@@ -1,4 +1,4 @@
-package com.infoworks.utils.rest.data;
+package com.infoworks.utils.rest.data.model;
 
 import com.infoworks.objects.Response;
 

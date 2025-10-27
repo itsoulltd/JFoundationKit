@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.infoworks.objects.MessageParser;
 import com.infoworks.orm.Property;
+import com.infoworks.utils.rest.data.model.Any;
+import com.infoworks.utils.rest.data.model.Links;
+import com.infoworks.utils.rest.data.model.Page;
+import com.infoworks.utils.rest.data.model.PaginatedResponse;
 import org.junit.Assert;
 import org.junit.Test;
 
