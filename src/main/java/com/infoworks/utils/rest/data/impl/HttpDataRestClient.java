@@ -251,7 +251,8 @@ public class HttpDataRestClient<Value extends Any> extends SimpleDataSource<Obje
         int nextPage = currentPage + 1;
         //
         Map body = new HashMap();
-        String nextPagePath = baseUrl.toString() + "?page={page}&size={size}";
+        String nextPagePath = baseUrl.toString();
+        //Read with Pagination: baseUrl.toString() + "?page={page}&size={size}";
         String result = exchange(HttpMethod.GET, body, nextPagePath, new Property("page", nextPage), new Property("size", pageSize));
         if(isEnableLogging()) System.out.println(result);
         //
@@ -442,12 +443,15 @@ public class HttpDataRestClient<Value extends Any> extends SimpleDataSource<Obje
             String result = exchange(HttpMethod.POST, postBody, rootURL);
             if(isEnableLogging()) System.out.println(result);
             Value created = (Value) MessageParser.unmarshal(anyClassType, result, getMapper());
-            Object key = created.parseId().orElse(null);
-            if(key != null) super.put(key.toString(), value);
-            return key;
+            if (created != null) {
+                Object key = created.parseId().orElse(null);
+                if(key != null) super.put(key.toString(), value);
+                return key;
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
     /**
