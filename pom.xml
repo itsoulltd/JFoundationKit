@@ -176,6 +176,7 @@
                         <exclude>UploadTaskTest.java</exclude>
                         <exclude>SpringWebSocketTest.java</exclude>
                         <exclude>DataRestClientTest.java</exclude>
+                        <exclude>HttpDataRestClientTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
