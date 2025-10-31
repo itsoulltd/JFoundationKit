@@ -6,6 +6,9 @@ import com.infoworks.orm.Row;
 import com.infoworks.utils.rest.base.HttpTask;
 import org.junit.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.Assert.*;
 
 public class RestTaskTest {
@@ -62,6 +65,20 @@ public class RestTaskTest {
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         System.out.println(response.getMessage());
+    }
+
+    @Test
+    public void getTestV5_2() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        //
+        RestTask task = new GetTask("https://jsonplaceholder.typicode.com/posts", "/1");
+        task.execute(null, (response) -> {
+            System.out.println(response.getStatus());
+            System.out.println(response.getMessage());
+            latch.countDown();
+        });
+        //
+        latch.await(100, TimeUnit.MILLISECONDS);
     }
 
     @Test

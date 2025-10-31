@@ -176,4 +176,10 @@ public abstract class RestTask extends HttpTask<Message, Response> {
         }
         return outcome;
     }
+
+    public void execute(Message message, Consumer<Response> responseListener) throws RuntimeException {
+        if (responseListener != null) {
+            responseListener.accept(execute(message));
+        }
+    }
 }
