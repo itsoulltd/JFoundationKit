@@ -69,7 +69,7 @@
             <version>32.1.3-jre</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <!-- MySQL -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -82,6 +82,13 @@
             <artifactId>h2</artifactId>
             <!--<version>1.4.200</version>-->
             <version>2.2.220</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- PostgreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
             <scope>test</scope>
         </dependency>
         <!-- A Wrapper API for All Kind of JDBC & JPA-Entity-Manager & Cassandra Calls -->
@@ -134,6 +141,40 @@
             <scope>test</scope>
         </dependency>
         <!-- -->
+        <!-- EclipseStore v2.x Java11+ -->
+        <!-- EclipseStore v3.x required Java17+ -->
+        <dependency>
+            <groupId>org.eclipse.store</groupId>
+            <artifactId>storage-embedded</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.store</groupId>
+            <artifactId>storage-embedded-configuration</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- EclipseStore external clients example -->
+        <dependency>
+            <groupId>org.eclipse.serializer</groupId>
+            <artifactId>persistence-binary-jdk8</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.store</groupId>
+            <artifactId>afs-sql</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.store</groupId>
+            <artifactId>afs-redis</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- -->
         <!-- Test Suits Ends -->
     </dependencies>
 
@@ -177,6 +218,7 @@
                         <exclude>SpringWebSocketTest.java</exclude>
                         <exclude>DataRestClientTest.java</exclude>
                         <exclude>HttpDataRestClientTest.java</exclude>
+                        <exclude>EclipseDataStoreTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
