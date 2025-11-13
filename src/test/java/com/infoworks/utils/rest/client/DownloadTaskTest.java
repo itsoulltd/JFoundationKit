@@ -70,7 +70,8 @@ public class DownloadTaskTest {
         DownloadTask task = new DownloadTask("https://farm2.staticflickr.com/1090/4595137268_0e3f2b9aa7_z_d.jpg"
                 , null);
         task.setToken("my-token");
-        task.addResponseListener((encoded) -> {
+        task.addResponseListener((response) -> {
+            String encoded = response.getMessage();
             System.out.println(encoded != null ? encoded.length() : "0");
             try {
                 String decoded = new String(Base64.getDecoder().decode(encoded), "UTF-8");
@@ -95,7 +96,8 @@ public class DownloadTaskTest {
         DownloadTask task = new DownloadTask("https://farm2.staticflickr.com/1090/bb3_z_d.jpg"
                 , null);
         task.setToken("my-token");
-        task.addResponseListener((encoded) -> {
+        task.addResponseListener((response) -> {
+            String encoded = response.getMessage();
             System.out.println(encoded != null ? encoded.length() : "0");
         });
         DownloadTask.ResourceResponse response = task.execute(null);
@@ -111,7 +113,8 @@ public class DownloadTaskTest {
         //
         DownloadTask task = new DownloadTask(null, null);
         task.setToken("my-token");
-        task.addResponseListener((encoded) -> {
+        task.addResponseListener((response) -> {
+            String encoded = response.getMessage();
             System.out.println(encoded != null ? encoded.length() : "0");
         });
         DownloadTask.ResourceResponse response = task.execute(null);

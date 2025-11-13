@@ -9,8 +9,6 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
-
 public class RestTaskTest {
 
     @Test
@@ -82,6 +80,18 @@ public class RestTaskTest {
     }
 
     @Test
+    public void getTestV5_3() {
+        RestTask task = new GetTask("https://jsonplaceholder.typicode.com/posts", "/1", new Property[0]
+                , (response) -> {
+                    //Result:
+                    System.out.println(response.getStatus());
+                    System.out.println(response.getMessage());
+                }
+        );
+        task.execute(null);
+    }
+
+    @Test
     public void postTest() {
         RestTask task = new PostTask(
                 "http://localhost:8080"
@@ -101,6 +111,20 @@ public class RestTaskTest {
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         System.out.println(response.getMessage());
+    }
+
+    @Test
+    public void postTestV2_2() {
+        RestTask task = new PostTask("https://jsonplaceholder.typicode.com/posts", null);
+        task.setBody(new Row().add("title", "foo")
+                .add("body", "bar")
+                .add("userId", "1"), null);
+        task.addResponseListener((response) -> {
+            //Result:
+            System.out.println(response.getStatus());
+            System.out.println(response.getMessage());
+        });
+        task.execute(null);
     }
 
     @Test
