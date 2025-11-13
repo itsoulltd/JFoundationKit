@@ -19,8 +19,7 @@ public class GetTask extends RestTask<Message, Response> {
     }
 
     public GetTask(String baseUri, String requestUri, Property[] params, Consumer<String> response) {
-        this(baseUri, requestUri, params);
-        addResponseListener(response);
+        super(baseUri, requestUri, params, response);
     }
 
     @Override
