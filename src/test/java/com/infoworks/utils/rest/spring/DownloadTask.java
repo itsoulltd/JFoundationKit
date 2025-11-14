@@ -27,11 +27,14 @@ public class DownloadTask extends GetTask {
 
     @Override
     public ResourceResponse execute(Message message) throws RuntimeException {
+        String uri = getUri();
+        Object[] params = getParams();
+        LOG.info(uri);
         RestTemplate template = getTemplate();
         try {
-            ResponseEntity<Resource> response = (getParams().length > 0)
-                    ? template.exchange(getUri(), HttpMethod.GET, getBody(), Resource.class, getParams())
-                    : template.exchange(getUri(), HttpMethod.GET, getBody(), Resource.class);
+            ResponseEntity<Resource> response = (params.length > 0)
+                    ? template.exchange(uri, HttpMethod.GET, getBody(), Resource.class, params)
+                    : template.exchange(uri, HttpMethod.GET, getBody(), Resource.class);
             if (getResponseListener() != null) {
                 String base64Encoded = null;
                 if (response.hasBody()) {
@@ -48,12 +51,12 @@ public class DownloadTask extends GetTask {
             return (ResourceResponse) new ResourceResponse()
                     .setResource(response.getBody())
                     .setStatus(200)
-                    .setMessage(getUri());
+                    .setMessage("");
         } catch (Exception e) {
             return (ResourceResponse) new ResourceResponse()
                     .setResource(null)
                     .setStatus(500)
-                    .setMessage(getUri())
+                    .setMessage("")
                     .setError(e.getMessage());
         }
     }

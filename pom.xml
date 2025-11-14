@@ -211,10 +211,11 @@
                         <exclude>LettuceDataSourceTest.java</exclude>
                         <exclude>RedissonDataSourceTest.java</exclude>
                         <exclude>iFileStoreTest.java</exclude>
+                        <exclude>com.infoworks.utils.rest.client.RestTaskTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.client.DownloadTaskTest.java</exclude>
+                        <exclude>com.infoworks.utils.rest.client.UploadTaskTest.java</exclude>
+                        <exclude>com.infoworks.utils.rest.spring.RestTaskTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.spring.DownloadTaskTest.java</exclude>
-                        <exclude>RestTaskTest.java</exclude>
-                        <exclude>UploadTaskTest.java</exclude>
                         <exclude>SpringWebSocketTest.java</exclude>
                         <exclude>DataRestClientTest.java</exclude>
                         <exclude>HttpDataRestClientTest.java</exclude>
