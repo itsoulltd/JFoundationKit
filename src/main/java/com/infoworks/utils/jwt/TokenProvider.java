@@ -9,6 +9,7 @@ import com.infoworks.utils.jwt.models.JWTHeader;
 import com.infoworks.utils.jwt.models.JWTPayload;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Duration;
 import java.util.Base64;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public interface TokenProvider extends AutoCloseable{
 
 	Key generateKey(String...args);
-	String generateToken(Calendar timeToLive) throws RuntimeException;
+	String generateToken(String secret, JWTPayload payload, Calendar timeToLive) throws RuntimeException;
 	String refreshToken(String token, Calendar timeToLive) throws RuntimeException;
 	void makeExpire() throws RuntimeException;
 	void dispose();
@@ -122,5 +123,17 @@ public interface TokenProvider extends AutoCloseable{
 		} else {
 			return token;
 		}
+	}
+
+	static String encode(String strs) {
+		return encode(strs.getBytes(StandardCharsets.UTF_8));
+	}
+
+	static String encode(byte[] bytes) {
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+	}
+
+	static String decode(String encodedString) {
+		return new String(Base64.getUrlDecoder().decode(encodedString));
 	}
 }

@@ -20,7 +20,8 @@ public class JWTPayload extends Message {
     }
 
     public JWTPayload setIat(long iat) {
-        this.iat = iat;return this;
+        this.iat = iat;
+        return this;
     }
 
     public long getNbf() {
