@@ -10,8 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -93,7 +92,8 @@ public class JWebToken implements TokenProvider {
         String signature = parts[2];
         String secret = getSecret(TokenProvider.parseHeader(token, JWTHeader.class), args);
         //Check: Validation
-        boolean notExpire = payload.getExp() > (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)); //token not expired
+        //boolean notExpire = payload.getExp() > (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)); //token not expired
+        boolean notExpire = payload.getExp() > (Instant.now().toEpochMilli()); //token not expired
         boolean signatureMatched = signature.equals(hmacSha256(secret, payload)); //signature matched
         return notExpire && signatureMatched;
     }
