@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 public class JWebTokenTest {
@@ -15,8 +16,12 @@ public class JWebTokenTest {
     @Test
     public void tokenTest() {
         JWebToken jwt = new JWebToken();
+        JWTPayload payload = new JWTPayload()
+                .setIat(Instant.now().toEpochMilli())
+                .setIss("Towhid")
+                .setSub("m.towhid@gmail.com");
         String token = jwt.generateToken("What-A-Secret!"
-                , new JWTPayload().setIss("Towhid").setSub("m.towhid@gmail.com")
+                , payload
                 , TokenProvider.timeToLive(Duration.ofMinutes(5), TimeUnit.MINUTES));
         Assert.assertTrue(token != null);
         System.out.println("JWT:" + token);
