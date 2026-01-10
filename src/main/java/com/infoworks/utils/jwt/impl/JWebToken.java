@@ -10,9 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +22,7 @@ public class JWebToken implements TokenProvider {
 
     private static Logger LOG = Logger.getLogger(JWebToken.class.getSimpleName());
     private static final String HMAC_ALGO = "HmacSHA256";
-    private final JWTHeader header = new JWTHeader().setAlg("HS256").setTyp("JWT");
+    private final JWTHeader DEFAULT_HEADER = new JWTHeader().setAlg("HS256").setTyp("JWT");
 
     @Override
     public Key generateKey(String... args) {
@@ -31,15 +33,25 @@ public class JWebToken implements TokenProvider {
         return secretKey;
     }
 
+    protected void updateDefaultHeader(JWTHeader header) {
+        if (header != null && header.getKid() != null) {
+            DEFAULT_HEADER.setKid(header.getKid());
+        }
+    }
+
     @Override
-    public String generateToken(String secret, JWTPayload payload, Calendar timeToLive) throws RuntimeException {
+    public String generateToken(String secret, JWTHeader header, JWTPayload payload) throws RuntimeException {
         String encodedHeader = TokenProvider.encode(header.toString());
-        if (payload.getExp() <= 0l) payload.setExp(timeToLive.getTimeInMillis());
-        String signature = hmacSha256(secret, payload);
+        if (payload.getExp() <= 0l) {
+            Calendar timeToLive = TokenProvider.timeToLive(Duration.ofHours(1), TimeUnit.HOURS);
+            payload.setExp(timeToLive.getTimeInMillis());
+        }
+        updateDefaultHeader(header);
+        String signature = hmacSha256(secret, DEFAULT_HEADER, payload);
         return encodedHeader + "." + TokenProvider.encode(payload.toString()) + "." + signature;
     }
 
-    private String hmacSha256(String secret, JWTPayload payload) {
+    protected String hmacSha256(String secret, JWTHeader header, JWTPayload payload) {
         try {
             Key secretKey = generateKey(secret);
             Mac sha256Hmac = Mac.getInstance(HMAC_ALGO);
@@ -55,7 +67,7 @@ public class JWebToken implements TokenProvider {
     }
 
     @Override
-    public String refreshToken(String token, Calendar timeToLive) throws RuntimeException {
+    public String refreshToken(String secret, String token, Calendar timeToLive) throws RuntimeException {
         return null;
     }
 
@@ -89,13 +101,13 @@ public class JWebToken implements TokenProvider {
             throw new RuntimeException("Payload doesn't contain expiry " + payload);
         }
         //Signature & Secret:
+        JWTHeader header = TokenProvider.parseHeader(token, JWTHeader.class);
         String signature = parts[2];
-        String secret = getSecret(TokenProvider.parseHeader(token, JWTHeader.class), args);
+        String secret = getSecret(header, args);
         //Check: Validation
-        //boolean notExpire = payload.getExp() > (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)); //token not expired
-        boolean notExpire = payload.getExp() > (Instant.now().toEpochMilli()); //token not expired
-        boolean signatureMatched = signature.equals(hmacSha256(secret, payload)); //signature matched
-        return notExpire && signatureMatched;
+        boolean isExpire = hasExpire(header, payload);
+        boolean signatureMatched = isSignatureMatched(signature, secret, header, payload);
+        return isExpire && signatureMatched;
     }
 
     protected String getSecret(JWTHeader header, String...args) throws RuntimeException{
@@ -105,5 +117,16 @@ public class JWebToken implements TokenProvider {
         if (secret == null || secret.isEmpty())
             throw new RuntimeException("Secret must not null or empty");
         return secret;
+    }
+
+    protected Boolean hasExpire(JWTHeader header, JWTPayload payload) {
+        //boolean notExpire = payload.getExp() > (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)); //token not expired
+        boolean notExpire = payload.getExp() > (Instant.now().toEpochMilli()); //token not expired
+        return notExpire;
+    }
+
+    protected Boolean isSignatureMatched(String signature, String secret, JWTHeader header, JWTPayload payload) {
+        boolean signatureMatched = signature.equals(hmacSha256(secret, header, payload)); //signature matched
+        return signatureMatched;
     }
 }

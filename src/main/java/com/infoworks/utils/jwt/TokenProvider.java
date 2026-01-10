@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 public interface TokenProvider extends AutoCloseable{
 
 	Key generateKey(String...args);
-	String generateToken(String secret, JWTPayload payload, Calendar timeToLive) throws RuntimeException;
-	String refreshToken(String token, Calendar timeToLive) throws RuntimeException;
+	String generateToken(String secret, JWTHeader header, JWTPayload payload) throws RuntimeException;
+	String refreshToken(String secret, String token, Calendar timeToLive) throws RuntimeException;
 	void makeExpire() throws RuntimeException;
 	void dispose();
 
