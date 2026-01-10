@@ -41,12 +41,12 @@ public class JWebToken implements TokenProvider {
 
     @Override
     public String generateToken(String secret, JWTHeader header, JWTPayload payload) throws RuntimeException {
-        String encodedHeader = TokenProvider.encode(header.toString());
+        updateDefaultHeader(header);
+        String encodedHeader = TokenProvider.encode(DEFAULT_HEADER.toString());
         if (payload.getExp() <= 0l) {
             Calendar timeToLive = TokenProvider.timeToLive(Duration.ofHours(1), TimeUnit.HOURS);
             payload.setExp(timeToLive.getTimeInMillis());
         }
-        updateDefaultHeader(header);
         String signature = hmacSha256(secret, DEFAULT_HEADER, payload);
         return encodedHeader + "." + TokenProvider.encode(payload.toString()) + "." + signature;
     }
