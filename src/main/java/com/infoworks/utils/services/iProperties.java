@@ -6,6 +6,7 @@ import com.infoworks.objects.Message;
 import com.infoworks.utils.services.impl.AppProperties;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 public interface iProperties extends iDataSource<String, String>, iDataStore {
@@ -14,6 +15,11 @@ public interface iProperties extends iDataSource<String, String>, iDataStore {
         return new AppProperties(name, defaultSet);
     }
 
+    static iProperties createInMemory(InputStream ios, Map<String, String> defaultSet) {
+        return new AppProperties(ios, defaultSet);
+    }
+
+    boolean isInMemory();
     void flush();
     String fileName();
     <E extends Message> void putObject(String key, E value) throws IOException;

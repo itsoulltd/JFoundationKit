@@ -48,18 +48,18 @@ public class AppProperties implements iProperties {
         }
     }
 
-    public AppProperties(InputStream in, Map<String, String> defaultConfig) throws RuntimeException {
+    public AppProperties(InputStream ios, Map<String, String> defaultConfig) throws RuntimeException {
         this.path = null;
         try {
-            load(in, defaultConfig);
+            load(ios, defaultConfig);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private void load(InputStream in, Map<String, String> defaultConfig) throws IOException {
-        if (in != null) {
-            configProp.load(in);
+    private void load(InputStream ios, Map<String, String> defaultConfig) throws IOException {
+        if (ios != null) {
+            configProp.load(ios);
             if (configProp.isEmpty()
                     && (defaultConfig != null && !defaultConfig.isEmpty())) {
                 configProp.putAll(defaultConfig);
@@ -67,8 +67,12 @@ public class AppProperties implements iProperties {
         }
     }
 
+    public boolean isInMemory() {
+        return this.path == null;
+    }
+
     public void flush() {
-        if (path == null) return;
+        if (isInMemory()) return;
         try(OutputStream stream = new FileOutputStream(path.toFile())) {
             configProp.store(stream,"Properties file updated: " + path.toAbsolutePath().toString());
         } catch (FileNotFoundException e) {
@@ -103,7 +107,7 @@ public class AppProperties implements iProperties {
     }
 
     public String fileName() {
-        if (path == null) return "";
+        if (isInMemory()) return "";
         return path.getFileName().toString();
     }
 
