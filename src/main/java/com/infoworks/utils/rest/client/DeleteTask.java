@@ -1,6 +1,7 @@
 package com.infoworks.utils.rest.client;
 
 import com.infoworks.objects.Message;
+import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
 
 import java.net.URI;
@@ -16,7 +17,7 @@ public class DeleteTask extends RestTask {
         super(baseUri, requestUri, params);
     }
 
-    public DeleteTask(String baseUri, String requestUri, Property[] params, Consumer<String> response) {
+    public DeleteTask(String baseUri, String requestUri, Property[] params, Consumer<Response> response) {
         super(baseUri, requestUri, params, response);
     }
 

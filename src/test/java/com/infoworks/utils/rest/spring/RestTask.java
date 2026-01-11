@@ -8,6 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -20,6 +21,7 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
 
     public RestTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
+        updateQueryParams(params);
     }
 
     public RestTask(String baseUri, String requestUri) {
@@ -33,6 +35,13 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
     public RestTask(String baseUri, String requestUri, Property[] params, Consumer<String> responseListener) {
         this(baseUri, requestUri, params);
         this.responseListener = responseListener;
+    }
+
+    protected Object[] getParams() {
+        Object[] filtered = Arrays.stream(this.params)
+                .filter(param -> param.getValue() != null && !param.getValue().toString().isEmpty())
+                .map(Property::getValue).toArray();
+        return filtered;
     }
 
     public void setBody(Map<String, Object> data) {

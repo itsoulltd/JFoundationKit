@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Message implements Externalizable, Comparable<Message> {
+public class Message implements iMessage, Externalizable, Comparable<Message> {
 
     @Ignore
     protected static Logger LOG = Logger.getLogger(Message.class.getSimpleName());
@@ -28,8 +28,8 @@ public class Message implements Externalizable, Comparable<Message> {
     public final Field[] getDeclaredFields(boolean inherit) {
         List<Field> fields = new ArrayList();
         fields.addAll(Arrays.asList(getClass().getDeclaredFields()));
-        if (inherit){
-            //Inherit properties from one immediate parent which is not Entity.class.
+        if (inherit) {
+            //Inherit properties from one immediate parent which is not Message.class;
             Class mySuperClass = getClass().getSuperclass();
             while(!mySuperClass.getSimpleName().equalsIgnoreCase(Message.class.getSimpleName())){
                 fields.addAll(Arrays.asList(mySuperClass.getDeclaredFields()));

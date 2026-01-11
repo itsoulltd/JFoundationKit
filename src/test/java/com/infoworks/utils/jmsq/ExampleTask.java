@@ -18,7 +18,7 @@ public class ExampleTask extends AbstractTask<Message, Response> {
     //OR
     //Provide an custom constructor:
     public ExampleTask(String data) {
-        super(new Property("data", data));
+        this(data, LocalDateTime.now());
     }
 
     public ExampleTask(String data, LocalDateTime timestamp) {

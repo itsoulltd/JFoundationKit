@@ -15,31 +15,31 @@ public class GetTask extends RestTask<Message, Response> {
 
     public GetTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
-        updateQueryParams(params);
     }
 
     public GetTask(String baseUri, String requestUri, Property[] params, Consumer<String> response) {
-        this(baseUri, requestUri, params);
-        addResponseListener(response);
+        super(baseUri, requestUri, params, response);
     }
 
     @Override
     public Response execute(Message message) throws RuntimeException {
+        String uri = getUri();
+        Object[] params = getParams();
+        LOG.info(uri);
         RestTemplate template = getTemplate();
         try {
-            ResponseEntity<String> response = (getParams().length > 0)
-                    ? template.exchange(getUri(), HttpMethod.GET, getBody(), String.class, getParams())
-                    : template.exchange(getUri(), HttpMethod.GET, getBody(), String.class);
+            ResponseEntity<String> response = (params.length > 0)
+                    ? template.exchange(uri, HttpMethod.GET, getBody(), String.class, params)
+                    : template.exchange(uri, HttpMethod.GET, getBody(), String.class);
             if (getResponseListener() != null)
                 getResponseListener().accept(response.getBody());
-            return (Response) new Response()
+            return new Response()
                     .setStatus(200)
-                    .setMessage(getUri())
-                    .setPayload(response.getBody());
+                    .setMessage(response.getBody());
         } catch (Exception e) {
             return new Response()
                     .setStatus(500)
-                    .setMessage(getUri())
+                    .setMessage("")
                     .setError(e.getMessage());
         }
     }

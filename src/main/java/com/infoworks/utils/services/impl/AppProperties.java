@@ -39,21 +39,31 @@ public class AppProperties implements iProperties {
         }
         this.path = Paths.get(name);
         if(createIfNotExist()) System.out.println("File Created!");
-        load(defaultConfig);
-    }
-
-    private void load(Map<String, String> defaultConfig) throws RuntimeException {
-        if (path == null) return;
-        //Private constructor to restrict new instances
-        System.out.println("Reading all properties from the file: " + path.toAbsolutePath().toString());
+        //
+        System.out.println("Reading all properties from the file: " + path.toAbsolutePath());
         try(InputStream in = new FileInputStream(path.toFile())) {
-            configProp.load(in);
-            if (configProp.isEmpty()
-                    && (defaultConfig != null && !defaultConfig.isEmpty())){
-                configProp.putAll(defaultConfig);
-            }
+            load(in, defaultConfig);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public AppProperties(InputStream in, Map<String, String> defaultConfig) throws RuntimeException {
+        this.path = null;
+        try {
+            load(in, defaultConfig);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private void load(InputStream in, Map<String, String> defaultConfig) throws IOException {
+        if (in != null) {
+            configProp.load(in);
+            if (configProp.isEmpty()
+                    && (defaultConfig != null && !defaultConfig.isEmpty())) {
+                configProp.putAll(defaultConfig);
+            }
         }
     }
 

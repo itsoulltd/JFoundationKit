@@ -2,6 +2,7 @@ package com.infoworks.utils.rest.client;
 
 import com.infoworks.objects.Message;
 import com.infoworks.objects.MessageParser;
+import com.infoworks.objects.Response;
 import com.infoworks.orm.Property;
 
 import java.net.URI;
@@ -17,7 +18,7 @@ public class PostTask extends RestTask {
         super(baseUri, requestUri, params);
     }
 
-    public PostTask(String baseUri, String requestUri, Property[] params, Consumer<String> response) {
+    public PostTask(String baseUri, String requestUri, Property[] params, Consumer<Response> response) {
         super(baseUri, requestUri, params, response);
     }
 

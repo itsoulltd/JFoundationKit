@@ -1,3 +1,22 @@
+## JFoundationKit
+[![](https://jitpack.io/v/itsoulltd/JFoundationKit.svg)](https://jitpack.io/#itsoulltd/JFoundationKit)
+### SetUp
+       
+       Step 1. Add the JitPack repository to your build file
+        <repositories>
+            <repository>
+                <id>jitpack.io</id>
+                <url>https://jitpack.io</url>
+            </repository>
+        </repositories>
+        
+        Step 2. Add the dependency
+        <dependency>
+            <groupId>com.github.itsoulltd</groupId>
+            <artifactId>JFoundationKit</artifactId>
+            <version>latest</version>
+        </dependency>
+
 ## How To Use API:
         
         ###Let's know about Message.java:

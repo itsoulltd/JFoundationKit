@@ -28,7 +28,7 @@ public abstract class RestTask extends HttpTask<Message, Response> {
     protected HttpClient client;
     protected HttpClient.Version version;
     protected MediaType contentType = MediaType.JSON;
-    protected Consumer<String> responseListener;
+    protected Consumer<Response> responseListener;
 
     public RestTask(String baseUri, String requestUri, Property...params) {
         super(baseUri, requestUri, params);
@@ -43,7 +43,7 @@ public abstract class RestTask extends HttpTask<Message, Response> {
         this("", "");
     }
 
-    public RestTask(String baseUri, String requestUri, Property[] params, Consumer<String> responseListener) {
+    public RestTask(String baseUri, String requestUri, Property[] params, Consumer<Response> responseListener) {
         this(baseUri, requestUri, params);
         this.responseListener = responseListener;
     }
@@ -118,12 +118,12 @@ public abstract class RestTask extends HttpTask<Message, Response> {
         this.contentType = contentType;
     }
 
-    public HttpTask addResponseListener(Consumer<String> response) {
+    public HttpTask addResponseListener(Consumer<Response> response) {
         this.responseListener = response;
         return this;
     }
 
-    protected Consumer<String> getResponseListener() {
+    protected Consumer<Response> getResponseListener() {
         return this.responseListener;
     }
 
@@ -171,9 +171,17 @@ public abstract class RestTask extends HttpTask<Message, Response> {
             HttpClient client = getClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             outcome = new Responses().setStatus(response.statusCode()).setMessage(response.body());
+            if (getResponseListener() != null) getResponseListener().accept(outcome);
         } catch (IOException | InterruptedException e) {
             outcome.setError(e.getMessage());
+            if (getResponseListener() != null) getResponseListener().accept(outcome);
         }
         return outcome;
+    }
+
+    public void execute(Message message, Consumer<Response> responseListener) throws RuntimeException {
+        if (responseListener != null) {
+            responseListener.accept(execute(message));
+        }
     }
 }

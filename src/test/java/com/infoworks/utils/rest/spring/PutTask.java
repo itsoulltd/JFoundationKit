@@ -23,23 +23,24 @@ public class PutTask extends RestTask<Message, Response> {
 
     @Override
     public Response execute(Message message) throws RuntimeException {
+        String uri = getUri();
+        LOG.info(uri);
         RestTemplate template = getTemplate();
         try {
-            ResponseEntity<String> response = template.exchange(getUri()
+            ResponseEntity<String> response = template.exchange(uri
                     , HttpMethod.PUT
                     , getBody()
                     , String.class
                     , getParams());
             if (getResponseListener() != null)
                 getResponseListener().accept(response.getBody());
-            return (Response) new Response()
+            return new Response()
                     .setStatus(200)
-                    .setMessage(getUri())
-                    .setPayload(response.getBody());
+                    .setMessage(response.getBody());
         } catch (Exception e) {
             return new Response()
                     .setStatus(500)
-                    .setMessage(getUri())
+                    .setMessage("")
                     .setError(e.getMessage());
         }
     }

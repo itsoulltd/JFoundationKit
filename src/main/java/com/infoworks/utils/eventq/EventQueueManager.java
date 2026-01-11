@@ -5,6 +5,7 @@ import com.infoworks.tasks.queue.QueuedTaskStateListener;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ public abstract class EventQueueManager extends AbstractQueueManager {
     protected static Logger LOG = Logger.getLogger(EventQueueManager.class.getSimpleName());
     private QueuedTaskStateListener listener;
     private ExecutorService service;
+    private ScheduledExecutorService scheduleService;
 
     @Override
     public QueuedTaskStateListener getListener() {
@@ -37,6 +39,19 @@ public abstract class EventQueueManager extends AbstractQueueManager {
         this.service = service;
     }
 
+    public ScheduledExecutorService getScheduleService() {
+        if (scheduleService == null){
+            synchronized (this){
+                scheduleService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 2 + 1);
+            }
+        }
+        return scheduleService;
+    }
+
+    public void setScheduleService(ScheduledExecutorService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
+
     /**
      * Note:
      * Send termination to jms-template for stopping current processing or abandon all active task from
@@ -46,17 +61,30 @@ public abstract class EventQueueManager extends AbstractQueueManager {
      */
     @Override
     public void terminateRunningTasks(long delay, TimeUnit timeUnit) {
+        //Shutdown ExecutorService:
         try {
-            if (!getService().isShutdown()){
+            if (this.service != null && !this.service.isShutdown()) {
                 if (delay <= 0l)
-                    getService().shutdownNow();
+                    this.service.shutdownNow();
                 else {
-                    getService().shutdown();
-                    getService().awaitTermination(delay, timeUnit);
+                    this.service.shutdown();
+                    this.service.awaitTermination(delay, timeUnit);
                 }
             }
         } catch (Exception e) {}
-        service = null;
+        this.service = null;
+        //Shutdown ScheduledExecutorService:
+        try {
+            if (this.scheduleService != null && !this.scheduleService.isShutdown()) {
+                if (delay <= 0l)
+                    this.scheduleService.shutdownNow();
+                else {
+                    this.scheduleService.shutdown();
+                    this.scheduleService.awaitTermination(delay, timeUnit);
+                }
+            }
+        } catch (Exception e) {}
+        this.scheduleService = null;
     }
 
     @Override

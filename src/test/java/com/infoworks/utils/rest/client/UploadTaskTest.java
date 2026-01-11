@@ -26,6 +26,7 @@ public class UploadTaskTest {
         task.setToken("my-token");
         task.setContentDispositionNameKey("content");
         task.setBodyPublisher(new MultipartFilePublisher());
+        //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         if(response.getStatus() == 500) {
@@ -44,6 +45,7 @@ public class UploadTaskTest {
         task.setToken("my-token");
         task.setContentDispositionNameKey("content");
         task.setBodyPublisher(new MultipartIStreamPublisher());
+        //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         if(response.getStatus() == 500) {
@@ -67,6 +69,7 @@ public class UploadTaskTest {
         //
         task.setContentDispositionNameKey("content");
         task.setBodyPublisher(new MultipartIStreamPublisher());
+        //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
         if(response.getStatus() == 500) System.out.println(response.getError());
