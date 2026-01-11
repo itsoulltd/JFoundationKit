@@ -48,18 +48,18 @@ public class AppProperties implements iProperties {
         }
     }
 
-    public AppProperties(InputStream in, Map<String, String> defaultConfig) throws RuntimeException {
+    public AppProperties(InputStream ios, Map<String, String> defaultConfig) throws RuntimeException {
         this.path = null;
         try {
-            load(in, defaultConfig);
+            load(ios, defaultConfig);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private void load(InputStream in, Map<String, String> defaultConfig) throws IOException {
-        if (in != null) {
-            configProp.load(in);
+    private void load(InputStream ios, Map<String, String> defaultConfig) throws IOException {
+        if (ios != null) {
+            configProp.load(ios);
             if (configProp.isEmpty()
                     && (defaultConfig != null && !defaultConfig.isEmpty())) {
                 configProp.putAll(defaultConfig);

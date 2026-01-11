@@ -6,12 +6,17 @@ import com.infoworks.objects.Message;
 import com.infoworks.utils.services.impl.AppProperties;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 public interface iProperties extends iDataSource<String, String>, iDataStore {
 
     static iProperties create(String name, Map<String, String> defaultSet) {
         return new AppProperties(name, defaultSet);
+    }
+
+    static iProperties create(InputStream ios, Map<String, String> defaultSet) {
+        return new AppProperties(ios, defaultSet);
     }
 
     void flush();
