@@ -67,8 +67,12 @@ public class AppProperties implements iProperties {
         }
     }
 
+    public boolean isInMemory() {
+        return this.path == null;
+    }
+
     public void flush() {
-        if (path == null) return;
+        if (isInMemory()) return;
         try(OutputStream stream = new FileOutputStream(path.toFile())) {
             configProp.store(stream,"Properties file updated: " + path.toAbsolutePath().toString());
         } catch (FileNotFoundException e) {
@@ -103,7 +107,7 @@ public class AppProperties implements iProperties {
     }
 
     public String fileName() {
-        if (path == null) return "";
+        if (isInMemory()) return "";
         return path.getFileName().toString();
     }
 

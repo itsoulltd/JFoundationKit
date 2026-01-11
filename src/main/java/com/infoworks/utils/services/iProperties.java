@@ -15,10 +15,11 @@ public interface iProperties extends iDataSource<String, String>, iDataStore {
         return new AppProperties(name, defaultSet);
     }
 
-    static iProperties create(InputStream ios, Map<String, String> defaultSet) {
+    static iProperties createInMemory(InputStream ios, Map<String, String> defaultSet) {
         return new AppProperties(ios, defaultSet);
     }
 
+    boolean isInMemory();
     void flush();
     String fileName();
     <E extends Message> void putObject(String key, E value) throws IOException;
