@@ -1,11 +1,11 @@
 package com.infoworks.utils.services;
 
 import com.infoworks.objects.Message;
+import io.jsonwebtoken.lang.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -120,12 +120,16 @@ public class iPropertiesTest {
         Assert.assertTrue(drive4D.wheels == 0);
     }
 
-    //@Test
+    @Test
     public void testAddAndFlush() {
-        Path path = Paths.get("src","test","resources","app.properties");
+        //Path path = Paths.get("src","test","resources","app.properties");
+        Path path = Paths.get("target", "app.properties");
         String absolutePath = path.toAbsolutePath().toString();
         //
-        iProperties properties = iProperties.create(absolutePath, null);
+        Map<String, String> defaultData = new HashMap<>();
+        defaultData.put("last.read", "100");
+        //
+        iProperties properties = iProperties.create(absolutePath, defaultData);
         String val = properties.read("last.read");
         Assert.assertTrue(val.equals("100"));
         //
@@ -137,9 +141,10 @@ public class iPropertiesTest {
         System.out.println(val);
     }
 
-    //@Test
+    @Test
     public void testObject() throws IOException {
-        Path path = Paths.get("src", "test", "resources", "app.properties");
+        //Path path = Paths.get("src", "test", "resources", "app.properties");
+        Path path = Paths.get("target", "app1.properties");
         String absolutePath = path.toAbsolutePath().toString();
         //
         iProperties properties = iProperties.create(absolutePath, null);
@@ -153,9 +158,9 @@ public class iPropertiesTest {
         Assert.assertTrue(subha.dob.getTime() == dob.getTime());
     }
 
-    //@Test
+    @Test
     public void testObject2() throws IOException {
-        Path path = Paths.get("src", "test", "resources", "app.properties");
+        Path path = Paths.get("target", "app2.properties");
         String absolutePath = path.toAbsolutePath().toString();
         //
         iProperties properties = iProperties.create(absolutePath, null);
@@ -165,6 +170,48 @@ public class iPropertiesTest {
         Car drive4D = properties.getObject("obj.val.car", Car.class);
         Assert.assertTrue(drive4D.regNo.equals("KHA-324490"));
         Assert.assertTrue(drive4D.wheels == 4);
+    }
+
+    private InputStream createFileInputStreamFromTestResources(String fileName) throws FileNotFoundException {
+        Path path = Paths.get("src","test","resources", fileName);
+        return createFileInputStream(path);
+    }
+
+    private InputStream createFileInputStream(Path path) throws FileNotFoundException {
+        File imfFile = new File(path.toFile().getAbsolutePath());
+        InputStream ios = new FileInputStream(imfFile);
+        return ios;
+    }
+
+    @Test
+    public void testIosReadSync() {
+        try (InputStream ios = createFileInputStreamFromTestResources("app.properties")) {
+            iProperties properties = iProperties.createInMemory(ios, null);
+            String[] values = properties.readSync(0, properties.size());
+            Assert.assertTrue(values.length == properties.size());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testIosInMemory() {
+        try (InputStream ios = createFileInputStreamFromTestResources("app.properties")) {
+            iProperties properties = iProperties.createInMemory(ios, null);
+            String[] values = properties.readSync(0, properties.size());
+            Assert.assertTrue(values.length == properties.size());
+            System.out.println(values);
+            //
+            Assert.assertTrue(properties.isInMemory());
+            System.out.println("Status: in-memory " + properties.isInMemory());
+            properties.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static class Person extends Message{
