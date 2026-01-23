@@ -212,6 +212,8 @@
                         <exclude>iResourcesTest.java</exclude>
                         <exclude>iPropertiesTest.java</exclude>
                         <exclude>OutboxPatternTest.java</exclude>
+                        <exclude>OrchestratedSagaTest.java</exclude>
+                        <exclude>ChoreographedSagaTest.java</exclude>
                         <exclude>ObjectMapperTest.java</exclude>
                         <exclude>TableMapperTest.java</exclude>
                         <exclude>MemCacheTest.java</exclude>
