@@ -104,7 +104,7 @@ public class ChoreographedSagaTest {
             if (state == TaskStack.State.Finished && message instanceof ShipmentResponse) {
                 ShipmentResponse response = (ShipmentResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
-                    System.out.println("ShippingTask Complete: " + response.getOrderID());
+                    System.out.println("Shipping Complete For OrderID:" + response.getOrderID());
                     counter.decrementAndGet();
                 } else if(response.getOptStatus() == OptStatus.CANCEL) {
                     paymentService.add(new PaymentCancelTask(response.getOrderID(), response.getPaymentID(), response.getMessage()));
@@ -187,16 +187,16 @@ public class ChoreographedSagaTest {
         @Override
         public OrderResponse execute(Message message) throws RuntimeException {
             String orderId = getPropertyValue("orderId").toString();
-            String msg = getPropertyValue("message").toString() + "[" + orderId + "]";
+            String msg = getPropertyValue("message").toString() + " [ order-id: " + orderId + "] ";
             boolean nextRandom = (getPropertyValue("nextRandom") != null)
                     ? Boolean.parseBoolean(getPropertyValue("nextRandom").toString())
                     : true;
             //True will be Success, failed other-wise:
             if (nextRandom) {
-                System.out.println(msg + "->" + "Commit: Order Create In DB [" + Thread.currentThread().getName() + "]");
+                System.out.println(msg + "  ==>  " + "Commit: Order Create In DB [" + Thread.currentThread().getName() + "]");
                 return (OrderResponse) new OrderResponse().setOptStatus(OptStatus.CREATE).setOrderID(orderId).setStatus(200).setMessage(msg);
             } else {
-                System.out.println(msg + "->" + "Commit: Order Create Failed In DB [" + Thread.currentThread().getName() + "]");
+                System.out.println(msg + "  ==>  " + "Commit: Order Create Failed In DB [" + Thread.currentThread().getName() + "]");
                 return (OrderResponse) new OrderResponse().setOrderID(orderId).setStatus(500).setMessage(msg);
             }
         }
@@ -217,9 +217,9 @@ public class ChoreographedSagaTest {
         @Override
         public OrderResponse execute(Message message) throws RuntimeException {
             String orderId = getPropertyValue("orderId").toString();
-            String msg = getPropertyValue("message").toString() + "[" + orderId + "]";
+            String msg = getPropertyValue("message").toString() + " [ order-id: " + orderId + "] ";
             //True will be Success, failed other-wise:
-            System.out.println(msg + "->" + "Commit: Order Cancel In DB [" + Thread.currentThread().getName() + "]");
+            System.out.println(msg + "  ==>  " + "Commit: Order Cancel In DB [" + Thread.currentThread().getName() + "]");
             return (OrderResponse) new OrderResponse().setOptStatus(OptStatus.CANCEL).setOrderID(orderId).setStatus(200).setMessage(msg);
         }
     }
@@ -280,7 +280,7 @@ public class ChoreographedSagaTest {
         @Override
         public PaymentResponse execute(Message message) throws RuntimeException {
             String orderId = getPropertyValue("orderId").toString();
-            String msg = getPropertyValue("message").toString() + "[" + orderId + "]";
+            String msg = getPropertyValue("message").toString() + " [ order-id: " + orderId + "] ";
             boolean nextRandom = (getPropertyValue("nextRandom") != null)
                     ? Boolean.parseBoolean(getPropertyValue("nextRandom").toString())
                     : true;
@@ -290,10 +290,10 @@ public class ChoreographedSagaTest {
                 /**
                  * All your payment tasks:
                  */
-                System.out.println(msg + "->" + "Commit: Payment Create In DB [" + Thread.currentThread().getName() + "]");
+                System.out.println(msg + "  ==>  " + "Commit: Payment Create In DB [" + Thread.currentThread().getName() + "]");
                 return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CREATE).setPaymentID(paymentID).setOrderID(orderId).setStatus(200).setMessage(msg);
             } else {
-                System.out.println(msg + "->" + "Commit: Payment Create Failed In DB [" + Thread.currentThread().getName() + "]");
+                System.out.println(msg + "  ==>  " + "Commit: Payment Create Failed In DB [" + Thread.currentThread().getName() + "]");
                 return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CANCEL).setOrderID(orderId).setStatus(200).setMessage(msg);
             }
         }
@@ -316,9 +316,9 @@ public class ChoreographedSagaTest {
         public PaymentResponse execute(Message message) throws RuntimeException {
             String orderId = getPropertyValue("orderId").toString();
             String paymentId = getPropertyValue("paymentId").toString();
-            String msg = getPropertyValue("message").toString() + "[" + orderId + "]";
+            String msg = getPropertyValue("message").toString() + " [ order-id: " + orderId + "] ";
             //True will be Success, failed other-wise:
-            System.out.println(msg + "->" + "Commit: Payment Cancel In DB [" + Thread.currentThread().getName() + "]");
+            System.out.println(msg + "  ==>  " + "Commit: Payment Cancel In DB [" + Thread.currentThread().getName() + "]");
             return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CANCEL).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(msg);
         }
     }
@@ -391,7 +391,7 @@ public class ChoreographedSagaTest {
         public ShipmentResponse execute(Message message) throws RuntimeException {
             String orderId = getPropertyValue("orderId").toString();
             String paymentId = getPropertyValue("paymentId").toString();
-            String msg = getPropertyValue("message").toString() + "[" + orderId + "]";
+            String msg = getPropertyValue("message").toString() + " [ order-id: " + orderId + "] ";
             boolean nextRandom = (getPropertyValue("nextRandom") != null)
                     ? Boolean.parseBoolean(getPropertyValue("nextRandom").toString())
                     : true;
@@ -401,10 +401,10 @@ public class ChoreographedSagaTest {
                 /**
                  * All your shipping tasks:
                  */
-                System.out.println(msg + "->" + "Commit: Shipment Create In DB [" + Thread.currentThread().getName() + "]");
+                System.out.println(msg + "  ==>  " + "Commit: Shipment Create In DB [" + Thread.currentThread().getName() + "]");
                 return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CREATE).setShippingID(shipmentID).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(msg);
             } else {
-                System.out.println(msg + "->" + "Commit: Shipment Create Failed In DB [" + Thread.currentThread().getName() + "]");
+                System.out.println(msg + "  ==>  " + "Commit: Shipment Create Failed In DB [" + Thread.currentThread().getName() + "]");
                 return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CANCEL).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(msg);
             }
         }
@@ -429,9 +429,9 @@ public class ChoreographedSagaTest {
             String orderId = getPropertyValue("orderId").toString();
             String paymentId = getPropertyValue("paymentId").toString();
             String shipmentId = getPropertyValue("shipmentId").toString();
-            String msg = getPropertyValue("message").toString() + "[" + orderId + "]";
+            String msg = getPropertyValue("message").toString() + " [ order-id: " + orderId + "] ";
             //True will be Success, failed other-wise:
-            System.out.println(msg + "->" + "Commit: Shipment Cancel In DB [" + Thread.currentThread().getName() + "]");
+            System.out.println(msg + "  ==>  " + "Commit: Shipment Cancel In DB [" + Thread.currentThread().getName() + "]");
             return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CANCEL).setShippingID(shipmentId).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(msg);
         }
     }
