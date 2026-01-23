@@ -54,14 +54,16 @@ public class ChoreographedSagaTest {
     public void choreographedSagaTest() {
         CountDownLatch latch = new CountDownLatch(1);
         AtomicInteger counter = new AtomicInteger(7);
-        //Service pipelines:
+
+        //Application Service Pipelines:-
         TaskQueue orderService = new EventQueue(Executors.newFixedThreadPool(3), true);
         TaskQueue paymentService = new EventQueue(Executors.newSingleThreadExecutor());
         TaskQueue shippingService = new EventQueue(Executors.newFixedThreadPool(5), true);
-        //
-        //Order-Process:
+
+        //State Management or Choreograph:-
+        //Order Choreograph:
         orderService.onTaskComplete((message, state) -> {
-            //Main-Flow:
+            //Order-Flow:
             if (state == TaskStack.State.Finished && message instanceof OrderResponse) {
                 OrderResponse response = (OrderResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
@@ -73,13 +75,13 @@ public class ChoreographedSagaTest {
             } else {
                 //TODO: When Failed
             }
-            //Opt:
+            //Opt:-
             if (counter.get() == 1) latch.countDown();
         });
         //
-        //Payment-Process:
+        //Payment Choreograph:
         paymentService.onTaskComplete((message, state) -> {
-            //Main-Flow:
+            //Payment-Flow:
             if (state == TaskStack.State.Finished && message instanceof PaymentResponse) {
                 PaymentResponse response = (PaymentResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
@@ -94,13 +96,13 @@ public class ChoreographedSagaTest {
             } else {
                 //TODO: When Failed
             }
-            //Opt:
+            //Opt:-
             if (counter.get() == 1) latch.countDown();
         });
         //
-        //Shipping-Process:
+        //Shipping Choreograph:
         shippingService.onTaskComplete((message, state) -> {
-            //Main-Flow:
+            //Shipping-Flow:
             if (state == TaskStack.State.Finished && message instanceof ShipmentResponse) {
                 ShipmentResponse response = (ShipmentResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
@@ -115,7 +117,7 @@ public class ChoreographedSagaTest {
             } else {
                 //TODO: When Failed
             }
-            //Opt:
+            //Opt:-
             if (counter.get() == 1) latch.countDown();
         });
         ///////Choreograph///////
