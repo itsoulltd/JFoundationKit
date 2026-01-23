@@ -104,7 +104,7 @@ public class ChoreographedSagaTest {
             if (state == TaskStack.State.Finished && message instanceof ShipmentResponse) {
                 ShipmentResponse response = (ShipmentResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
-                    System.out.println("Shipping Complete For OrderID:" + response.getOrderID());
+                    System.out.println("==>|| Shipping Complete For OrderID:" + response.getOrderID() + " (" + response.getMessage() + ") ||<==");
                     counter.decrementAndGet();
                 } else if(response.getOptStatus() == OptStatus.CANCEL) {
                     paymentService.add(new PaymentCancelTask(response.getOrderID(), response.getPaymentID(), response.getMessage()));
