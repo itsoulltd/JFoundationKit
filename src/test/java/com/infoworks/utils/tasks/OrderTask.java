@@ -11,18 +11,18 @@ import java.util.Random;
 /**
  *
  */
-public class OrderCreateTask extends ExecutableTask<Message, OrderResponse> {
+public class OrderTask extends ExecutableTask<Message, OrderResponse> {
 
     //Must need Zero param constructor in Case of JMSTask
-    public OrderCreateTask() {}
+    public OrderTask() {}
 
-    public OrderCreateTask(String orderId, String message, boolean nextRandom) {
+    public OrderTask(String orderId, String message, boolean nextRandom) {
         super(new Property("message", message)
                 , new Property("orderId", orderId)
                 , new Property("nextRandom", nextRandom));
     }
 
-    public OrderCreateTask(String orderId, String message) {
+    public OrderTask(String orderId, String message) {
         this(orderId, message, new Random().nextBoolean());
     }
 

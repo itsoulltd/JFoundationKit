@@ -123,13 +123,13 @@ public class ChoreographedSagaTest {
         ///////Choreograph///////
         Random random = new Random();
         int orderId = 0;
-        orderService.add(new OrderCreateTask(++orderId + "", "Order For Coffee + Croissant", random.nextBoolean()));
-        orderService.add(new OrderCreateTask(++orderId + "", "Order For Biskit & Cake", random.nextBoolean()));
-        orderService.add(new OrderCreateTask(++orderId + "", "Order For Glossary", random.nextBoolean()));
-        orderService.add(new OrderCreateTask(++orderId + "", "Order For Fruits", random.nextBoolean()));
-        orderService.add(new OrderCreateTask(++orderId + "", "Order For Tea + Coffee", random.nextBoolean()));
-        orderService.add(new OrderCreateTask(++orderId + "", "Order For Black Coffee", random.nextBoolean()));
-        orderService.add(new OrderCreateTask(++orderId + "", "Order For Breakfast", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Coffee + Croissant", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Biskit & Cake", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Glossary", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Fruits", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Tea + Coffee", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Black Coffee", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Breakfast", random.nextBoolean()));
         /////////////////////////
         //
         try {
