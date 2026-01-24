@@ -14,8 +14,7 @@ import java.util.UUID;
  */
 public class PaymentTask extends ExecutableTask<Message, PaymentResponse> {
 
-    public PaymentTask() {
-    }
+    public PaymentTask() {}
 
     public PaymentTask(String orderId, String message, boolean nextRandom) {
         super(new Property("message", message)
@@ -31,7 +30,7 @@ public class PaymentTask extends ExecutableTask<Message, PaymentResponse> {
     public PaymentResponse execute(Message message) throws RuntimeException {
         String orderId = getPropertyValue("orderId").toString();
         String strMsg = getPropertyValue("message").toString();
-        String msg = strMsg + " [ order-id: " + orderId + "] ";
+        String msg = "[order-id: " + orderId + "] " + strMsg;
         boolean nextRandom = (getPropertyValue("nextRandom") != null)
                 ? Boolean.parseBoolean(getPropertyValue("nextRandom").toString())
                 : true;
@@ -41,11 +40,18 @@ public class PaymentTask extends ExecutableTask<Message, PaymentResponse> {
             /**
              * All your payment tasks:
              */
-            System.out.println(msg + "  ==>  " + "Commit: Payment Create In DB [" + Thread.currentThread().getName() + "]");
+            System.out.println("✅ " + msg + "  ==>  " + "Commit: Payment Create In DB [" + Thread.currentThread().getName() + "]");
             return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CREATE).setPaymentID(paymentID).setOrderID(orderId).setStatus(200).setMessage(strMsg);
         } else {
-            System.out.println(msg + "  ==>  " + "Commit: Payment Create Failed In DB [" + Thread.currentThread().getName() + "]");
-            return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CANCEL).setOrderID(orderId).setStatus(200).setMessage(strMsg);
+            System.out.println("❌ " + msg + "  ==>  " + "Commit: Payment Create Failed In DB [" + Thread.currentThread().getName() + "]");
+            throw new RuntimeException(msg);
         }
+    }
+
+    @Override
+    public PaymentResponse abort(Message message) throws RuntimeException {
+        String orderId = getPropertyValue("orderId").toString();
+        String strMsg = getPropertyValue("message").toString();
+        return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CANCEL).setOrderID(orderId).setStatus(500).setMessage(strMsg);
     }
 }

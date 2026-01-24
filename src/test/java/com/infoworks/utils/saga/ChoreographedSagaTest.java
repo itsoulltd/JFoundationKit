@@ -1,7 +1,6 @@
 package com.infoworks.utils.saga;
 
 import com.infoworks.tasks.queue.TaskQueue;
-import com.infoworks.tasks.stack.TaskStack;
 import com.infoworks.utils.eventq.EventQueue;
 import com.infoworks.utils.tasks.*;
 import com.infoworks.utils.tasks.models.OptStatus;
@@ -64,7 +63,7 @@ public class ChoreographedSagaTest {
         //Order Choreograph:
         orderService.onTaskComplete((message, state) -> {
             //Order-Flow:
-            if (state == TaskStack.State.Finished && message instanceof OrderResponse) {
+            if (message instanceof OrderResponse) {
                 OrderResponse response = (OrderResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
                     paymentService.add(new PaymentTask(response.getOrderID(), response.getMessage()));
@@ -82,7 +81,7 @@ public class ChoreographedSagaTest {
         //Payment Choreograph:
         paymentService.onTaskComplete((message, state) -> {
             //Payment-Flow:
-            if (state == TaskStack.State.Finished && message instanceof PaymentResponse) {
+            if (message instanceof PaymentResponse) {
                 PaymentResponse response = (PaymentResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
                     shippingService.add(new ShipmentTask(response.getOrderID(), response.getPaymentID(), response.getMessage()));
@@ -103,10 +102,11 @@ public class ChoreographedSagaTest {
         //Shipping Choreograph:
         shippingService.onTaskComplete((message, state) -> {
             //Shipping-Flow:
-            if (state == TaskStack.State.Finished && message instanceof ShipmentResponse) {
+            if (message instanceof ShipmentResponse) {
                 ShipmentResponse response = (ShipmentResponse) message;
                 if (response.getOptStatus() == OptStatus.CREATE) {
-                    System.out.println("==>|| Shipping Complete For OrderID:" + response.getOrderID() + " (" + response.getMessage() + ") ||<==");
+                    System.out.println("\uD83D\uDE0E " + "[order-id: " + response.getOrderID() + "] "
+                            + "==>|| Shipping Complete For OrderID:" + response.getOrderID() + " (" + response.getMessage() + ") ||<==");
                     counter.decrementAndGet();
                 } else if(response.getOptStatus() == OptStatus.CANCEL) {
                     paymentService.add(new PaymentCancelTask(response.getOrderID(), response.getPaymentID(), response.getMessage()));

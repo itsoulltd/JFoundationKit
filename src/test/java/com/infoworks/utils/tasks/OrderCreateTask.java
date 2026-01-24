@@ -14,8 +14,7 @@ import java.util.Random;
 public class OrderCreateTask extends ExecutableTask<Message, OrderResponse> {
 
     //Must need Zero param constructor in Case of JMSTask
-    public OrderCreateTask() {
-    }
+    public OrderCreateTask() {}
 
     public OrderCreateTask(String orderId, String message, boolean nextRandom) {
         super(new Property("message", message)
@@ -31,17 +30,24 @@ public class OrderCreateTask extends ExecutableTask<Message, OrderResponse> {
     public OrderResponse execute(Message message) throws RuntimeException {
         String orderId = getPropertyValue("orderId").toString();
         String strMsg = getPropertyValue("message").toString();
-        String msg = strMsg + " [ order-id: " + orderId + "] ";
+        String msg = "[order-id: " + orderId + "] " + strMsg;
         boolean nextRandom = (getPropertyValue("nextRandom") != null)
                 ? Boolean.parseBoolean(getPropertyValue("nextRandom").toString())
                 : true;
         //True will be Success, failed other-wise:
         if (nextRandom) {
-            System.out.println(msg + "  ==>  " + "Commit: Order Create In DB [" + Thread.currentThread().getName() + "]");
+            System.out.println("✅ " + msg + "  ==>  " + "Commit: Order Create In DB [" + Thread.currentThread().getName() + "]");
             return (OrderResponse) new OrderResponse().setOptStatus(OptStatus.CREATE).setOrderID(orderId).setStatus(200).setMessage(strMsg);
         } else {
-            System.out.println(msg + "  ==>  " + "Commit: Order Create Failed In DB [" + Thread.currentThread().getName() + "]");
-            return (OrderResponse) new OrderResponse().setOrderID(orderId).setStatus(500).setMessage(strMsg);
+            System.out.println("❌ " + msg + "  ==>  " + "Commit: Order Create Failed In DB [" + Thread.currentThread().getName() + "]");
+            throw new RuntimeException(msg);
         }
+    }
+
+    @Override
+    public OrderResponse abort(Message message) throws RuntimeException {
+        String orderId = getPropertyValue("orderId").toString();
+        String strMsg = getPropertyValue("message").toString();
+        return (OrderResponse) new OrderResponse().setOrderID(orderId).setStatus(500).setMessage(strMsg);
     }
 }

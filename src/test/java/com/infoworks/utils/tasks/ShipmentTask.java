@@ -14,8 +14,7 @@ import java.util.UUID;
  */
 public class ShipmentTask extends ExecutableTask<Message, ShipmentResponse> {
 
-    public ShipmentTask() {
-    }
+    public ShipmentTask() {}
 
     public ShipmentTask(String orderId, String paymentId, String message, boolean nextRandom) {
         super(new Property("message", message)
@@ -33,7 +32,7 @@ public class ShipmentTask extends ExecutableTask<Message, ShipmentResponse> {
         String orderId = getPropertyValue("orderId").toString();
         String paymentId = getPropertyValue("paymentId").toString();
         String strMsg = getPropertyValue("message").toString();
-        String msg = strMsg + " [ order-id: " + orderId + "] ";
+        String msg = "[order-id: " + orderId + "] " + strMsg;
         boolean nextRandom = (getPropertyValue("nextRandom") != null)
                 ? Boolean.parseBoolean(getPropertyValue("nextRandom").toString())
                 : true;
@@ -43,11 +42,19 @@ public class ShipmentTask extends ExecutableTask<Message, ShipmentResponse> {
             /**
              * All your shipping tasks:
              */
-            System.out.println(msg + "  ==>  " + "Commit: Shipment Create In DB [" + Thread.currentThread().getName() + "]");
+            System.out.println("✅ " + msg + "  ==>  " + "Commit: Shipment Create In DB [" + Thread.currentThread().getName() + "]");
             return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CREATE).setShippingID(shipmentID).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(strMsg);
         } else {
-            System.out.println(msg + "  ==>  " + "Commit: Shipment Create Failed In DB [" + Thread.currentThread().getName() + "]");
-            return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CANCEL).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(strMsg);
+            System.out.println("❌ " + msg + "  ==>  " + "Commit: Shipment Create Failed In DB [" + Thread.currentThread().getName() + "]");
+            throw new RuntimeException(msg);
         }
+    }
+
+    @Override
+    public ShipmentResponse abort(Message message) throws RuntimeException {
+        String orderId = getPropertyValue("orderId").toString();
+        String paymentId = getPropertyValue("paymentId").toString();
+        String strMsg = getPropertyValue("message").toString();
+        return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CANCEL).setPaymentID(paymentId).setOrderID(orderId).setStatus(500).setMessage(strMsg);
     }
 }

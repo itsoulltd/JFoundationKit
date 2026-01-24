@@ -11,8 +11,7 @@ import com.infoworks.utils.tasks.models.PaymentResponse;
  */
 public class PaymentCancelTask extends ExecutableTask<Message, PaymentResponse> {
 
-    public PaymentCancelTask() {
-    }
+    public PaymentCancelTask() {}
 
     public PaymentCancelTask(String orderId, String paymentId, String message) {
         super(new Property("message", message)
@@ -25,9 +24,9 @@ public class PaymentCancelTask extends ExecutableTask<Message, PaymentResponse> 
         String orderId = getPropertyValue("orderId").toString();
         String paymentId = getPropertyValue("paymentId").toString();
         String strMsg = getPropertyValue("message").toString();
-        String msg = strMsg + " [ order-id: " + orderId + "] ";
+        String msg = "[order-id: " + orderId + "] " + strMsg;
         //True will be Success, failed other-wise:
-        System.out.println(msg + "  ==>  " + "Commit: Payment Cancel In DB [" + Thread.currentThread().getName() + "]");
+        System.out.println("⛔ " + msg + "  ==>  " + "Commit: Payment Cancel In DB [" + Thread.currentThread().getName() + "]");
         return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CANCEL).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(strMsg);
     }
 }
