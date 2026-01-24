@@ -4,6 +4,7 @@ import com.infoworks.objects.Message;
 import com.infoworks.orm.Property;
 import com.infoworks.tasks.ExecutableTask;
 import com.infoworks.utils.tasks.models.OptStatus;
+import com.infoworks.utils.tasks.models.PaymentResponse;
 import com.infoworks.utils.tasks.models.ShipmentResponse;
 
 import java.util.Random;
@@ -31,6 +32,12 @@ public class ShipmentTask extends ExecutableTask<Message, ShipmentResponse> {
     public ShipmentResponse execute(Message message) throws RuntimeException {
         String orderId = getPropertyValue("orderId").toString();
         String paymentId = getPropertyValue("paymentId").toString();
+        if (paymentId == null || paymentId.isEmpty()) {
+            //Let's try to get it from message:
+            if (message != null && message instanceof PaymentResponse) {
+                paymentId = ((PaymentResponse) message).getPaymentID();
+            }
+        }
         String strMsg = getPropertyValue("message").toString();
         String msg = "[order-id: " + orderId + "] " + strMsg;
         boolean nextRandom = (getPropertyValue("nextRandom") != null)

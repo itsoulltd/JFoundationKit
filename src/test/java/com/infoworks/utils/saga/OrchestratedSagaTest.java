@@ -46,6 +46,26 @@ public class OrchestratedSagaTest {
         //To manage the orchestrator flow we will use TaskStack.java interface (..utils.transaction.TransactionStack.java).
         CountDownLatch latch = new CountDownLatch(1);
         //Saga-Flow:
+        TaskStack orchestration = new TransactionStack();
+        orchestration.push(new OrderTask("001", "Order For Coffee + Croissant"));
+        orchestration.push(new PaymentTask("001", "Order For Coffee + Croissant"));
+        orchestration.push(new ShipmentTask("001", "", "Order For Coffee + Croissant"));
+        orchestration.commit(true, (message, state) -> {
+            System.out.println("OrderProcessing Status: " + state.name());
+            latch.countDown();
+        });
+        //
+        try {
+            latch.await();
+        } catch (InterruptedException e) {}
+    }
+
+    @Test
+    public void orchestrationSagaTestV2() {
+        //To create a command we will use Task.java interface.
+        //To manage the orchestrator flow we will use TaskStack.java interface (..utils.transaction.TransactionStack.java).
+        CountDownLatch latch = new CountDownLatch(1);
+        //Saga-Flow:
         TaskStack regStack = new TransactionStack();
         regStack.push(new CheckUserExistTask("ahmed@yahoo.com"));
         regStack.push(new RegistrationTask("ahmed@yahoo.com"
