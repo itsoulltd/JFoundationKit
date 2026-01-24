@@ -39,7 +39,6 @@ public class OrderTask extends ExecutableTask<Message, OrderResponse> {
             System.out.println("✅ " + msg + "  ==>  " + "Commit: Order Create In DB [" + Thread.currentThread().getName() + "]");
             return (OrderResponse) new OrderResponse().setOptStatus(OptStatus.CREATE).setOrderID(orderId).setStatus(200).setMessage(strMsg);
         } else {
-            System.out.println("❌ " + msg + "  ==>  " + "Commit: Order Create Failed In DB [" + Thread.currentThread().getName() + "]");
             throw new RuntimeException(msg);
         }
     }
@@ -48,6 +47,8 @@ public class OrderTask extends ExecutableTask<Message, OrderResponse> {
     public OrderResponse abort(Message message) throws RuntimeException {
         String orderId = getPropertyValue("orderId").toString();
         String strMsg = getPropertyValue("message").toString();
+        String msg = "[order-id: " + orderId + "] " + strMsg;
+        System.out.println("❌ " + msg + "  ==>  " + "Commit: Order Create Failed In DB [" + Thread.currentThread().getName() + "]");
         return (OrderResponse) new OrderResponse().setOrderID(orderId).setStatus(500).setMessage(strMsg);
     }
 }

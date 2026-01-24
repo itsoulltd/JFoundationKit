@@ -31,13 +31,7 @@ public class ShipmentTask extends ExecutableTask<Message, ShipmentResponse> {
     @Override
     public ShipmentResponse execute(Message message) throws RuntimeException {
         String orderId = getPropertyValue("orderId").toString();
-        String paymentId = getPropertyValue("paymentId").toString();
-        if (paymentId == null || paymentId.isEmpty()) {
-            //Let's try to get it from message:
-            if (message != null && message instanceof PaymentResponse) {
-                paymentId = ((PaymentResponse) message).getPaymentID();
-            }
-        }
+        String paymentId = getPropertyValue("paymentId", message).toString();
         String strMsg = getPropertyValue("message").toString();
         String msg = "[order-id: " + orderId + "] " + strMsg;
         boolean nextRandom = (getPropertyValue("nextRandom") != null)
@@ -52,7 +46,6 @@ public class ShipmentTask extends ExecutableTask<Message, ShipmentResponse> {
             System.out.println("✅ " + msg + "  ==>  " + "Commit: Shipment Create In DB [" + Thread.currentThread().getName() + "]");
             return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CREATE).setShippingID(shipmentID).setPaymentID(paymentId).setOrderID(orderId).setStatus(200).setMessage(strMsg);
         } else {
-            System.out.println("❌ " + msg + "  ==>  " + "Commit: Shipment Create Failed In DB [" + Thread.currentThread().getName() + "]");
             throw new RuntimeException(msg);
         }
     }
@@ -62,6 +55,24 @@ public class ShipmentTask extends ExecutableTask<Message, ShipmentResponse> {
         String orderId = getPropertyValue("orderId").toString();
         String paymentId = getPropertyValue("paymentId").toString();
         String strMsg = getPropertyValue("message").toString();
+        String msg = "[order-id: " + orderId + "] " + strMsg;
+        System.out.println("❌ " + msg + "  ==>  " + "Commit: Shipment Create Failed In DB [" + Thread.currentThread().getName() + "]");
         return (ShipmentResponse) new ShipmentResponse().setOptStatus(OptStatus.CANCEL).setPaymentID(paymentId).setOrderID(orderId).setStatus(500).setMessage(strMsg);
+    }
+
+    protected Object getPropertyValue(String key, Message message) throws RuntimeException {
+        if (key.equalsIgnoreCase("paymentId")) {
+            String paymentId = getPropertyValue("paymentId").toString();
+            if (paymentId == null || paymentId.isEmpty()) {
+                //Let's try to get it from message:
+                if (message != null && message instanceof PaymentResponse) {
+                    paymentId = ((PaymentResponse) message).getPaymentID();
+                    updateProperties(new Property("paymentId", paymentId));
+                }
+            }
+            return paymentId;
+        } else {
+            return getPropertyValue(key);
+        }
     }
 }

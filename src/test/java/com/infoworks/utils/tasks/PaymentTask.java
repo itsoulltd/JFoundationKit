@@ -43,7 +43,6 @@ public class PaymentTask extends ExecutableTask<Message, PaymentResponse> {
             System.out.println("✅ " + msg + "  ==>  " + "Commit: Payment Create In DB [" + Thread.currentThread().getName() + "]");
             return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CREATE).setPaymentID(paymentID).setOrderID(orderId).setStatus(200).setMessage(strMsg);
         } else {
-            System.out.println("❌ " + msg + "  ==>  " + "Commit: Payment Create Failed In DB [" + Thread.currentThread().getName() + "]");
             throw new RuntimeException(msg);
         }
     }
@@ -52,6 +51,8 @@ public class PaymentTask extends ExecutableTask<Message, PaymentResponse> {
     public PaymentResponse abort(Message message) throws RuntimeException {
         String orderId = getPropertyValue("orderId").toString();
         String strMsg = getPropertyValue("message").toString();
+        String msg = "[order-id: " + orderId + "] " + strMsg;
+        System.out.println("❌ " + msg + "  ==>  " + "Commit: Payment Create Failed In DB [" + Thread.currentThread().getName() + "]");
         return (PaymentResponse) new PaymentResponse().setOptStatus(OptStatus.CANCEL).setOrderID(orderId).setStatus(500).setMessage(strMsg);
     }
 }
