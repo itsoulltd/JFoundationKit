@@ -67,9 +67,10 @@ public class RestTaskTest {
         GetTask task = new GetTask("https://jsonplaceholder.typicode.com/posts"
                 , "/1"
                 , new Property("name", "islam"), new Property("age", 39));
-        Response response = task.execute(null);
-        System.out.println(response.getStatus());
-        System.out.println(response.getMessage());
+        task.execute(null, (response) -> {
+            System.out.println(response.getStatus());
+            System.out.println(response.getMessage());
+        });
     }
 
     @Test
