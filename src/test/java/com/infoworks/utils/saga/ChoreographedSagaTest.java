@@ -1,5 +1,20 @@
 package com.infoworks.utils.saga;
 
+import com.infoworks.tasks.queue.TaskQueue;
+import com.infoworks.utils.eventq.EventQueue;
+import com.infoworks.utils.tasks.*;
+import com.infoworks.utils.tasks.models.OptStatus;
+import com.infoworks.utils.tasks.models.OrderResponse;
+import com.infoworks.utils.tasks.models.PaymentResponse;
+import com.infoworks.utils.tasks.models.ShipmentResponse;
+import org.junit.Test;
+
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * The Saga Pattern is a design pattern used in distributed systems and microservices
  * architecture to manage long-running transactions and ensure data consistency across
@@ -32,4 +47,94 @@ public class ChoreographedSagaTest {
      * items).
      * This means you must explicitly code for rollback in each service.
      */
+
+
+    @Test
+    public void choreographedSagaTest() {
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicInteger counter = new AtomicInteger(7);
+
+        //Application Service Pipelines:-
+        TaskQueue orderService = new EventQueue(Executors.newFixedThreadPool(3), true);
+        TaskQueue paymentService = new EventQueue(Executors.newSingleThreadExecutor());
+        TaskQueue shippingService = new EventQueue(Executors.newFixedThreadPool(5), true);
+
+        //State Management or Choreograph:-
+        //Order Choreograph:
+        orderService.onTaskComplete((message, state) -> {
+            //Order-Flow:
+            if (message instanceof OrderResponse) {
+                OrderResponse response = (OrderResponse) message;
+                if (response.getOptStatus() == OptStatus.CREATE) {
+                    paymentService.add(new PaymentTask(response.getOrderID(), response.getMessage()));
+                    counter.incrementAndGet();
+                } else {
+                    counter.decrementAndGet();
+                }
+            } else {
+                //TODO: When Failed
+            }
+            //Opt:-
+            if (counter.get() == 1) latch.countDown();
+        });
+        //
+        //Payment Choreograph:
+        paymentService.onTaskComplete((message, state) -> {
+            //Payment-Flow:
+            if (message instanceof PaymentResponse) {
+                PaymentResponse response = (PaymentResponse) message;
+                if (response.getOptStatus() == OptStatus.CREATE) {
+                    shippingService.add(new ShipmentTask(response.getOrderID(), response.getPaymentID(), response.getMessage()));
+                    counter.incrementAndGet();
+                } else if (response.getOptStatus() == OptStatus.CANCEL) {
+                    orderService.add(new OrderCancelTask(response.getOrderID(), response.getMessage()));
+                    counter.incrementAndGet();
+                } else {
+                    counter.decrementAndGet();
+                }
+            } else {
+                //TODO: When Failed
+            }
+            //Opt:-
+            if (counter.get() == 1) latch.countDown();
+        });
+        //
+        //Shipping Choreograph:
+        shippingService.onTaskComplete((message, state) -> {
+            //Shipping-Flow:
+            if (message instanceof ShipmentResponse) {
+                ShipmentResponse response = (ShipmentResponse) message;
+                if (response.getOptStatus() == OptStatus.CREATE) {
+                    System.out.println("\uD83D\uDE0E " + "[order-id: " + response.getOrderID() + "] "
+                            + "==>|| Shipping Complete For OrderID:" + response.getOrderID() + " (" + response.getMessage() + ") ||<==");
+                    counter.decrementAndGet();
+                } else if(response.getOptStatus() == OptStatus.CANCEL) {
+                    paymentService.add(new PaymentCancelTask(response.getOrderID(), response.getPaymentID(), response.getMessage()));
+                    counter.incrementAndGet();
+                } else {
+                    counter.decrementAndGet();
+                }
+            } else {
+                //TODO: When Failed
+            }
+            //Opt:-
+            if (counter.get() == 1) latch.countDown();
+        });
+        ///////Choreograph///////
+        Random random = new Random();
+        int orderId = 0;
+        orderService.add(new OrderTask(++orderId + "", "Order For Coffee + Croissant", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Biskit & Cake", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Glossary", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Fruits", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Tea + Coffee", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Black Coffee", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Breakfast", random.nextBoolean()));
+        /////////////////////////
+        //
+        try {
+            latch.await(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {}
+    }
+
 }

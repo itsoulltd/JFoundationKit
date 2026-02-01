@@ -68,7 +68,28 @@ public class JWebToken implements TokenProvider {
 
     @Override
     public String refreshToken(String secret, String token, Calendar timeToLive) throws RuntimeException {
-        return null;
+        String[] parts = token.split("\\.");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid Token format");
+        }
+        //Payload:
+        JWTPayload payload = TokenProvider.parsePayload(token, JWTPayload.class);
+        if (payload == null) {
+            throw new RuntimeException("Payload is Empty: ");
+        }
+        if (payload.getExp() <= 0l) {
+            throw new RuntimeException("Payload doesn't contain expiry " + payload);
+        }
+        //Header:
+        JWTHeader header = TokenProvider.parseHeader(token, JWTHeader.class);
+        try {
+            payload.setExp(timeToLive.getTimeInMillis());
+            String jwtToken = generateToken(secret, header, payload);
+            return jwtToken;
+        } catch (Exception e) {
+            LOG.warning(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -92,7 +113,7 @@ public class JWebToken implements TokenProvider {
         if (parts.length != 3) {
             throw new IllegalArgumentException("Invalid Token format");
         }
-        //
+        //Payload:
         JWTPayload payload = TokenProvider.parsePayload(token, JWTPayload.class);
         if (payload == null) {
             throw new RuntimeException("Payload is Empty: ");

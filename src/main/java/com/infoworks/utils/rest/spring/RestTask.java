@@ -88,4 +88,10 @@ public abstract class RestTask<In extends Message, Out extends Response> extends
         httpHeaders.set(HttpHeaders.AUTHORIZATION, prefix + token);
         return httpHeaders;
     }
+
+    public void execute(In message, Consumer<Response> responseListener) throws RuntimeException {
+        if (responseListener != null) {
+            responseListener.accept(execute(message));
+        }
+    }
 }
