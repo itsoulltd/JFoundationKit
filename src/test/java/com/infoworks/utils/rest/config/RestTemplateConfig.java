@@ -7,15 +7,15 @@ import org.springframework.web.client.RestTemplate;
 
 public class RestTemplateConfig {
 
-    private static ClientHttpRequestFactory _requestFactory;
+    private static RestTemplate _template;
 
     public static RestTemplate getTemplate() {
-        if (_requestFactory == null) {
+        if (_template == null) {
             HttpClient client = ApacheHttpClientConfig.defaultHttpClient();
-            _requestFactory = new HttpComponentsClientHttpRequestFactory(client);
+            ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(client);
+            _template = new RestTemplate(requestFactory);
         }
-        RestTemplate template = new RestTemplate(_requestFactory);
-        return template;
+        return _template;
     }
 
 }
