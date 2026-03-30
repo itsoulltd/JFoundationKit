@@ -17,6 +17,13 @@
             <version>latest</version>
         </dependency>
 
+## Programming philosophy behind:
+
+        1. DRY (Don't Repeat Yourself).
+        2. The Single Responsibility Principle (SRP) (Is a function/interface/class/module should have one, and only one, reason to change, 
+            meaning it should focus on a single, specific functionality).
+        3. Composition over inheritance (Is a common design pattern that tries to achieve code reuse without requiring inheritance.).
+
 ## How To Use API:
         
         ###Let's know about Message.java:
