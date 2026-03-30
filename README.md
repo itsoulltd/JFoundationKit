@@ -20,38 +20,27 @@
 ## How To Use API:
         
         ###Let's know about Message.java:
-        ###Message is derived from Entity.java
+        ###Message confirms to iMessage, Externalizable, Comparable<Message>
         Message message = new Message();
-        message.setEvent(new Event()
-                .setEventType(EventType.ADD)
-                .setUuid(UUID.randomUUID().toString())
-                .setTimestamp(String.valueOf(new Date().getTime())));
+        message.setPayload("My name");
 
-        String str = MessageMapper.getJsonSerializer().writeValueAsString(message);
-        String str2 = message.toString();
-        System.out.println("Message was: " + message.toString());
-
-        ###Custom Event:
-        Message messageC = new Message();
-        messageC.setEvent(new MyCustomEvent()
-                .setPassenger(new Passenger())
-                .setEventType(EventType.ACTIVATE)
-                .setUuid(UUID.randomUUID().toString())
-                .setTimestamp(String.valueOf(new Date().getTime())));
-        System.out.println("Custom Event Message was: " + messageC.toString());
+        String str1 = message.toString();
+        String str2 = MessageMapper.getJsonSerializer().writeValueAsString(message);
+        System.out.println(str1 + " == " + str2);
         
         ###Now recreate Message from Json:
-        String remoteJson = messageC.toString();
+        String remoteJson = message.toString();
         Message myRemoteMessage = MessageMapper.unmarshal(Message.class, remoteJson);
-        System.out.println("Both Custom Message is same: " + ( myRemoteMessage.getEvent().getUuid().equals(messageC.getEvent().getUuid()) ? "YES" : "NO" ));
+        System.out.println("Both Custom Message is same: " + ( myRemoteMessage.getPayload().equals(message.getPayload()) ? "YES" : "NO" ));
         
         ###Let's know about Response.java:
         ###Response is derived from Message.java
         Response response = new Response().setStatus(200).setMessage("Successful Transmission");
         System.out.println("Response was: " + response.toString());
         
-        ###Let's know about PagingQuery.java & SearchQuery.java:
-        SearchQuery query = Pagination.createQuery(SearchQuery.class
+        ###Let's know about PagingQuery.java & SearchQuery.java: [Moved to JSqlKit](https://github.com/itsoulltd/JSqlKit)
+        SearchQuery query = Pagination.of(SearchQuery.class
+                , 0
                 , 10
                 , SortOrder.ASC
                 , "CLUSTER_NAME","REGION_NAME", "AM_NAME");
