@@ -124,7 +124,7 @@ public class ChoreographedSagaTest {
         Random random = new Random();
         int orderId = 0;
         orderService.add(new OrderTask(++orderId + "", "Order For Coffee + Croissant", random.nextBoolean()));
-        orderService.add(new OrderTask(++orderId + "", "Order For Biskit & Cake", random.nextBoolean()));
+        orderService.add(new OrderTask(++orderId + "", "Order For Biscuit & Cake", random.nextBoolean()));
         orderService.add(new OrderTask(++orderId + "", "Order For Glossary", random.nextBoolean()));
         orderService.add(new OrderTask(++orderId + "", "Order For Fruits", random.nextBoolean()));
         orderService.add(new OrderTask(++orderId + "", "Order For Tea + Coffee", random.nextBoolean()));
