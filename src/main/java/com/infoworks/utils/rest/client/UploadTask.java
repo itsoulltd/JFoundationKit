@@ -5,7 +5,7 @@ import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
-import com.infoworks.utils.rest.client.body.publisher.MultipartBodyPublisher;
+import com.infoworks.utils.rest.client.body.publisher.MultipartFilePublisher;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +23,7 @@ public class UploadTask extends PostTask {
     private String contentDispositionNameKey = "file";
     private MediaType mimeType;
     private File uploadFile;
-    private MultipartBodyPublisher bodyPublisher;
+    private MultipartFilePublisher bodyPublisher;
 
     public UploadTask() {super();}
 
@@ -65,11 +65,11 @@ public class UploadTask extends PostTask {
         return null;
     }
 
-    public MultipartBodyPublisher getBodyPublisher() {
+    public MultipartFilePublisher getBodyPublisher() {
         return bodyPublisher;
     }
 
-    public void setBodyPublisher(MultipartBodyPublisher bodyPublisher) {
+    public void setBodyPublisher(MultipartFilePublisher bodyPublisher) {
         this.bodyPublisher = bodyPublisher;
     }
 
@@ -96,7 +96,7 @@ public class UploadTask extends PostTask {
         //Files.newInputStream(getUploadFile().toPath())
         try (InputStream inputStream = new FileInputStream(getUploadFile())) {
             //Prepare request builder:
-            MultipartBodyPublisher publisher = getBodyPublisher();
+            MultipartFilePublisher publisher = getBodyPublisher();
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(getUri()))
                     .POST(publisher.ofMultipartBody(inputStream, getContentDispositionNameKey(), getFilename(), getMimeType()));

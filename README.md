@@ -19,10 +19,9 @@
 
 ## Programming philosophy behind:
 
-        1. DRY (Don't Repeat Yourself).
-        2. The Single Responsibility Principle (SRP) (Is a function/interface/class/module should have one, and only one, reason to change, 
-            meaning it should focus on a single, specific functionality).
-        3. Composition over inheritance (Is a common design pattern that tries to achieve code reuse without requiring inheritance.).
+        1. DRY (Don't repeat yourself and Put shared logic in one place).
+        2. The Single Responsibility Principle (SRP) (Keep each component focused on one responsibility).
+        3. Composition over inheritance (*More flexible; *Easier to modify behavior at runtime; *Reduces tight coupling between classes).
 
 ## How To Use API:
         

@@ -3,8 +3,8 @@ package com.infoworks.utils.rest.client;
 import com.infoworks.objects.MediaType;
 import com.infoworks.objects.Response;
 import com.infoworks.utils.rest.base.SSLContextFactory;
-import com.infoworks.utils.rest.client.body.publisher.MultipartFilePublisher;
-import com.infoworks.utils.rest.client.body.publisher.MultipartIStreamPublisher;
+import com.infoworks.utils.rest.client.body.publisher.MultipartFileByteArrayPublisher;
+import com.infoworks.utils.rest.client.body.publisher.MultipartFileInputStreamPublisher;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class UploadTaskTest {
         UploadTask task = new UploadTask("http://localhost:8080/files/upload", MediaType.PNG, imfFile);
         task.setToken("my-token");
         task.setContentDispositionNameKey("content");
-        task.setBodyPublisher(new MultipartFilePublisher());
+        task.setBodyPublisher(new MultipartFileByteArrayPublisher());
         //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
@@ -44,7 +44,7 @@ public class UploadTaskTest {
         UploadTask task = new UploadTask("http://localhost:8080/files/upload", MediaType.PDF, imfFile);
         task.setToken("my-token");
         task.setContentDispositionNameKey("content");
-        task.setBodyPublisher(new MultipartIStreamPublisher());
+        task.setBodyPublisher(new MultipartFileInputStreamPublisher());
         //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
@@ -68,7 +68,7 @@ public class UploadTaskTest {
         task.setSecurity(SSLContextFactory.createDefaultContext());
         //
         task.setContentDispositionNameKey("content");
-        task.setBodyPublisher(new MultipartIStreamPublisher());
+        task.setBodyPublisher(new MultipartFileInputStreamPublisher());
         //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
