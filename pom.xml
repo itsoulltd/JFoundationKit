@@ -246,7 +246,7 @@
                         <exclude>iFileStoreTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.client.RestTaskTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.client.DownloadTaskTest.java</exclude>
-                        <exclude>com.infoworks.utils.rest.client.UploadTaskTest.java</exclude>
+                        <exclude>com.infoworks.utils.rest.client.FileUploadTaskTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.spring.RestTaskTest.java</exclude>
                         <exclude>com.infoworks.utils.rest.spring.DownloadTaskTest.java</exclude>
                         <exclude>SpringWebSocketTest.java</exclude>
