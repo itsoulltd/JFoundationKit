@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Map;
 
-public class UploadTask extends PostTask {
+public class UploadTask extends PutTask {
     private byte[] uploadBytes;
 
     public UploadTask() {super();}
@@ -38,29 +38,34 @@ public class UploadTask extends PostTask {
     }
 
     @Override
-    public Response execute(Message message) throws RuntimeException {
+    protected HttpRequest prepareRequest(Message message) {
+        setContentType(MediaType.BINARY_OCTET_STREAM);
+        //Prepare request builder:
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(getUri()))
+                .PUT(HttpRequest.BodyPublishers.ofByteArray(getUploadBytes()));
+        //Prepare Http-Headers:
+        Map<String, String> headers = createAuthHeader(getToken());
+        headers.put("User-Agent", "JavaHttpClient/11");
+        headers.put(MediaType.Key, getContentType().value());
+        headers.put("accept", "*/*");
+        headers.forEach(builder::header);
+        return builder.build();
+    }
+
+    @Override
+    protected Response executeRequest(HttpRequest request) {
         Response outcome = new Responses().setStatus(500);
         if (getUploadBytes().length == 0) return outcome.setError("UploadBytes cannot be null or empty.");
-        setContentType(MediaType.BINARY_OCTET_STREAM);
-        //Files.newInputStream(getUploadFile().toPath())
         try {
-            //Prepare request builder:
-            HttpRequest.Builder builder = HttpRequest.newBuilder()
-                    .uri(URI.create(getUri()))
-                    .PUT(HttpRequest.BodyPublishers.ofByteArray(getUploadBytes()));
-            //Prepare Http-Headers:
-            Map<String, String> headers = createAuthHeader(getToken());
-            headers.put("User-Agent", "JavaHttpClient/11");
-            headers.put(MediaType.Key, getContentType().value());
-            headers.put("accept", "*/*");
-            headers.forEach(builder::header);
-            //POST file-upload:
+            //PUT file-upload:
             HttpClient client = getClient();
-            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             outcome = new Responses().setStatus(response.statusCode()).setMessage(response.body());
         } catch (IOException | InterruptedException e) {
             outcome.setError(e.getMessage());
         }
         return outcome;
     }
+
 }
