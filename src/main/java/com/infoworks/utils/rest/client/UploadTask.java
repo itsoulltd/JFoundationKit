@@ -5,72 +5,23 @@ import com.infoworks.objects.Message;
 import com.infoworks.objects.Response;
 import com.infoworks.objects.Responses;
 import com.infoworks.orm.Property;
-import com.infoworks.utils.rest.client.body.publisher.MultipartBodyPublisher;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Map;
 
-public class UploadTask extends PostTask {
-    private String contentDispositionNameKey = "file";
-    private MediaType mimeType;
-    private File uploadFile;
-    private MultipartBodyPublisher bodyPublisher;
+public class UploadTask extends PutTask {
+    private byte[] uploadBytes;
 
     public UploadTask() {super();}
 
-    public UploadTask(String uploadUri, MediaType mimeType, File uploadFile) {
+    public UploadTask(String uploadUri, byte[] bytesToUpload) {
         super(uploadUri, "", new Property[0]);
-        this.mimeType = mimeType;
-        this.uploadFile = uploadFile;
-    }
-
-    public MediaType getMimeType() {
-        if (this.mimeType == null) {
-            //Let's try to get from the file it-self:
-            try {
-                String mediaType = Files.probeContentType(getUploadFile().toPath());
-                this.mimeType = new MediaType(mediaType, null);
-            } catch (Exception e) {
-                this.mimeType = MediaType.BINARY_OCTET_STREAM;
-            }
-        }
-        return mimeType;
-    }
-
-    public void setMimeType(MediaType mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    public File getUploadFile() {
-        return uploadFile;
-    }
-
-    public void setUploadFile(File uploadFile) {
-        this.uploadFile = uploadFile;
-    }
-
-    public String getFilename() {
-        if (getUploadFile() != null) {
-            return getUploadFile().getName();
-        }
-        return null;
-    }
-
-    public MultipartBodyPublisher getBodyPublisher() {
-        return bodyPublisher;
-    }
-
-    public void setBodyPublisher(MultipartBodyPublisher bodyPublisher) {
-        this.bodyPublisher = bodyPublisher;
+        this.uploadBytes = bytesToUpload;
     }
 
     @Override
@@ -78,41 +29,43 @@ public class UploadTask extends PostTask {
         return Duration.ofSeconds(60);
     }
 
-    public String getContentDispositionNameKey() {
-        return contentDispositionNameKey;
+    public byte[] getUploadBytes() {
+        return uploadBytes;
     }
 
-    public void setContentDispositionNameKey(String contentDispositionNameKey) {
-        this.contentDispositionNameKey = contentDispositionNameKey;
+    public void setUploadBytes(byte[] uploadBytes) {
+        this.uploadBytes = uploadBytes;
     }
 
     @Override
-    public Response execute(Message message) throws RuntimeException {
+    protected HttpRequest prepareRequest(Message message) {
+        setContentType(MediaType.BINARY_OCTET_STREAM);
+        //Prepare request builder:
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(getUri()))
+                .PUT(HttpRequest.BodyPublishers.ofByteArray(getUploadBytes()));
+        //Prepare Http-Headers:
+        Map<String, String> headers = createAuthHeader(getToken());
+        headers.put("User-Agent", "JavaHttpClient/11");
+        headers.put(MediaType.Key, getContentType().value());
+        headers.put("accept", "*/*");
+        headers.forEach(builder::header);
+        return builder.build();
+    }
+
+    @Override
+    protected Response executeRequest(HttpRequest request) {
         Response outcome = new Responses().setStatus(500);
-        if (getMimeType() == null) return outcome.setError("MediaType cannot be null or empty.");
-        if (getUploadFile() == null) return outcome.setError("UploadFile cannot be null or empty.");
-        if (getBodyPublisher() == null) return outcome.setError("MultipartBodyPublisher cannot be null or empty.");
-        setContentType(MediaType.MULTIPART_FORM_DATA);
-        //Files.newInputStream(getUploadFile().toPath())
-        try (InputStream inputStream = new FileInputStream(getUploadFile())) {
-            //Prepare request builder:
-            MultipartBodyPublisher publisher = getBodyPublisher();
-            HttpRequest.Builder builder = HttpRequest.newBuilder()
-                    .uri(URI.create(getUri()))
-                    .POST(publisher.ofMultipartBody(inputStream, getContentDispositionNameKey(), getFilename(), getMimeType()));
-            //Prepare Http-Headers:
-            Map<String, String> headers = createAuthHeader(getToken());
-            headers.put("User-Agent", "JavaHttpClient/11");
-            headers.put(publisher.contentTypeKey(), publisher.contentTypeValue(getContentType()));
-            headers.put("accept", "*/*");
-            headers.forEach(builder::header);
-            //POST file-upload:
+        if (getUploadBytes().length == 0) return outcome.setError("UploadBytes cannot be null or empty.");
+        try {
+            //PUT file-upload:
             HttpClient client = getClient();
-            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             outcome = new Responses().setStatus(response.statusCode()).setMessage(response.body());
         } catch (IOException | InterruptedException e) {
             outcome.setError(e.getMessage());
         }
         return outcome;
     }
+
 }

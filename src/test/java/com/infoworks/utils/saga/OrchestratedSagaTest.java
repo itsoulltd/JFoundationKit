@@ -1,5 +1,6 @@
 package com.infoworks.utils.saga;
 
+import com.infoworks.PLogger;
 import com.infoworks.tasks.stack.TaskStack;
 import com.infoworks.utils.tasks.*;
 import com.infoworks.utils.transaction.TransactionStack;
@@ -46,6 +47,8 @@ public class OrchestratedSagaTest {
         //To manage the orchestrator flow we will use TaskStack.java interface (..utils.transaction.TransactionStack.java).
         CountDownLatch latch = new CountDownLatch(1);
         //Saga-Flow:
+        PLogger pl = new PLogger();
+        pl.printMillis("start");
         TaskStack orchestration = new TransactionStack();
         orchestration.push(new OrderTask("001", "Order For Coffee + Croissant"));
         orchestration.push(new PaymentTask("001", "Order For Coffee + Croissant"));
@@ -54,10 +57,27 @@ public class OrchestratedSagaTest {
             System.out.println("OrderProcessing Status: " + state.name());
             latch.countDown();
         });
+        pl.printMillis("end");
         //
         try {
             latch.await();
         } catch (InterruptedException e) {}
+    }
+
+    @Test
+    public void nonOrchestrationSagaTest() {
+        //Non-Saga-Flow:
+        PLogger pl = new PLogger();
+        pl.printMillis("start");
+        try {
+            new OrderTask("001", "Order For Coffee + Croissant").execute(null);
+            new PaymentTask("001", "Order For Coffee + Croissant").execute(null);
+            new ShipmentTask("001", "", "Order For Coffee + Croissant").execute(null);
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+        pl.printMillis("end");
+        //
     }
 
     @Test

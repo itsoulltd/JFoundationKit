@@ -2,7 +2,6 @@ package com.infoworks.utils.jmsq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infoworks.objects.Message;
-import com.infoworks.objects.MessageParser;
 import com.infoworks.tasks.Task;
 import com.infoworks.tasks.queue.QueuedTaskStateListener;
 import com.infoworks.tasks.queue.TaskQueue;
@@ -20,26 +19,11 @@ public abstract class AbstractJmsQueue implements TaskQueue, QueuedTaskStateList
     public abstract void setObjectMapper(ObjectMapper objectMapper);
 
     protected JmsMessage convert(Task task){
-        //Defined:JmsMessage Protocol
-        JmsMessage jmsMessage = new JmsMessage()
-                .setTaskClassName(task.getClass().getName())
-                .setMessageClassName(Message.class.getName());
-        if (task.getMessage() != null) {
-            jmsMessage.setMessageClassName(task.getMessage().getClass().getName())
-                    .setPayload(MessageParser.printString(task.getMessage(), getObjectMapper()));
-        }
-        return jmsMessage;
+        return JmsMessage.convert(task, getObjectMapper());
     }
 
     protected JmsMessage convert(Task task, Message error){
-        //Defined:JmsMessage Protocol
-        JmsMessage jmsMessage = convert(task)
-                .setErrorClassName(Message.class.getName());
-        if (error != null){
-            jmsMessage.setErrorClassName(error.getClass().getName())
-                    .setErrorPayload(MessageParser.printString(error, getObjectMapper()));
-        }
-        return jmsMessage;
+        return JmsMessage.convert(task, error, getObjectMapper());
     }
 
     @Override

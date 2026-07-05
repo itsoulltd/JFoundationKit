@@ -17,41 +17,36 @@
             <version>latest</version>
         </dependency>
 
+## Programming philosophy behind:
+
+        1. DRY (Don't repeat yourself and Put shared logic in one place).
+        2. The Single Responsibility Principle (SRP) (Keep each component focused on one responsibility).
+        3. Composition over inheritance (*More flexible; *Easier to modify behavior at runtime; *Reduces tight coupling between classes).
+
 ## How To Use API:
         
         ###Let's know about Message.java:
-        ###Message is derived from Entity.java
+        ###Message confirms to iMessage, Externalizable, Comparable<Message>
         Message message = new Message();
-        message.setEvent(new Event()
-                .setEventType(EventType.ADD)
-                .setUuid(UUID.randomUUID().toString())
-                .setTimestamp(String.valueOf(new Date().getTime())));
+        message.setPayload("My name");
 
-        String str = MessageMapper.getJsonSerializer().writeValueAsString(message);
-        String str2 = message.toString();
-        System.out.println("Message was: " + message.toString());
-
-        ###Custom Event:
-        Message messageC = new Message();
-        messageC.setEvent(new MyCustomEvent()
-                .setPassenger(new Passenger())
-                .setEventType(EventType.ACTIVATE)
-                .setUuid(UUID.randomUUID().toString())
-                .setTimestamp(String.valueOf(new Date().getTime())));
-        System.out.println("Custom Event Message was: " + messageC.toString());
+        String str1 = message.toString();
+        String str2 = MessageMapper.getJsonSerializer().writeValueAsString(message);
+        System.out.println(str1 + " == " + str2);
         
         ###Now recreate Message from Json:
-        String remoteJson = messageC.toString();
+        String remoteJson = message.toString();
         Message myRemoteMessage = MessageMapper.unmarshal(Message.class, remoteJson);
-        System.out.println("Both Custom Message is same: " + ( myRemoteMessage.getEvent().getUuid().equals(messageC.getEvent().getUuid()) ? "YES" : "NO" ));
+        System.out.println("Both Custom Message is same: " + ( myRemoteMessage.getPayload().equals(message.getPayload()) ? "YES" : "NO" ));
         
         ###Let's know about Response.java:
         ###Response is derived from Message.java
         Response response = new Response().setStatus(200).setMessage("Successful Transmission");
         System.out.println("Response was: " + response.toString());
         
-        ###Let's know about PagingQuery.java & SearchQuery.java:
-        SearchQuery query = Pagination.createQuery(SearchQuery.class
+        ###Let's know about PagingQuery.java & SearchQuery.java: [Moved to JSqlKit](https://github.com/itsoulltd/JSqlKit)
+        SearchQuery query = Pagination.of(SearchQuery.class
+                , 0
                 , 10
                 , SortOrder.ASC
                 , "CLUSTER_NAME","REGION_NAME", "AM_NAME");
@@ -199,12 +194,77 @@
         regStack.commit(true, (message, state) -> {
             System.out.println("Registration Status: " + state.name());
         });
+
+##### iDataSource & iDataStore Api: 
+
+        /**
+        * SimpleDataSource is a concreate impl of iDataSource interface.
+        */
+        //Create an instance of iDataSource from a concreate impl of SimpleDataSource.java
+        SimpleDataSource<String, Object> dataSource = new SimpleDataSource<>();
         
+        //API: Create and Insert:
+        Person person = new Person().setName("John")
+                            .setEmail("john@gmail.com").setAge(36)
+                            .setGender("male");
+        dataSource.put("id-001", person);
+        
+        person = new Person().setName("Adam")
+                             .setEmail("adam@gmail.com").setAge(31)
+                             .setGender("male");
+        dataSource.put("id-002", person);
+        
+        //API: Read by Key
+        Person found = dataSource.read("id-001");
+        
+        //API: Paginated read-sync and Convert:
+        int maxItem = dataSource.size();
+        Object[] items = dataSource.readSync(0, maxItem);
+        List<Person> converted = Stream.of(items).map(itm -> (Person) itm).collect(Collectors.toList());
+        converted.forEach(person -> System.out.println(person.toString()));
+        
+        //API: Remove
+        Person removed = dataSource.remove("id-002");
+        
+        //API: Replace
+        Person replaced = dataSource.replace("id-002", new Person()...);
+
+##### Page Vs Offset:
+
+        //Page Vs Offset: When limit/size is given
+        public int getOffset(int page, int limit) {
+             if (limit <= 0) limit = 10;
+             if (page <= 0) page = 1;
+             int offset = (page - 1) * limit;
+             return offset;
+        }
+        
+        //E.g. Usually in rest-api get-method, page variable being passed with starting value from 1;
+        //Where as in database sql-context, we write select query with offset with startting value from 0;
+        //So, usually we have to translate page into offset or vice-versa.
+        int page = 2;
+        int limit = 10;
+        int offset = getOffset(page, limit);
+        
+        //Test Results:
+        When (limit:10 & page:2)   Offset: 10
+        When (limit:10 & page:-1)  Offset: 0
+        When (limit:10 & page:7)   Offset: 60
+        When (limit:10 & page:101) Offset: 1000
+        When (limit:15 & page:2)   Offset: 15
+        When (limit:15 & page:-1)  Offset: 0
+        When (limit:20 & page:7)   Offset: 120
+        When (limit:-1 & page:-1)  Offset: 0
+
 ##### To know more about Task & TaskStack & TaskQueue, visit test classes. Thank you!
+![screenshot](README.img/OrchestratedSagaTest.png)
+![screenshot](README.img/Non-OrchestratedSagaTest.png)
+![screenshot](README.img/ChoreographedSagaTest-01.png)
+![screenshot](README.img/ChoreographedSagaTest-02.png)
         
 #### Please Contact for extended support.
       email@ m.towhid.islam@gmail.com
-      call@  +8801712645571
+      call@  DE(+4917623596979) BD(+8801712645571)
 ##### [Towhidul Islam @linkedin](https://www.linkedin.com/in/mtowhidislam/)
       Available for Hiring (full-time or contractual)
 ##### Tech-Experience: 

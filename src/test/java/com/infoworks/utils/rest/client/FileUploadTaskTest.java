@@ -3,8 +3,8 @@ package com.infoworks.utils.rest.client;
 import com.infoworks.objects.MediaType;
 import com.infoworks.objects.Response;
 import com.infoworks.utils.rest.base.SSLContextFactory;
-import com.infoworks.utils.rest.client.body.publisher.MultipartFilePublisher;
-import com.infoworks.utils.rest.client.body.publisher.MultipartIStreamPublisher;
+import com.infoworks.utils.rest.client.body.publisher.MultipartFileByteArrayPublisher;
+import com.infoworks.utils.rest.client.body.publisher.MultipartFileInputStreamPublisher;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,17 +15,17 @@ import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-public class UploadTaskTest {
+public class FileUploadTaskTest {
 
     @Test
     public void uploadTestWithFilePublisher() {
         Path path = Paths.get("src","test","resources", "data", "final-architecture.png");
         File imfFile = new File(path.toFile().getAbsolutePath());
         //
-        UploadTask task = new UploadTask("http://localhost:8080/files/upload", MediaType.PNG, imfFile);
+        FileUploadTask task = new FileUploadTask("http://localhost:8080/files/upload", MediaType.PNG, imfFile);
         task.setToken("my-token");
         task.setContentDispositionNameKey("content");
-        task.setBodyPublisher(new MultipartFilePublisher());
+        task.setBodyPublisher(new MultipartFileByteArrayPublisher());
         //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
@@ -41,10 +41,10 @@ public class UploadTaskTest {
         Path path = Paths.get("src","test","resources", "data", "JFoundationKit_Test.pdf");
         File imfFile = new File(path.toFile().getAbsolutePath());
         //
-        UploadTask task = new UploadTask("http://localhost:8080/files/upload", MediaType.PDF, imfFile);
+        FileUploadTask task = new FileUploadTask("http://localhost:8080/files/upload", MediaType.PDF, imfFile);
         task.setToken("my-token");
         task.setContentDispositionNameKey("content");
-        task.setBodyPublisher(new MultipartIStreamPublisher());
+        task.setBodyPublisher(new MultipartFileInputStreamPublisher());
         //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
@@ -60,7 +60,7 @@ public class UploadTaskTest {
         Path path = Paths.get("src","test","resources", "data", "rider-mock-data.json");
         File imfFile = new File(path.toFile().getAbsolutePath());
         //
-        UploadTask task = new UploadTask("https://localhost:8443/files/upload", MediaType.JSON, imfFile);
+        FileUploadTask task = new FileUploadTask("https://localhost:8443/files/upload", MediaType.JSON, imfFile);
         //
         SSLParameters sslParams = new SSLParameters();
         sslParams.setEndpointIdentificationAlgorithm(""); // Disable hostname check
@@ -68,7 +68,7 @@ public class UploadTaskTest {
         task.setSecurity(SSLContextFactory.createDefaultContext());
         //
         task.setContentDispositionNameKey("content");
-        task.setBodyPublisher(new MultipartIStreamPublisher());
+        task.setBodyPublisher(new MultipartFileInputStreamPublisher());
         //Finally:
         Response response = task.execute(null);
         System.out.println(response.getStatus());
@@ -80,7 +80,7 @@ public class UploadTaskTest {
     public void mediaTypeFromFileTest_PNG() {
         Path path = Paths.get("src","test","resources", "data", "final-architecture.png");
         File imfFile = new File(path.toFile().getAbsolutePath());
-        UploadTask task = new UploadTask("", null, imfFile);
+        FileUploadTask task = new FileUploadTask("", null, imfFile);
         MediaType type = task.getMimeType();
         Assert.assertEquals(type.value(), MediaType.PNG.value());
     }
@@ -89,7 +89,7 @@ public class UploadTaskTest {
     public void mediaTypeFromFileTest_PDF() {
         Path path = Paths.get("src","test","resources", "data", "JFoundationKit_Test.pdf");
         File pdfFile = new File(path.toFile().getAbsolutePath());
-        UploadTask task = new UploadTask("", null, pdfFile);
+        FileUploadTask task = new FileUploadTask("", null, pdfFile);
         MediaType type = task.getMimeType();
         Assert.assertEquals(type.value(), MediaType.PDF.value());
     }
@@ -98,7 +98,7 @@ public class UploadTaskTest {
     public void mediaTypeFromFileTest_Json() {
         Path path = Paths.get("src","test","resources", "data", "ride-mock-data.json");
         File jsonFile = new File(path.toFile().getAbsolutePath());
-        UploadTask task = new UploadTask("", null, jsonFile);
+        FileUploadTask task = new FileUploadTask("", null, jsonFile);
         MediaType type = task.getMimeType();
         Assert.assertEquals(type.value(), MediaType.JSON.value());
     }

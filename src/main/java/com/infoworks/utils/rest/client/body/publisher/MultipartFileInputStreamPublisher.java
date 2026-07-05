@@ -11,7 +11,7 @@ import java.io.SequenceInputStream;
 import java.net.http.HttpRequest;
 import java.util.*;
 
-public class MultipartIStreamPublisher implements MultipartBodyPublisher {
+public class MultipartFileInputStreamPublisher implements MultipartFilePublisher {
 
     private static String BOUNDARY = "----Boundary" + UUID.randomUUID();
     private static String LINE_FEED = "\r\n";
