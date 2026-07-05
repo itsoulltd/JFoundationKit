@@ -30,16 +30,7 @@ public abstract class AbstractJmsQueueManager extends AbstractQueueManager {
     protected Task createTask(String text)
             throws ClassNotFoundException, IOException, IllegalAccessException
             , InstantiationException, NoSuchMethodException, InvocationTargetException {
-        //Defined:JmsMessage Protocol
-        JmsMessage jmsMessage = MessageParser.unmarshal(JmsMessage.class, text);
-        //Task task = (Task) Class.forName(jmsMessage.getTaskClassName()).newInstance();
-        Class taskType = Class.forName(jmsMessage.getTaskClassName());
-        Task task = (Task) taskType.getDeclaredConstructor().newInstance();
-        //
-        Class<? extends Message> messageClass = (Class<? extends Message>) Class.forName(jmsMessage.getMessageClassName());
-        Message taskMessage = MessageParser.unmarshal(messageClass, jmsMessage.getPayload());
-        task.setMessage(taskMessage);
-        return task;
+        return JmsMessage.revert(text);
     }
 
     protected boolean handleTextOnStart(String text) throws RuntimeException {
