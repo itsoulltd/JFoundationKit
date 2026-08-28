@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 public class ExcelReadWriteTest {
@@ -54,11 +55,29 @@ public class ExcelReadWriteTest {
     public void readExcelFile() throws IOException {
         iResources resources = iResources.create();
         try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            Map<Integer, List<String>> rows = new ExcelReadingService().read(ios, 0, 0, 0);
+            Map<Integer, List<String>> rows = new ExcelReadingService().read(ios, 0, 0, 10);
             rows.forEach((idx, row) -> {
                 LOG.info(String.join(" | ", row));
             });
         }
+        pLogger.printMillis("Simple-Read-Complete");
+    }
+
+    @Test
+    public void readAsyncExcelFile() throws IOException {
+        AtomicLong pageCounter = new AtomicLong(0);
+        iResources resources = iResources.create();
+        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
+            new ExcelReadingService().readAsync(ios, 50, 0, 1, 55, 12
+                    , (rows) -> {
+                        //Print rows:
+                        rows.forEach((idx, row) -> {
+                            LOG.info(String.join(" | ", row));
+                        });
+                        pLogger.printMillis("Page: " + pageCounter.incrementAndGet());
+                    });
+        }
+        pLogger.printMillis("Async-Read-Complete");
     }
 
     @Test
