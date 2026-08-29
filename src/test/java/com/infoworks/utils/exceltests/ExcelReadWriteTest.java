@@ -52,10 +52,46 @@ public class ExcelReadWriteTest {
     }
 
     @Test
+    public void rowCountExcelFile() throws IOException {
+        iResources resources = iResources.create();
+        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
+            int count = new ExcelReadingService(ios).size(0);
+            pLogger.printMillis("Row count: " + count);
+        }
+    }
+
+    @Test
+    public void readSyncExcelFile() throws IOException {
+        iResources resources = iResources.create();
+        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
+            List<String>[] items = new ExcelReadingService(ios).readSync(0, 10);
+            pLogger.printMillis("readSync row count: " + items.length);
+        }
+    }
+
+    @Test
+    public void readSyncExcelFile_02() throws IOException {
+        iResources resources = iResources.create();
+        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
+            List<String>[] items = new ExcelReadingService(ios).readSync(90, 120);
+            pLogger.printMillis("readSync row count: " + items.length);
+        }
+    }
+
+    @Test
+    public void readSyncExcelFile_03() throws IOException {
+        iResources resources = iResources.create();
+        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
+            List<String>[] items = new ExcelReadingService(ios).readSync(55, 5);
+            pLogger.printMillis("readSync row count: " + items.length);
+        }
+    }
+
+    @Test
     public void readExcelFile() throws IOException {
         iResources resources = iResources.create();
         try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            Map<Integer, List<String>> rows = new ExcelReadingService().read(ios, 0, 0, 10);
+            Map<Integer, List<String>> rows = new ExcelReadingService(ios).read(0, 0, 10);
             rows.forEach((idx, row) -> {
                 LOG.info(String.join(" | ", row));
             });
@@ -68,7 +104,7 @@ public class ExcelReadWriteTest {
         AtomicLong pageCounter = new AtomicLong(0);
         iResources resources = iResources.create();
         try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            new ExcelReadingService().readAsync(ios, 50, 0, 1, 55, 12
+            new ExcelReadingService(ios).readAsync(50, 0, 1, 55, 12
                     , (rows) -> {
                         //Print rows:
                         rows.forEach((idx, row) -> {

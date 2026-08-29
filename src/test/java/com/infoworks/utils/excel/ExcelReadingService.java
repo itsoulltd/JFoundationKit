@@ -1,5 +1,6 @@
 package com.infoworks.utils.excel;
 
+import com.infoworks.data.base.iDataSource;
 import com.monitorjbl.xlsx.StreamingReader;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -16,42 +17,74 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ExcelReadingService {
+public class ExcelReadingService implements iDataSource<Integer, List<String>> {
 
     private static Logger LOG = Logger.getLogger(ExcelReadingService.class.getSimpleName());
+    private final InputStream inputStream;
 
-    public void readAsync(InputStream inputStream
-            , Integer bufferSize
-            , Integer sheetAt
-            , Integer beginIndex
-            , Integer endIndex
-            , Integer pageSize
-            , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
-        //
-        Workbook workbook = StreamingReader.builder()
-                .rowCacheSize(pageSize)
-                .bufferSize(bufferSize)
-                .open(inputStream);
-        configureWorkbook(workbook);
-        readBuffered(workbook, sheetAt, beginIndex, endIndex, pageSize, consumer);
-        workbook.close();
+    public ExcelReadingService(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 
-    public void readAsync(File file
-            , Integer bufferSize
-            , Integer sheetAt
-            , Integer beginIndex
-            , Integer endIndex
-            , Integer pageSize
+    @Override
+    public int size() {
+        try {
+            return size(0);
+        } catch (IOException ignored) {}
+        return 0;
+    }
+
+    public int size(Integer sheetAt) throws IOException {
+        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+            configureWorkbook(workbook);
+            Sheet sheet = workbook.getSheetAt(sheetAt);
+            int maxCount = sheet.getLastRowNum() + 1;
+            return maxCount;
+        }
+    }
+
+    @Override @SuppressWarnings("unchecked")
+    public List<String>[] readSync(int offset, int pageSize) {
+        try {
+            int till = offset + pageSize;
+            Map<Integer, List<String>> data = read(0, offset, till);
+            return data.values().toArray(new List[0]);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override @SuppressWarnings("unchecked")
+    public void readAsync(int offset, int pageSize, Consumer<List<String>[]> consumer) {
+        try {
+            readAsync(100, 0, offset, 0, pageSize, (rows) -> {
+                if (consumer != null) consumer.accept(rows.values().toArray(new List[0]));
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void readAsync(Integer bufferSize, Integer sheetAt, Integer beginIndex, Integer endIndex, Integer pageSize
             , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
-        //
-        Workbook workbook = StreamingReader.builder()
+        try (Workbook workbook = StreamingReader.builder()
                 .rowCacheSize(pageSize)
                 .bufferSize(bufferSize)
-                .open(file);
-        configureWorkbook(workbook);
-        readBuffered(workbook, sheetAt, beginIndex, endIndex, pageSize, consumer);
-        workbook.close();
+                .open(inputStream)) {
+            configureWorkbook(workbook);
+            readBuffered(workbook, sheetAt, beginIndex, endIndex, pageSize, consumer);
+        }
+    }
+
+    public static void readAsync(File file, Integer bufferSize, Integer sheetAt, Integer beginIndex, Integer endIndex, Integer pageSize
+            , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
+        try (Workbook workbook = StreamingReader.builder()
+                .rowCacheSize(pageSize)
+                .bufferSize(bufferSize)
+                .open(file)) {
+            configureWorkbook(workbook);
+            readBuffered(workbook, sheetAt, beginIndex, endIndex, pageSize, consumer);
+        }
     }
 
     /**
@@ -64,7 +97,7 @@ public class ExcelReadingService {
      * @param consumer
      * @throws IOException
      */
-    private void readBuffered(Workbook workbook
+    private static void readBuffered(Workbook workbook
             , Integer sheetAt
             , Integer beginIndex
             , Integer endIndex
@@ -100,31 +133,23 @@ public class ExcelReadingService {
         }
     }
 
-    public void read(InputStream inputStream
-            , Integer sheetAt
-            , Integer startAt
-            , Integer pageSize
+    public void read(Integer sheetAt, Integer startAt, Integer pageSize
             , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
-        //
-        Workbook workbook = WorkbookFactory.create(inputStream);
-        configureWorkbook(workbook);
-        readAsync(workbook, sheetAt, startAt, pageSize, consumer);
-        workbook.close();
+        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+            configureWorkbook(workbook);
+            readAsync(workbook, sheetAt, startAt, pageSize, consumer);
+        }
     }
 
-    public void read(File file
-            , Integer sheetAt
-            , Integer startAt
-            , Integer pageSize
+    public static void read(File file, Integer sheetAt, Integer startAt, Integer pageSize
             , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
-        //
-        Workbook workbook = WorkbookFactory.create(file);
-        configureWorkbook(workbook);
-        readAsync(workbook, sheetAt, startAt, pageSize, consumer);
-        workbook.close();
+        try (Workbook workbook = WorkbookFactory.create(file)) {
+            configureWorkbook(workbook);
+            readAsync(workbook, sheetAt, startAt, pageSize, consumer);
+        }
     }
 
-    private void readAsync(Workbook workbook
+    private static void readAsync(Workbook workbook
             , Integer sheetAt
             , Integer startAt
             , Integer pageSize
@@ -139,7 +164,7 @@ public class ExcelReadingService {
         while (index < loopCount){
             int end = start + pageSize;
             if (end >= maxCount) end = maxCount;
-            Map res = parseContent(workbook, sheetAt, start, end);
+            Map<Integer, List<String>> res = parseContent(workbook, sheetAt, start, end);
             if (consumer != null && res.size() > 0){
                 consumer.accept(res);
             }
@@ -149,51 +174,48 @@ public class ExcelReadingService {
         }
     }
 
-    public Map<Integer, List<String>> read(InputStream inputStream, Integer sheetAt, Integer start, Integer end) throws IOException {
-        Workbook workbook = WorkbookFactory.create(inputStream);
-        configureWorkbook(workbook);
-        Map res = parseContent(workbook, sheetAt, start, end);
-        workbook.close();
-        return res;
+    public Map<Integer, List<String>> read(Integer sheetAt, Integer start, Integer end) throws IOException {
+        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+            configureWorkbook(workbook);
+            Map<Integer, List<String>> res = parseContent(workbook, sheetAt, start, end);
+            return res;
+        }
     }
 
-    public Map<Integer, List<String>> readXls(InputStream inputStream, Integer sheetAt, Integer start, Integer end) throws IOException {
-        Workbook workbook = new HSSFWorkbook(inputStream);
-        configureWorkbook(workbook);
-        Map res = parseContent(workbook, sheetAt, start, end);
-        workbook.close();
-        return res;
+    public Map<Integer, List<String>> readXls(Integer sheetAt, Integer start, Integer end) throws IOException {
+        try (Workbook workbook = new HSSFWorkbook(inputStream)) {
+            configureWorkbook(workbook);
+            Map<Integer, List<String>> res = parseContent(workbook, sheetAt, start, end);
+            return res;
+        }
     }
 
-    public Map<Integer, List<String>> read(File file, Integer sheetAt, Integer start, Integer end) throws IOException {
-        Workbook workbook = WorkbookFactory.create(file);
-        configureWorkbook(workbook);
-        Map res = parseContent(workbook, sheetAt, start, end);
-        workbook.close();
-        return res;
+    public static Map<Integer, List<String>> read(File file, Integer sheetAt, Integer start, Integer end) throws IOException {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
+            configureWorkbook(workbook);
+            Map<Integer, List<String>> res = parseContent(workbook, sheetAt, start, end);
+            return res;
+        }
     }
 
-    private void configureWorkbook(Workbook workbook) {
+    private static void configureWorkbook(Workbook workbook) {
         if (workbook != null){
+            //Add All kind of setting for workbook:
             try {
-                //Add All kind of setting for workbook:
                 workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            }catch (UnsupportedOperationException e){
-                LOG.log(Level.WARNING, e.getMessage());
-            }catch (Exception e){
+            } catch (Exception e) {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
     }
 
-    private Map<Integer, List<String>> parseContent(Workbook workbook, Integer sheetAt, Integer start, Integer end) throws IOException {
-        //DoTheMath:
-        Sheet sheet = workbook.getSheetAt(sheetAt);
+    private static Map<Integer, List<String>> parseContent(Workbook workbook, Integer sheetAt, Integer start, Integer end) throws IOException {
+        //The math:
         Map<Integer, List<String>> data = new HashMap<>();
+        Sheet sheet = workbook.getSheetAt(sheetAt);
+        int maxCount = sheet.getLastRowNum() + 1;
         //
-        if (end <= 0 || end == Integer.MAX_VALUE){
-            end = sheet.getLastRowNum() + 1;
-        }
+        if (end <= 0 || end > maxCount) end = maxCount;
         int idx = (start < 0) ? 0 : start;
         while (idx < end) {
             data.put(idx, new ArrayList<>());
@@ -205,7 +227,7 @@ public class ExcelReadingService {
         return data;
     }
 
-    private void addInto(Map<Integer, List<String>> data, int idx, Cell cell) {
+    private static void addInto(Map<Integer, List<String>> data, int idx, Cell cell) {
         switch (cell.getCellType()) {
             case STRING:
                 data.get(idx).add(cell.getRichStringCellValue().getString());
