@@ -11,8 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,7 +42,7 @@ public class ExcelReadWriteTest {
 
     private InputStream createInputStream(String fileName, iResources resources) throws FileNotFoundException {
         if (resources == null) {
-            Path path = Paths.get("src","test","resources", fileName);
+            Path path = Paths.get("src","test", "resources", fileName);
             File imfFile = new File(path.toFile().getAbsolutePath());
             InputStream ios = new FileInputStream(imfFile);
             return ios;
@@ -51,47 +53,48 @@ public class ExcelReadWriteTest {
         }
     }
 
+    private File createCopyFrom(String filename) throws IOException {
+        Path tempDir = Files.createTempDirectory("temp-");
+        Path target = tempDir.resolve(Path.of(filename).getFileName().toString());
+        try (InputStream inputStream = createInputStream(filename, iResources.create())) {
+            Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
+        }
+        return target.toFile();
+    }
+
     @Test
     public void rowCountExcelFile() throws IOException {
-        iResources resources = iResources.create();
-        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            int count = new ExcelReadingService(ios).size(0);
-            pLogger.printMillis("Row count: " + count);
-        }
+        File file = createCopyFrom("data/Balance_Sheet_1787924075343.xlsx");
+        int count = new ExcelReadingService(file).size(0);
+        pLogger.printMillis("Row count: " + count);
     }
 
     @Test
     public void readSyncExcelFile() throws IOException {
-        iResources resources = iResources.create();
-        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            List<String>[] items = new ExcelReadingService(ios).readSync(0, 10);
-            pLogger.printMillis("readSync row count: " + items.length);
-        }
+        File file = createCopyFrom("data/Balance_Sheet_1787924075343.xlsx");
+        List<String>[] items = new ExcelReadingService(file).readSync(0, 10);
+        pLogger.printMillis("readSync row count: " + items.length);
     }
 
     @Test
     public void readSyncExcelFile_02() throws IOException {
-        iResources resources = iResources.create();
-        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            List<String>[] items = new ExcelReadingService(ios).readSync(90, 120);
-            pLogger.printMillis("readSync row count: " + items.length);
-        }
+        File file = createCopyFrom("data/Balance_Sheet_1787924075343.xlsx");
+        List<String>[] items = new ExcelReadingService(file).readSync(90, 120);
+        pLogger.printMillis("readSync row count: " + items.length);
     }
 
     @Test
     public void readSyncExcelFile_03() throws IOException {
-        iResources resources = iResources.create();
-        try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            List<String>[] items = new ExcelReadingService(ios).readSync(55, 5);
-            pLogger.printMillis("readSync row count: " + items.length);
-        }
+        File file = createCopyFrom("data/Balance_Sheet_1787924075343.xlsx");
+        List<String>[] items = new ExcelReadingService(file).readSync(55, 5);
+        pLogger.printMillis("readSync row count: " + items.length);
     }
 
     @Test
     public void readExcelFile() throws IOException {
         iResources resources = iResources.create();
         try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            Map<Integer, List<String>> rows = new ExcelReadingService(ios).read(0, 0, 10);
+            Map<Integer, List<String>> rows = ExcelReadingService.read(ios,0, 0, 10);
             rows.forEach((idx, row) -> {
                 LOG.info(String.join(" | ", row));
             });
@@ -100,11 +103,12 @@ public class ExcelReadWriteTest {
     }
 
     @Test
-    public void readAsyncExcelFile() throws IOException {
+    public void readExcelInputStream_Async() throws IOException {
         AtomicLong pageCounter = new AtomicLong(0);
+        //
         iResources resources = iResources.create();
         try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            new ExcelReadingService(ios).readAsync(50, 0, 1, 55, 12
+            ExcelReadingService.readAsync(ios, 50, 0, 1, 55, 12
                     , (rows) -> {
                         //Print rows:
                         rows.forEach((idx, row) -> {
@@ -117,6 +121,22 @@ public class ExcelReadWriteTest {
     }
 
     @Test
+    public void readExcelFile_Async() throws IOException {
+        AtomicLong pageCounter = new AtomicLong(0);
+        //
+        File file = createCopyFrom("data/Balance_Sheet_1787924075343.xlsx");
+        new ExcelReadingService(file).readAsync(100, 0, 1, 30, 10
+                , (rows) -> {
+                    //Print rows:
+                    rows.forEach((idx, row) -> {
+                        LOG.info(String.join(" | ", row));
+                    });
+                    pLogger.printMillis("Page: " + pageCounter.incrementAndGet());
+                });
+        pLogger.printMillis("Async-Read-Complete");
+    }
+
+    //@Test
     public void writeExcelFile() {
         //Prepare Data:
         String[] headers = {"AccountName","Currency","Amount","Balance","Type","Date","Ref"};
