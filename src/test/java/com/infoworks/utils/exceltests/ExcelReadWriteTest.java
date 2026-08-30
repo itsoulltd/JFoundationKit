@@ -105,18 +105,34 @@ public class ExcelReadWriteTest {
     public void readExcelInputStream_Async() throws IOException {
         AtomicLong pageCounter = new AtomicLong(0);
         //
+        List<String> columnNames = new ArrayList<>();
         iResources resources = iResources.create();
+        //
         try (InputStream ios = createInputStream("data/Balance_Sheet_1787924075343.xlsx", resources)) {
-            ExcelReadingService.readAsync(ios, 50, 0, 1, 55, 12
+            ExcelReadingService.readAsync(ios, 50, 0, 0, 15, 5
                     , (rows) -> {
                         //Print rows:
                         rows.forEach((idx, row) -> {
-                            LOG.info(String.join(" | ", row));
+                            //LOG.info(String.join(" | ", row));
+                            //Since begin-index is 0, means top-row will return, which could be the column-names.
+                            if (idx == 0) columnNames.addAll(row);
+                            else LOG.info(convert(row, columnNames.toArray(new String[0])).toString());
                         });
                         pLogger.printMillis("Page: " + pageCounter.incrementAndGet());
                     });
         }
         pLogger.printMillis("Async-Read-Complete");
+    }
+
+    private Row convert(List<String> rowData, String...keys) {
+        Row row = new Row();
+        int idx = 0;
+        while (idx < keys.length) {
+            try { row.add(keys[idx], rowData.get(idx)); }
+            catch (Exception ignore) {}
+            idx++;
+        }
+        return row;
     }
 
     @Test
