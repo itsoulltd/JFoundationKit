@@ -19,11 +19,11 @@ import java.util.logging.Logger;
 
 public class ExcelReadingService implements iDataSource<Integer, List<String>> {
 
-    private static Logger LOG = Logger.getLogger(ExcelReadingService.class.getSimpleName());
-    private final InputStream inputStream;
+    private static final Logger LOG = Logger.getLogger(ExcelReadingService.class.getSimpleName());
+    private final File file;
 
-    public ExcelReadingService(InputStream inputStream) {
-        this.inputStream = inputStream;
+    public ExcelReadingService(File file) {
+        this.file = file;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
     }
 
     public int size(Integer sheetAt) throws IOException {
-        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+        try (Workbook workbook = WorkbookFactory.create(file)) {
             configureWorkbook(workbook);
             Sheet sheet = workbook.getSheetAt(sheetAt);
             int maxCount = sheet.getLastRowNum() + 1;
@@ -65,7 +65,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
         }
     }
 
-    public void readAsync(Integer bufferSize, Integer sheetAt, Integer beginIndex, Integer endIndex, Integer pageSize
+    public static void readAsync(InputStream inputStream, Integer bufferSize, Integer sheetAt, Integer beginIndex, Integer endIndex, Integer pageSize
             , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
         try (Workbook workbook = StreamingReader.builder()
                 .rowCacheSize(pageSize)
@@ -76,7 +76,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
         }
     }
 
-    public static void readAsync(File file, Integer bufferSize, Integer sheetAt, Integer beginIndex, Integer endIndex, Integer pageSize
+    public void readAsync(Integer bufferSize, Integer sheetAt, Integer beginIndex, Integer endIndex, Integer pageSize
             , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
         try (Workbook workbook = StreamingReader.builder()
                 .rowCacheSize(pageSize)
@@ -133,7 +133,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
         }
     }
 
-    public void read(Integer sheetAt, Integer startAt, Integer pageSize
+    public static void read(InputStream inputStream, Integer sheetAt, Integer startAt, Integer pageSize
             , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             configureWorkbook(workbook);
@@ -141,7 +141,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
         }
     }
 
-    public static void read(File file, Integer sheetAt, Integer startAt, Integer pageSize
+    public void read(Integer sheetAt, Integer startAt, Integer pageSize
             , Consumer<Map<Integer, List<String>>> consumer) throws IOException {
         try (Workbook workbook = WorkbookFactory.create(file)) {
             configureWorkbook(workbook);
@@ -174,7 +174,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
         }
     }
 
-    public Map<Integer, List<String>> read(Integer sheetAt, Integer start, Integer end) throws IOException {
+    public static Map<Integer, List<String>> read(InputStream inputStream, Integer sheetAt, Integer start, Integer end) throws IOException {
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
             configureWorkbook(workbook);
             Map<Integer, List<String>> res = parseContent(workbook, sheetAt, start, end);
@@ -182,7 +182,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
         }
     }
 
-    public Map<Integer, List<String>> readXls(Integer sheetAt, Integer start, Integer end) throws IOException {
+    public static Map<Integer, List<String>> readXls(InputStream inputStream, Integer sheetAt, Integer start, Integer end) throws IOException {
         try (Workbook workbook = new HSSFWorkbook(inputStream)) {
             configureWorkbook(workbook);
             Map<Integer, List<String>> res = parseContent(workbook, sheetAt, start, end);
@@ -190,7 +190,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
         }
     }
 
-    public static Map<Integer, List<String>> read(File file, Integer sheetAt, Integer start, Integer end) throws IOException {
+    public Map<Integer, List<String>> read(Integer sheetAt, Integer start, Integer end) throws IOException {
         try (Workbook workbook = WorkbookFactory.create(file)) {
             configureWorkbook(workbook);
             Map<Integer, List<String>> res = parseContent(workbook, sheetAt, start, end);
@@ -204,7 +204,7 @@ public class ExcelReadingService implements iDataSource<Integer, List<String>> {
             try {
                 workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             } catch (Exception e) {
-                LOG.log(Level.WARNING, e.getMessage());
+                LOG.log(Level.WARNING, e.getMessage(), e);
             }
         }
     }
