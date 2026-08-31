@@ -116,7 +116,7 @@ public class ExcelReadWriteTest {
                             //LOG.info(String.join(" | ", row));
                             //Since begin-index is 0, means top-row will return, which could be the column-names.
                             if (idx == 0) columnNames.addAll(row);
-                            else LOG.info(convert(row, columnNames.toArray(new String[0])).toString());
+                            else LOG.info(convert(idx, row, columnNames.toArray(new String[0])).toString());
                         });
                         pLogger.printMillis("Page: " + pageCounter.incrementAndGet());
                     });
@@ -124,12 +124,12 @@ public class ExcelReadWriteTest {
         pLogger.printMillis("Async-Read-Complete");
     }
 
-    private Row convert(List<String> rowData, String...keys) {
+    private Row convert(int rIndex, List<String> rowData, String...keys) {
         Row row = new Row();
         int idx = 0;
         while (idx < keys.length) {
             try { row.add(keys[idx], rowData.get(idx)); }
-            catch (Exception ignore) {}
+            catch (Exception ignore) { /*LOG.warning("ERROR: row-convertion at rIndex: " + rIndex);*/ }
             idx++;
         }
         return row;
