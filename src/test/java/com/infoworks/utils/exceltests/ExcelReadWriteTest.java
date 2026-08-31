@@ -46,7 +46,7 @@ public class ExcelReadWriteTest {
     private File createCopyFrom(String filename) throws IOException {
         Path tempDir = Files.createTempDirectory("temp-");
         Path target = tempDir.resolve(Path.of(filename).getFileName().toString());
-        try (InputStream inputStream = createInputStream(filename, iResources.create())) {
+        try (InputStream inputStream = iResources.create().createStream(new File(filename))) {
             Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
         }
         return target.toFile();
