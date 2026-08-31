@@ -158,7 +158,7 @@ public class ExcelReadWriteTest {
         String[] colKeys = {"account_ref","currency","amount","balance","transaction_type","transaction_date","transaction_ref"};
         Map<Integer, List<String>> data = new HashMap<>();
         data.put(0, Arrays.asList(headers));
-        List<Map> transactions = dummyTransactions();
+        List<Map<String, Object>> transactions = dummyTransactions();
         Map<Integer, List<String>> converted = AsyncWriter.convert(transactions, 1, colKeys);
         data.putAll(converted);
 
@@ -182,8 +182,8 @@ public class ExcelReadWriteTest {
         }
     }
 
-    private List<Map> dummyTransactions() {
-        List<Map> data = new ArrayList<>();
+    private List<Map<String, Object>> dummyTransactions() {
+        List<Map<String, Object>> data = new ArrayList<>();
         data.add(new Row().add("account_ref", "CASH@admin").add("currency", "BDT").add("amount", "-230.0").add("balance", "1219.9").add("transaction_type", "withdrawal").add("transaction_date", "2026-01-14T19:38:20.318").add("transaction_ref", "cc25a914-4a84-4849").keyObjectMap());
         data.add(new Row().add("account_ref", "CASH@admin").add("currency", "BDT").add("amount", "1290.0").add("balance", "1449.9").add("transaction_type", "deposit").add("transaction_date", "2026-01-14T19:37:20.313").add("transaction_ref", "dd54cecd-80a5-4386").keyObjectMap());
         data.add(new Row().add("account_ref", "CASH@admin").add("currency", "BDT").add("amount", "-340.8").add("balance", "879.1").add("transaction_type", "transfer").add("transaction_date", "2026-01-14T19:36:20.312").add("transaction_ref", "ab4c7d73-dc84-433e").keyObjectMap());

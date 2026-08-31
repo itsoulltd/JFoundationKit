@@ -66,11 +66,11 @@ public class AsyncWriter implements AutoCloseable {
         }
     }
 
-    public static Map<Integer, List<String>> convert(List<Map> response, int startIndex, String... keys) {
+    public static Map<Integer, List<String>> convert(List<Map<String, Object>> response, int startIndex, String... keys) {
         List<String> keysList = Arrays.stream(keys).collect(Collectors.toList());
         Map<Integer, List<String>> result = new HashMap<>();
         int index = Math.max(startIndex, 0);
-        for (Map row : response) {
+        for (Map<String, Object> row : response) {
             List<String> rowList = keysList.stream()
                     .map(key -> Optional.ofNullable(row.get(key)).orElse("").toString())
                     .collect(Collectors.toList());
