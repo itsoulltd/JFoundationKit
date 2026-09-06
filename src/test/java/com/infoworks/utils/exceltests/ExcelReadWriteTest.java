@@ -4,6 +4,7 @@ import com.infoworks.PLogger;
 import com.infoworks.orm.Row;
 import com.infoworks.utils.excel.ExcelReadingService;
 import com.infoworks.utils.excel.writer.AsyncWriter;
+import com.infoworks.utils.excel.writer.StreamWriter;
 import com.infoworks.utils.services.iFileStore;
 import com.infoworks.utils.services.iResources;
 import com.infoworks.utils.services.impl.FileStore;
@@ -152,7 +153,7 @@ public class ExcelReadWriteTest {
     }
 
     //@Test
-    public void writeExcelFile() {
+    public void writeExcelFile_Async() {
         //Prepare Data:
         String[] headers = {"AccountName","Currency","Amount","Balance","Type","Date","Ref"};
         String[] colKeys = {"account_ref","currency","amount","balance","transaction_type","transaction_date","transaction_ref"};
@@ -172,7 +173,38 @@ public class ExcelReadWriteTest {
             InputStream ios = new ByteArrayInputStream(((ByteArrayOutputStream) writer.getOutputStream()).toByteArray());
 
             iFileStore<InputStream> uploadFile = new FileStore("target/");
-            String reportName = String.format("Balance_Sheet_%s.xlsx", Instant.now().toEpochMilli());
+            String reportName = String.format("Balance_Sheet_Async_%s.xlsx", Instant.now().toEpochMilli());
+            uploadFile.put(reportName, ios);
+            pLogger.printMillis("iFileStore-Upload");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //@Test
+    public void writeExcelFile_Stream() {
+        //Prepare Data:
+        String[] headers = {"AccountName","Currency","Amount","Balance","Type","Date","Ref"};
+        String[] colKeys = {"account_ref","currency","amount","balance","transaction_type","transaction_date","transaction_ref"};
+        Map<Integer, List<String>> data = new HashMap<>();
+        data.put(0, Arrays.asList(headers));
+        List<Map<String, Object>> transactions = dummyTransactions();
+        Map<Integer, List<String>> converted = AsyncWriter.convert(transactions, 1, colKeys);
+        data.putAll(converted);
+
+        //StreamWriter:
+        try (AsyncWriter writer = new StreamWriter(50, new ByteArrayOutputStream())) {
+            writer.write("data", data, false);
+            writer.flush();
+            pLogger.printMillis("StreamWriter-Complete");
+
+            //Prepare for write to file:
+            InputStream ios = new ByteArrayInputStream(((ByteArrayOutputStream) writer.getOutputStream()).toByteArray());
+
+            iFileStore<InputStream> uploadFile = new FileStore("target/");
+            String reportName = String.format("Balance_Sheet_Stream_%s.xlsx", Instant.now().toEpochMilli());
             uploadFile.put(reportName, ios);
             pLogger.printMillis("iFileStore-Upload");
         } catch (IOException e) {
