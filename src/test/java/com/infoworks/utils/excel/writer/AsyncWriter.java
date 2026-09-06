@@ -8,19 +8,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AsyncWriter implements AutoCloseable {
 
-    protected Workbook workbook;
-    protected OutputStream outfile;
+    protected final Workbook workbook;
+    protected final OutputStream outputStream;
 
-    public AsyncWriter() {
+    public AsyncWriter(Workbook workbook, OutputStream outputStream) {
+        this.workbook = workbook;
+        this.outputStream = outputStream;
     }
 
     public AsyncWriter(boolean xssf, OutputStream outputStream) throws IOException {
-        this.workbook = WorkbookFactory.create(xssf);
-        this.outfile = outputStream;
+        this(WorkbookFactory.create(xssf), outputStream);
     }
 
     public AsyncWriter(boolean xssf, String fileNameToWrite) throws IOException {
@@ -29,21 +29,19 @@ public class AsyncWriter implements AutoCloseable {
 
     public void flush() throws IOException {
         if (workbook != null)
-            workbook.write(outfile);
+            workbook.write(outputStream);
     }
 
     @Override
     public void close() throws Exception {
         if (workbook != null) {
-            if (outfile != null) {
-                outfile.close();
-                outfile = null;
+            if (outputStream != null) {
+                outputStream.close();
             }
             if (workbook instanceof SXSSFWorkbook) {
                 ((SXSSFWorkbook) workbook).dispose();
             }
             workbook.close();
-            workbook = null;
         }
     }
 
@@ -67,20 +65,20 @@ public class AsyncWriter implements AutoCloseable {
     }
 
     public static Map<Integer, List<String>> convert(List<Map<String, Object>> response, int startIndex, String... keys) {
-        List<String> keysList = Arrays.stream(keys).collect(Collectors.toList());
+        List<String> keysList = Arrays.stream(keys).toList();
         Map<Integer, List<String>> result = new HashMap<>();
         int index = Math.max(startIndex, 0);
         for (Map<String, Object> row : response) {
             List<String> rowList = keysList.stream()
                     .map(key -> Optional.ofNullable(row.get(key)).orElse("").toString())
-                    .collect(Collectors.toList());
+                    .toList();
             result.put(index++, rowList);
         }
         return result;
     }
 
-    public OutputStream getOutfile() {
-        return outfile;
+    public OutputStream getOutputStream() {
+        return outputStream;
     }
 
     public Workbook getWorkbook() {

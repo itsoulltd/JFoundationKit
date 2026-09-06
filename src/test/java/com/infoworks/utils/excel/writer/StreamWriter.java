@@ -1,5 +1,6 @@
 package com.infoworks.utils.excel.writer;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -8,10 +9,12 @@ import java.io.OutputStream;
 
 public class StreamWriter extends AsyncWriter {
 
+    public StreamWriter(Workbook workbook, OutputStream outputStream) {
+        super(workbook, outputStream);
+    }
+
     public StreamWriter(int rowSize, OutputStream outputStream) {
-        if (rowSize <= 0) rowSize = 100;
-        this.workbook = new SXSSFWorkbook(rowSize);
-        this.outfile = outputStream;
+        this(new SXSSFWorkbook((rowSize <= 0) ? 100 : rowSize), outputStream);
     }
 
     public StreamWriter(int rowSize, String fileNameToWrite) throws IOException {

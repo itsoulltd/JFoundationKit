@@ -169,7 +169,7 @@ public class ExcelReadWriteTest {
             pLogger.printMillis("AsyncWriter-Complete");
 
             //Prepare for write to file:
-            InputStream ios = new ByteArrayInputStream(((ByteArrayOutputStream) writer.getOutfile()).toByteArray());
+            InputStream ios = new ByteArrayInputStream(((ByteArrayOutputStream) writer.getOutputStream()).toByteArray());
 
             iFileStore<InputStream> uploadFile = new FileStore("target/");
             String reportName = String.format("Balance_Sheet_%s.xlsx", Instant.now().toEpochMilli());
