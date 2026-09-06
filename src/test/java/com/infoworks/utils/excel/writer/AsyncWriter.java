@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AsyncWriter implements AutoCloseable {
 
@@ -65,13 +66,13 @@ public class AsyncWriter implements AutoCloseable {
     }
 
     public static Map<Integer, List<String>> convert(List<Map<String, Object>> response, int startIndex, String... keys) {
-        List<String> keysList = Arrays.stream(keys).toList();
+        List<String> keysList = Arrays.stream(keys).collect(Collectors.toList());
         Map<Integer, List<String>> result = new HashMap<>();
         int index = Math.max(startIndex, 0);
         for (Map<String, Object> row : response) {
             List<String> rowList = keysList.stream()
                     .map(key -> Optional.ofNullable(row.get(key)).orElse("").toString())
-                    .toList();
+                    .collect(Collectors.toList());
             result.put(index++, rowList);
         }
         return result;
