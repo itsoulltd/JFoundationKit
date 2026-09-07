@@ -46,6 +46,10 @@ public class AsyncWriter implements AutoCloseable {
         }
     }
 
+    public void write(String sheetName, Map<Integer, List<String>> data) {
+        write(sheetName, data, true);
+    }
+
     public void write(String sheetName, Map<Integer, List<String>> data, boolean skipZeroIndex) {
         //DoTheMath:
         Sheet sheet = workbook.getSheet(sheetName);
