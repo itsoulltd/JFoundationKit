@@ -61,7 +61,7 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
         <dependency>
@@ -207,25 +207,22 @@
             <scope>test</scope>
         </dependency>-->
         <!-- Test Suits Ends -->
-        <!--Apache POI-excel-parser (Test-Suit-Only) -->
+        <!--Apache POI-excel-parser -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>4.1.2</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>4.1.2</version>
-            <scope>test</scope>
         </dependency>
         <!-- Apache POI-streaming-api (v2.2.0 has hard-dependency on poi v4.1.2) -->
         <dependency>
             <groupId>com.monitorjbl</groupId>
             <artifactId>xlsx-streamer</artifactId>
             <version>2.2.0</version>
-            <scope>test</scope>
         </dependency>
         <!-- -->
     </dependencies>
