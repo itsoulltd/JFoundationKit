@@ -14,9 +14,12 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Set: [2.9.10.5, 2.18.10) to Jackson.Version, [Jackson 3.x requires JDK-17] -->
         <!-- Jackson v2.14 and above required JDK-8 baseline -->
         <jackson.version>[2.9.10.5, 2.18.10]</jackson.version>
+        <!-- Jackson v3.x and above requires JDK-17 baseline -->
+        <!--<jackson.version>[2.9.10.5, 2.18.10)</jackson.version>-->
+        <!-- springframework v5.x and below required JDK-8 baseline -->
+        <spring.version>[5.0.4.RELEASE, 5.3.39]</spring.version>
     </properties>
 
     <repositories>
@@ -73,20 +76,20 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>[5.0.4.RELEASE, 5.3.39]</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Spring WebSocket Client API-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
-            <version>[5.0.4.RELEASE, 5.3.39]</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
-            <version>[5.0.4.RELEASE, 5.3.39]</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- -->
