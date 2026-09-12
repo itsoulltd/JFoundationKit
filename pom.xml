@@ -270,7 +270,6 @@
                         <exclude>DataRestClientTest.java</exclude>
                         <exclude>HttpDataRestClientTest.java</exclude>
                         <exclude>EclipseDataStoreTest.java</exclude>
-                        <exclude>ExcelReadWriteTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

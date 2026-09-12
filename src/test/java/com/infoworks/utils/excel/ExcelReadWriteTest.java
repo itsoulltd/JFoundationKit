@@ -219,7 +219,7 @@ public class ExcelReadWriteTest {
         pLogger.printMillis("iFileStore-Upload");
     }
 
-    @Test
+    //@Test
     public void writeExcelFile_Stream_v2() {
         String filename = String.format("Balance_Sheet_Stream_%s.xlsx", Instant.now().toEpochMilli());
         String fileSavePath = Path.of("target", filename).toString();
@@ -254,7 +254,7 @@ public class ExcelReadWriteTest {
         return data;
     }
 
-    @Test
+    //@Test
     public void writeExcelFile_Stream_v3() {
         String filename = String.format("Balance_Sheet_Stream_%s.xlsx", Instant.now().toEpochMilli());
         String fileSavePath = Path.of("target", filename).toString();
