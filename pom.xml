@@ -14,8 +14,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Set: [2.9.10.5, 2.18.3) to Jackson.Version, To use with JDK 17 or latest -->
-        <jackson.version>[2.9.10.5, 2.18.3]</jackson.version>
+        <!-- Set: [2.9.10.5, 2.18.10) to Jackson.Version, [Jackson 3.x requires JDK-17] -->
+        <!-- Jackson v2.14 and above required JDK-8 baseline -->
+        <jackson.version>[2.9.10.5, 2.18.10]</jackson.version>
     </properties>
 
     <repositories>
@@ -61,14 +62,12 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
-            <!--<scope>provided</scope>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.13.0</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Spring Web Client API -->
         <dependency>
