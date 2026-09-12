@@ -14,9 +14,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Set: [2.9.10.5, 2.18.3) to Jackson.Version, To use with JDK 17 or latest -->
-        <!--<jackson.version>[2.9.10.5, 2.18.3]</jackson.version>-->
-        <jackson.version>[2.9.10.5, 2.18.3)</jackson.version>
+        <!-- Jackson v2.14 and above required JDK-8 baseline -->
+        <!--<jackson.version>[2.9.10.5, 2.18.10]</jackson.version>-->
+        <!-- Jackson v3.x and above requires JDK-17 baseline -->
+        <jackson.version>[2.9.10.5, 2.18.10)</jackson.version>
     </properties>
 
     <repositories>
@@ -62,14 +63,12 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.13.0</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Spring Web Client API -->
         <dependency>
@@ -208,6 +207,24 @@
             <scope>test</scope>
         </dependency>-->
         <!-- Test Suits Ends -->
+        <!--Apache POI-excel-parser -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <!-- Apache POI-streaming-api (v2.2.0 has hard-dependency on poi v4.1.2) -->
+        <dependency>
+            <groupId>com.monitorjbl</groupId>
+            <artifactId>xlsx-streamer</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <!-- -->
     </dependencies>
 
     <build>
