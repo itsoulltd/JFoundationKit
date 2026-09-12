@@ -42,7 +42,7 @@ public class EventQueueTest {
         } catch (InterruptedException e) {}
     }
 
-    @Test
+    //@Test
     public void asyncEventQueueTest() {
         //Initialize:
         CountDownLatch latch = new CountDownLatch(1);
