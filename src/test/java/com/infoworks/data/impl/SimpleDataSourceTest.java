@@ -432,13 +432,13 @@ public class SimpleDataSourceTest {
         //Load Data:
         loadDataSource();
         SimpleDataSource<String, Object> myDataSource = this.dataSource;
-        AtomicInteger pageCount = new AtomicInteger(2);
+
         //
-        iDataSource.paginateOver(myDataSource, 3, pageCount.get(), (objs) -> {
+        iDataSource.paginateOver(myDataSource, 3, 2, (objs) -> {
             for (Object p : objs) {
                 System.out.println(p.toString());
             }
-            System.out.println("Page count: " + pageCount.getAndDecrement());
+            System.out.println("============================");
         });
     }
 
@@ -447,13 +447,13 @@ public class SimpleDataSourceTest {
         //Load Data:
         loadDataSource();
         SimpleDataSource<String, Object> myDataSource = this.dataSource;
-        AtomicInteger pageCount = new AtomicInteger(1000); //when pageCount is huge, way bigger than datasource.size()
-        //
-        iDataSource.paginateOver(myDataSource, 5, pageCount.get(), (objs) -> {
+
+        //when pageCount is huge, way bigger than datasource.size()
+        iDataSource.paginateOver(myDataSource, 5, 1000, (objs) -> {
             for (Object p : objs) {
                 System.out.println(p.toString());
             }
-            System.out.println("Page count: " + pageCount.getAndDecrement());
+            System.out.println("============================");
         });
     }
 
@@ -468,7 +468,7 @@ public class SimpleDataSourceTest {
             for (Object p : objs) {
                 System.out.println(p.toString());
             }
-            System.out.println("Page count: " + pageCount.getAndIncrement());
+            System.out.println(String.format("===============%s===============", pageCount.getAndIncrement()));
         });
     }
 
@@ -514,7 +514,22 @@ public class SimpleDataSourceTest {
                     System.out.println(((Person) p).getName() + "'s email address is " + ((Person) p).getEmail());
                 }
             }
-            System.out.println("Page count: " + pageCount.getAndIncrement());
+            System.out.println(String.format("===============%s===============", pageCount.getAndIncrement()));
+        });
+    }
+
+    @Test
+    public void paginationTest_v6() {
+        //Load Data:
+        loadDataSource();
+        SimpleDataSource<String, Object> myDataSource = this.dataSource;
+
+        //when pageSize > datasource.size()
+        iDataSource.paginateOver(myDataSource, 10, 0, (objs) -> {
+            for (Object p : objs) {
+                System.out.println(p.toString());
+            }
+            System.out.println("============================");
         });
     }
 
