@@ -1,5 +1,6 @@
 package com.infoworks.data.impl;
 
+import com.infoworks.data.base.iDataSource;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,6 +9,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -423,6 +425,97 @@ public class SimpleDataSourceTest {
         for (Object p : readAll) {
             System.out.println(p.toString());
         }
+    }
+
+    @Test
+    public void paginationTest_v2() {
+        //Load Data:
+        loadDataSource();
+        SimpleDataSource<String, Object> myDataSource = this.dataSource;
+        AtomicInteger pageCount = new AtomicInteger(2);
+        //
+        iDataSource.paginateOver(myDataSource, 3, pageCount.get(), (objs) -> {
+            for (Object p : objs) {
+                System.out.println(p.toString());
+            }
+            System.out.println("Page count: " + pageCount.getAndDecrement());
+        });
+    }
+
+    @Test
+    public void paginationTest_v3() {
+        //Load Data:
+        loadDataSource();
+        SimpleDataSource<String, Object> myDataSource = this.dataSource;
+        AtomicInteger pageCount = new AtomicInteger(1000); //when pageCount is huge, way bigger than datasource.size()
+        //
+        iDataSource.paginateOver(myDataSource, 5, pageCount.get(), (objs) -> {
+            for (Object p : objs) {
+                System.out.println(p.toString());
+            }
+            System.out.println("Page count: " + pageCount.getAndDecrement());
+        });
+    }
+
+    @Test
+    public void paginationTest_v4() {
+        //Load Data:
+        loadDataSource();
+        SimpleDataSource<String, Object> myDataSource = this.dataSource;
+        AtomicInteger pageCount = new AtomicInteger(0); //when pageCount is <= 0
+        //
+        iDataSource.paginateOver(myDataSource, 3, pageCount.get(), (objs) -> {
+            for (Object p : objs) {
+                System.out.println(p.toString());
+            }
+            System.out.println("Page count: " + pageCount.getAndIncrement());
+        });
+    }
+
+    @Test
+    public void paginationTest_v5() {
+        //Load Data:
+        SimpleDataSource<String, Person> myDataSource = new SimpleDataSource<>();
+        myDataSource.put("p-1", new Person()
+                .setName("John")
+                .setEmail("john@gmail.com")
+                .setAge(36)
+                .setGender("male"));
+
+        myDataSource.put("p-2", new Person()
+                .setName("Eve")
+                .setEmail("eve@gmail.com")
+                .setAge(21)
+                .setGender("female"));
+
+        myDataSource.put("p-3", new Person()
+                .setName("Mosses")
+                .setEmail("mosses@gmail.com")
+                .setAge(31)
+                .setGender("male"));
+
+        myDataSource.put("p-4", new Person()
+                .setName("Abraham")
+                .setEmail("abraham@gmail.com")
+                .setAge(31)
+                .setGender("male"));
+
+        myDataSource.put("p-5", new Person()
+                .setName("Ahmed")
+                .setEmail("ahmed@gmail.com")
+                .setAge(31)
+                .setGender("male"));
+
+        AtomicInteger pageCount = new AtomicInteger(0); //when pageCount is <= 0
+        //
+        iDataSource.paginateOver(myDataSource, 3, pageCount.get(), (objs) -> {
+            for (Object p : objs) {
+                if (p instanceof Person) {
+                    System.out.println(((Person) p).getName() + "'s email address is " + ((Person) p).getEmail());
+                }
+            }
+            System.out.println("Page count: " + pageCount.getAndIncrement());
+        });
     }
 
 }

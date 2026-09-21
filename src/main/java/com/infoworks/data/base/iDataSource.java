@@ -1,5 +1,7 @@
 package com.infoworks.data.base;
 
+import com.infoworks.data.impl.SimpleDataSource;
+
 import java.util.function.Consumer;
 
 public interface iDataSource<Key, Value> {
@@ -8,6 +10,35 @@ public interface iDataSource<Key, Value> {
     default void readAsync(int offset, int pageSize, Consumer<Value[]> consumer) {
         if (consumer != null)
             consumer.accept(null);
+    }
+
+    /**
+     * Paginate over iDataSource. if pageCount <= 0 then all items will be iterate-over.
+     * Page count means number of pages data you wanted to iterate over.
+     * @param dataSource
+     * @param pageSize
+     * @param pageCount
+     * @param consumer
+     * @param <Key>
+     * @param <Value>
+     */
+    static <Key, Value> void paginateOver(SimpleDataSource<Key, Value> dataSource, int pageSize, int pageCount, Consumer<Object[]> consumer) {
+        //Null Check:
+        if (consumer == null) {
+            return;
+        }
+        //Validation:
+        pageSize = (pageSize <= 0) ? 5 : pageSize;
+        int maxCount = (pageSize == dataSource.size()) ? 1 : (dataSource.size() / pageSize) + 1;
+        pageCount = (pageCount <= 0 || pageCount > maxCount) ? maxCount : pageCount;
+        //Works:
+        int offset = 0; //iDataSource::readAsync is 0-based;
+        while (offset <= pageCount) {
+            Object[] objs  = dataSource.readSync(offset, pageSize);
+            consumer.accept(objs);
+            //Next page:
+            offset++;
+        }
     }
 
     default boolean containsKey(Key key) {return false;}
