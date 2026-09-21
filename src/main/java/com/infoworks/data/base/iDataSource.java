@@ -1,7 +1,5 @@
 package com.infoworks.data.base;
 
-import com.infoworks.data.impl.SimpleDataSource;
-
 import java.util.function.Consumer;
 
 public interface iDataSource<Key, Value> {
@@ -22,15 +20,15 @@ public interface iDataSource<Key, Value> {
      * @param <Key>
      * @param <Value>
      */
-    static <Key, Value> void paginateOver(SimpleDataSource<Key, Value> dataSource, int pageSize, int pageCount, Consumer<Object[]> consumer) {
+    static <Key, Value> void paginateOver(iDataSource<Key, Value> dataSource, int pageSize, int pageCount, Consumer<Object[]> consumer) {
         //Null Check:
-        if (consumer == null) {
-            return;
-        }
+        if (consumer == null) return;
+
         //Validation:
         pageSize = (pageSize <= 0) ? 5 : pageSize;
         int maxCount = (pageSize == dataSource.size()) ? 1 : (dataSource.size() / pageSize) + 1;
         pageCount = (pageCount <= 0 || pageCount > maxCount) ? maxCount : pageCount;
+
         //Works:
         int currentPage = 1;
         int offset = 0; //iDataSource::readAsync is 0-based;
